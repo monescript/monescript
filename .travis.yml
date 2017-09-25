@@ -4,6 +4,6 @@ node_js:
   - "7"
 before_script:
   - npm install -g npm@latest
-  - npm --prefix src install
+  - npm install
 script:
-  - npm --prefix test test
+  - npm test
