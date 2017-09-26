@@ -7,10 +7,11 @@
     "personal finance",
     "ui"
   ],
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "contributors": [],
   "devDependencies": {
-     "jasmine": "^2.8.0"
+    "jasmine": "^2.8.0",
+    "pegjs": "^0.10.0"
   },
   "scripts": {
     "test": "jasmine"
