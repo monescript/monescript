@@ -22,7 +22,7 @@ describe("LedgerParser", function() {
 
     var result = this.parser.parse(
       "2016/08/23 ! Payee Name 1234\n"
-      + " Expenses:Utilities:Phone 1:"
+      + " Expenses:Utilities:Phone 1  "
     );
 
     expect(result.year).toEqual(2016);
@@ -31,9 +31,9 @@ describe("LedgerParser", function() {
     expect(result.status).toEqual('!');
     expect(result.payee).toEqual('Payee Name 1234');
     console.log(result.posting[0].account[0]);
-    //expect(result.posting[0].account[0]).toEqual('Expenses');
-    //expect(result.posting[0].account[1]).toEqual('Utilities');
-    //expect(result.posting[0].account[2]).toEqual('Phone 1');
+    expect(result.posting[0].account[0]).toEqual('Expenses');
+    expect(result.posting[0].account[1]).toEqual('Utilities');
+    expect(result.posting[0].account[2]).toEqual('Phone 1');
     /*expect(result.posting[0].amount).toEqual(1234.56);
     expect(result.posting[0].currency).toEqual('$');*/
   });

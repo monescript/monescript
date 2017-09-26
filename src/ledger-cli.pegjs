@@ -45,7 +45,8 @@ account
   = accountWithSeparator+
 
 accountWithSeparator
-  = accountLevel:accountLevel accountLevelSep {return accountLevel.join("")}
+  = a:accountLevel accountLevelSep { return a } /
+  a:accountLevel accountAmountSep { return a }
 
 accountAmountSep
   = "  "
@@ -54,7 +55,10 @@ accountLevelSep
   = ":"
 
 accountLevel
-  = [a-zA-Z0-9 ]+
+  = start:word space:space end:word {return start.join("") + space.join("") + end.join(""); } / word:word  { return word.join("")}
+
+word
+ = [a-zA-Z0-9]+
 
 space
   = " "+
