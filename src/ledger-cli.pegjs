@@ -1,22 +1,19 @@
-/*
-https://pegjs.org/documentation
-https://github.com/pegjs/pegjs
-http://ledger-cli.org/3.0/doc/ledger3.html#Journal-File-Format-for-Developers
-https://github.com/MikeMcl/big.js/
-*/
 start
-  = y:year "/" m:month "/" d:day space s:status p:payee
+  = y:year "/" m:month "/" d:day space s:status p:payee newline
+    posting:posting+
     {
       var theStatus = "";
       if(s != undefined && s != null && s != ""){
          theStatus = s.join("").trim();
       }
+
       return {
-        year:y,
-        month:m,
-        day:d,
-        status:theStatus,
-        payee:p.join("")
+        year: y,
+        month: m,
+        day: d,
+        status: theStatus,
+        payee: p.join(""),
+        posting: posting
       };
     }
 
@@ -39,7 +36,28 @@ status
   =  "*" space / "!" space / "" {return text(); }
 
 payee
-  = .+
+  = [^\r\n]+
+
+posting
+  = space account:account {return {account:account}}
+
+account
+  = accountWithSeparator+
+
+accountWithSeparator
+  = accountLevel:accountLevel accountLevelSep {return accountLevel.join("")}
+
+accountAmountSep
+  = "  "
+
+accountLevelSep
+  = ":"
+
+accountLevel
+  = [a-zA-Z0-9 ]+
 
 space
   = " "+
+
+newline
+  = "\n" / "\r\n"
