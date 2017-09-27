@@ -17,6 +17,20 @@ describe("LedgerParser", function() {
   If you do not have adequate separation between the amount and the account Ledger will give an error and stop calculating.
   */
 
+  var verifyFirstPosting = function(result){
+      expect(result.posting[0].account.length).toEqual(3);
+      expect(result.posting[0].account[0]).toEqual('Expenses');
+      expect(result.posting[0].account[1]).toEqual('Utilities');
+      expect(result.posting[0].account[2]).toEqual('Phone 1');
+      expect(result.posting[0].amount).toEqual(1234.56);
+      expect(result.posting[0].currency).toEqual('$');
+  }
+
+  var verifyDate = function(result){
+    expect(result.year).toEqual(2016);
+    expect(result.month).toEqual(8);
+    expect(result.day).toEqual(23);
+  }
 
   it("should be able to parse a simple transaction", function() {
 
@@ -25,15 +39,33 @@ describe("LedgerParser", function() {
       + " Expenses:Utilities:Phone 1  $1234.56"
     );
 
-    expect(result.year).toEqual(2016);
-    expect(result.month).toEqual(8);
-    expect(result.day).toEqual(23);
+    verifyDate(result);
     expect(result.status).toEqual('!');
     expect(result.payee).toEqual('Payee Name 1234');
-    expect(result.posting[0].account[0]).toEqual('Expenses');
-    expect(result.posting[0].account[1]).toEqual('Utilities');
-    expect(result.posting[0].account[2]).toEqual('Phone 1');
-    expect(result.posting[0].amount).toEqual(1234.56);
-    expect(result.posting[0].currency).toEqual('$');
+    expect(result.posting.length).toEqual(1);
+    verifyFirstPosting(result);
   });
+
+  it("should be able to parse a transaction with two postings", function() {
+
+    var result = this.parser.parse(
+      "2016/08/23 * other\n"
+      + " Expenses:Utilities:Phone 1  $1234.56\n"
+      + " Assets:The Country:Bank One:Account Two  $-1234.56"
+    );
+
+    verifyDate(result);
+    expect(result.status).toEqual('*');
+    expect(result.payee).toEqual('other');
+    expect(result.posting.length).toEqual(2);
+    verifyFirstPosting(result);
+    expect(result.posting[1].account.length).toEqual(4);
+    expect(result.posting[1].account[0]).toEqual('Assets');
+    expect(result.posting[1].account[1]).toEqual('The Country');
+    expect(result.posting[1].account[2]).toEqual('Bank One');
+    expect(result.posting[1].account[3]).toEqual('Account Two');
+    expect(result.posting[1].amount).toEqual(-1234.56);
+    expect(result.posting[1].currency).toEqual('$');
+  });
+
 });

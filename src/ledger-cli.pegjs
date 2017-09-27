@@ -1,5 +1,5 @@
 start
-  = y:year "/" m:month "/" d:day space s:status p:payee newline
+  = y:year "/" m:month "/" d:day space s:status p:payee
     posting:posting+
     {
       var theStatus = "";
@@ -39,7 +39,10 @@ payee
   = [^\r\n]+
 
 posting
-  = space account:account amount:amount {return {account:account, currency:amount.currency, amount:amount.amount}}
+  = postingPrefix account:account amount:amount {return {account:account, currency:amount.currency, amount:amount.amount}}
+
+postingPrefix
+  = newline space
 
 amount
   = currency:"$" amount:number {return {currency:currency, amount:amount};}
