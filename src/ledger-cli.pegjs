@@ -39,7 +39,25 @@ payee
   = [^\r\n]+
 
 posting
-  = space account:account {return {account:account}}
+  = space account:account amount:amount {return {account:account, currency:amount.currency, amount:amount.amount}}
+
+amount
+  = currency:"$" amount:number {return {currency:currency, amount:amount};}
+
+
+number "number"
+  = minus? int frac? exp? { return parseFloat(text()); }
+
+  decimal_point = "."
+  digit1_9      = [1-9]
+  e             = [eE]
+  exp           = e (minus / plus)? DIGIT+
+  frac          = decimal_point DIGIT+
+  int           = zero / (digit1_9 DIGIT*)
+  minus         = "-"
+  plus          = "+"
+  zero          = "0"
+  DIGIT  = [0-9]
 
 account
   = accountWithSeparator+
