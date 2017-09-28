@@ -1,16 +1,11 @@
 start
   = comment*
-    date:date space s:status p:payee
+    date:date space status:status p:payee
     posting:posting+
     {
-      var theStatus = "";
-      if(s != undefined && s != null && s != ""){
-         theStatus = s.join("").trim();
-      }
-
       return {
         date: date,
-        status: theStatus,
+        status: status,
         payee: p.join(""),
         posting: posting
       };
@@ -39,7 +34,9 @@ day
   = digits:[0-9]+ { return parseInt(digits.join(""), 10);}
 
 status
-  =  "*" space / "!" space / "" {return text(); }
+  =  "*" space { return "*"; } /
+     "!" space { return "!"; } /
+     "" {return ""}
 
 payee
   = [^\r\n]+

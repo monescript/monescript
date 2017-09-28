@@ -17,8 +17,6 @@ describe("LedgerParser", function() {
   If you do not have adequate separation between the amount and the account Ledger will give an error and stop calculating.
   */
 
-
-
   it("should be able to parse a simple transaction", function() {
 
     var result = this.parser.parse(
@@ -65,13 +63,13 @@ describe("LedgerParser", function() {
 /*
   it("should be able to parse a transaction with mid comment", function() {
     var result = this.parser.parse(
-      "2016/08/23 * other\n" +
-      "; First phone bill \n" +
+      "2016/08/23 other\n" +
+      " ; First phone bill \n" +
       " Expenses:Utilities:Phone 1  $1234.56"
     );
 
     verifyDate(result);
-    expect(result.status).toEqual('*');
+    expect(result.status).toEqual('');
     expect(result.payee).toEqual('other');
     expect(result.posting.length).toEqual(1);
     verifyFirstPosting(result);
