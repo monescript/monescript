@@ -15,6 +15,58 @@ describe("LedgerParser", function() {
   and the accounts are indented by at least one space. If you omit the leading spaces in the account lines Ledger will generate an error.
   There must be at least two spaces, or a tab, between the amount and the account.
   If you do not have adequate separation between the amount and the account Ledger will give an error and stop calculating.
+
+  ------------------------------------------------------------------------------------------------------------------------------------
+
+  From: http://ledger-cli.org/3.0/doc/ledger3.html#Transactions-and-Comments
+
+  The initial character of each line determines what the line means, and how it should be interpreted. Allowable initial characters are:
+
+  NUMBER
+
+      A line beginning with a number denotes a transaction. It may be followed by any number of lines, each beginning with white-space,
+      to denote the transaction’s account postings. The format of the first line is:
+
+      DATE[=EDATE] [*|!] [(CODE)] DESC
+
+      If ‘*’ appears after the date (with optional effective date), it indicates the transaction is “cleared”, which can mean whatever
+      the user wants it to mean. If ‘!’ appears after the date, it indicates the transaction is “pending”; i.e., tentatively cleared
+      from the user’s point of view, but not yet actually cleared. If a CODE appears in parentheses, it may be used to indicate a check
+      number, or the type of the posting. Following these is the payee, or a description of the posting.
+
+      The format of each following posting is:
+
+        ACCOUNT  AMOUNT  [; NOTE]
+
+      The ACCOUNT may be surrounded by parentheses if it is a virtual posting, or square brackets if it is a virtual posting that must balance.
+      The AMOUNT can be followed by a per-unit posting cost, by specifying @ AMOUNT, or a complete posting cost with @@ AMOUNT. Lastly, the NOTE may
+      specify an actual and/or effective date for the posting by using the syntax [ACTUAL_DATE] or [=EFFECTIVE_DATE] or [ACTUAL_DATE=EFFECTIVE_DATE]
+      (see Virtual postings).
+
+      P
+          Specifies a historical price for a commodity. These are usually found in a pricing history file (see the --download (-Q) option). The syntax is:
+
+          P DATE SYMBOL PRICE
+
+      =
+          An automated transaction. A value expression must appear after the equal sign.
+
+          After this initial line there should be a set of one or more postings, just as if it were a normal transaction. If the amounts of the postings have
+          no commodity, they will be applied as multipliers to whichever real posting is matched by the value expression (see Automated Transactions).
+      ~
+          A periodic transaction. A period expression must appear after the tilde.
+
+          After this initial line there should be a set of one or more postings, just as if it were a normal transaction.
+
+      ; # % | *
+          A line beginning with a semicolon, pound, percent, bar or asterisk indicates a comment, and is ignored. Comments will not be returned in a “print” response.
+
+      indented ;
+
+          If the semicolon is indented and occurs inside a transaction, it is parsed as a persistent note for its preceding category. These notes or tags
+          can be used to augment the reporting and filtering capabilities of Ledger.
+
+
   */
 
   it("should be able to parse a simple transaction", function() {
@@ -61,7 +113,7 @@ describe("LedgerParser", function() {
     verifyFirstPosting(result);
   });
 
-  it("should be able to parse a transaction with mid posting comment", function() {
+  it("should be able to parse a transaction with full posting comment", function() {
     var result = this.parser.parse(
       "2016/08/23 other\n" +
       " ;First phone bill\n" +
@@ -105,5 +157,4 @@ describe("LedgerParser", function() {
     expect(result.date.month).toEqual(8);
     expect(result.date.day).toEqual(23);
   }
-
 });
