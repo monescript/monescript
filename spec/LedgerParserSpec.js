@@ -49,8 +49,7 @@ describe("LedgerParser", function() {
     verifySecondPosting(result);
   });
 
-  it("should be able to parse a transaction with comment", function() {
-
+  it("should be able to parse a transaction with header comment", function() {
     var result = this.parser.parse(
       "; First phone bill \n" +
       "2016/08/23 * other\n" +
@@ -62,8 +61,22 @@ describe("LedgerParser", function() {
     expect(result.payee).toEqual('other');
     expect(result.posting.length).toEqual(1);
     verifyFirstPosting(result);
-
   });
+/*
+  it("should be able to parse a transaction with mid comment", function() {
+    var result = this.parser.parse(
+      "2016/08/23 * other\n" +
+      "; First phone bill \n" +
+      " Expenses:Utilities:Phone 1  $1234.56"
+    );
+
+    verifyDate(result);
+    expect(result.status).toEqual('*');
+    expect(result.payee).toEqual('other');
+    expect(result.posting.length).toEqual(1);
+    verifyFirstPosting(result);
+  });
+*/
 
 
   var verifyFirstPosting = function(result){
@@ -86,9 +99,9 @@ describe("LedgerParser", function() {
   }
 
   var verifyDate = function(result){
-    expect(result.year).toEqual(2016);
-    expect(result.month).toEqual(8);
-    expect(result.day).toEqual(23);
+    expect(result.date.year).toEqual(2016);
+    expect(result.date.month).toEqual(8);
+    expect(result.date.day).toEqual(23);
   }
 
 });

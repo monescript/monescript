@@ -1,6 +1,6 @@
 start
   = comment*
-    y:year "/" m:month "/" d:day space s:status p:payee
+    date:date space s:status p:payee
     posting:posting+
     {
       var theStatus = "";
@@ -9,9 +9,7 @@ start
       }
 
       return {
-        year: y,
-        month: m,
-        day: d,
+        date: date,
         status: theStatus,
         payee: p.join(""),
         posting: posting
@@ -20,6 +18,9 @@ start
 
 comment
   = ";" [^\r\n]* newline
+
+date
+  = year:year "/" month:month "/" day:day { return {year:year, month:month, day: day}; }
 
 year
     = digits:[0-9]+ {
@@ -30,11 +31,12 @@ year
       return year;
     }
 
+
 month
-    = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
+  = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
 
 day
-    = digits:[0-9]+ { return parseInt(digits.join(""), 10);}
+  = digits:[0-9]+ { return parseInt(digits.join(""), 10);}
 
 status
   =  "*" space / "!" space / "" {return text(); }
