@@ -1,5 +1,6 @@
 start
-  = y:year "/" m:month "/" d:day space s:status p:payee
+  = comment*
+    y:year "/" m:month "/" d:day space s:status p:payee
     posting:posting+
     {
       var theStatus = "";
@@ -16,6 +17,9 @@ start
         posting: posting
       };
     }
+
+comment
+  = ";" [^\r\n]* newline
 
 year
     = digits:[0-9]+ {
