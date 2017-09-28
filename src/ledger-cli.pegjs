@@ -1,6 +1,6 @@
 start
-  = comment*
-    date:date space status:status p:payee
+  = lineComment*
+    newline? date:date space status:status p:payee
     posting:posting+
     {
       return {
@@ -10,9 +10,6 @@ start
         posting: posting
       };
     }
-
-comment
-  = ";" [^\r\n]* newline
 
 date
   = year:year "/" month:month "/" day:day { return {year:year, month:month, day: day}; }
@@ -25,7 +22,6 @@ year
       }
       return year;
     }
-
 
 month
   = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
@@ -42,10 +38,18 @@ payee
   = [^\r\n]+
 
 posting
-  = postingPrefix account:account amount:amount {return {account:account, currency:amount.currency, amount:amount.amount}}
+  = postingPrefix account:account amount:amount {return {account:account, currency:amount.currency, amount:amount.amount}} /
+    postingPrefix comment:comment { return {isComment: true, text: comment }; }
 
 postingPrefix
   = newline space
+
+lineComment
+  = newline? comment:comment { return comment; }
+
+comment
+  = ";" comment:[^\r\n]* { return comment.join(""); }
+
 
 amount
   = currency:"$" amount:number {return {currency:currency, amount:amount};}
@@ -80,6 +84,7 @@ accountLevelSep
 
 accountLevel
   = start:word space:space end:word {return start.join("") + space.join("") + end.join(""); } / word:word  { return word.join("")}
+
 
 word
  = [a-zA-Z0-9]+

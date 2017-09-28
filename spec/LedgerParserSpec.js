@@ -60,30 +60,34 @@ describe("LedgerParser", function() {
     expect(result.posting.length).toEqual(1);
     verifyFirstPosting(result);
   });
-/*
-  it("should be able to parse a transaction with mid comment", function() {
+
+  it("should be able to parse a transaction with mid posting comment", function() {
     var result = this.parser.parse(
       "2016/08/23 other\n" +
-      " ; First phone bill \n" +
+      " ;First phone bill\n" +
       " Expenses:Utilities:Phone 1  $1234.56"
     );
 
     verifyDate(result);
     expect(result.status).toEqual('');
     expect(result.payee).toEqual('other');
-    expect(result.posting.length).toEqual(1);
-    verifyFirstPosting(result);
+    expect(result.posting.length).toEqual(2);
+    expect(result.posting[0].isComment).toEqual(true);
+    expect(result.posting[0].text).toEqual('First phone bill');
+    verifyPhonePosting(result, 1);
   });
-*/
-
 
   var verifyFirstPosting = function(result){
-      expect(result.posting[0].account.length).toEqual(3);
-      expect(result.posting[0].account[0]).toEqual('Expenses');
-      expect(result.posting[0].account[1]).toEqual('Utilities');
-      expect(result.posting[0].account[2]).toEqual('Phone 1');
-      expect(result.posting[0].amount).toEqual(1234.56);
-      expect(result.posting[0].currency).toEqual('$');
+      verifyPhonePosting(result, 0);
+  }
+
+  var verifyPhonePosting = function(result, i){
+    expect(result.posting[i].account.length).toEqual(3);
+    expect(result.posting[i].account[0]).toEqual('Expenses');
+    expect(result.posting[i].account[1]).toEqual('Utilities');
+    expect(result.posting[i].account[2]).toEqual('Phone 1');
+    expect(result.posting[i].amount).toEqual(1234.56);
+    expect(result.posting[i].currency).toEqual('$');
   }
 
   var verifySecondPosting = function(result){
