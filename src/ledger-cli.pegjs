@@ -1,13 +1,14 @@
 start
   = lineComment*
-    newline? date:date space status:status p:payee
+    newline? date:date space status:status payee:payee
     posting:posting+
     {
       return {
         date: date,
         status: status,
-        payee: p.join(""),
-        posting: posting
+        payee: payee.payee,
+        posting: posting,
+        note: payee.note
       };
     }
 
@@ -35,7 +36,20 @@ status
      "" {return ""}
 
 payee
-  = [^\r\n]+
+  = payee:[^\r\n]+  { return {payee: payee.join(""), note: ""}}
+
+
+
+/*
+  // note:transactionNote? { return {payee: payee.join(""), note: note == null ? "" : note.join("")}}
+  /
+  [^\r\n]+ { return {payee: payee.join(""), note: ""}}
+*/
+
+
+transactionNote
+  = hardSeparator+ comment:comment { return comment; }
+
 
 posting
   = postingPrefix account:account amount:amount note:postingNote? {return {account:account, currency:amount.currency, amount:amount.amount, note: note}} /
@@ -48,11 +62,13 @@ lineComment
   = newline? comment:comment { return comment; }
 
 postingNote
-  = space comment:comment { return comment; }
+  = space+ comment:comment { return comment; }
 
 comment
   = ";" comment:[^\r\n]* { return comment.join(""); }
 
+hardSeparator
+  = "\t"+ / " " " "+ / " " "\t"+
 
 amount
   = currency:"$" amount:number {return {currency:currency, amount:amount};}
@@ -93,7 +109,7 @@ word
  = [a-zA-Z0-9]+
 
 space
-  = " "+
+  = [ \t]+
 
 newline
   = "\n" / "\r\n"

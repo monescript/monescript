@@ -99,7 +99,7 @@ describe("LedgerParser", function() {
     verifySecondPosting(result);
   });
 
-  it("should be able to parse a transaction with header comment", function() {
+  it("should be able to parse a transaction with line comment", function() {
     var result = this.parser.parse(
       "; First phone bill \n" +
       "2016/08/23 * other\n" +
@@ -112,6 +112,20 @@ describe("LedgerParser", function() {
     expect(result.posting.length).toEqual(1);
     verifyFirstPosting(result);
   });
+
+//  it("should be able to parse a transaction with top level transaction note", function() {
+//    var result = this.parser.parse(
+//      "2016/08/23 * other  ; First phone bill\n" +
+//      " Expenses:Utilities:Phone 1  $1234.56"
+//    );
+//    verifyDate(result);
+//    expect(result.note).toEqual(' First phone bill');
+//    expect(result.status).toEqual('*');
+//    expect(result.payee).toEqual('other');
+//    expect(result.posting.length).toEqual(1);
+//    verifyFirstPosting(result);
+//  });
+
 
   it("should be able to parse a transaction with full posting comment", function() {
     var result = this.parser.parse(
