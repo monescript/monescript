@@ -129,6 +129,20 @@ describe("LedgerParser", function() {
     verifyPhonePosting(result, 1);
   });
 
+    it("should be able to parse a transaction with posting note", function() {
+      var result = this.parser.parse(
+        "2016/08/23 other\n" +
+        " Expenses:Utilities:Phone 1  $1234.56 ; second bill"
+      );
+
+      verifyDate(result);
+      expect(result.status).toEqual('');
+      expect(result.payee).toEqual('other');
+      expect(result.posting.length).toEqual(1);
+      verifyPhonePosting(result, 0);
+      expect(result.posting[0].note).toEqual(' second bill');
+    });
+
   var verifyFirstPosting = function(result){
       verifyPhonePosting(result, 0);
   }

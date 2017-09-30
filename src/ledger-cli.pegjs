@@ -38,7 +38,7 @@ payee
   = [^\r\n]+
 
 posting
-  = postingPrefix account:account amount:amount {return {account:account, currency:amount.currency, amount:amount.amount}} /
+  = postingPrefix account:account amount:amount note:postingNote? {return {account:account, currency:amount.currency, amount:amount.amount, note: note}} /
     postingPrefix comment:comment { return {isComment: true, text: comment }; }
 
 postingPrefix
@@ -46,6 +46,9 @@ postingPrefix
 
 lineComment
   = newline? comment:comment { return comment; }
+
+postingNote
+  = space comment:comment { return comment; }
 
 comment
   = ";" comment:[^\r\n]* { return comment.join(""); }
