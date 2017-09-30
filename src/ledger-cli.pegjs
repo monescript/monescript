@@ -1,3 +1,6 @@
+start
+  = transaction*
+
 transaction
   = lineComment*
     newline? date:date space status:status payee:payee note:transactionNote?

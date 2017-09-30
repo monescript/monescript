@@ -76,11 +76,14 @@ describe("LedgerParser", function() {
       + " Expenses:Utilities:Phone 1  $1234.56"
     );
 
-    verifyDate(result);
-    expect(result.status).toEqual('!');
-    expect(result.payee).toEqual('Payee Name 1234');
-    expect(result.posting.length).toEqual(1);
-    verifyFirstPosting(result);
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('!');
+    expect(txn.payee).toEqual('Payee Name 1234');
+    expect(txn.posting.length).toEqual(1);
+    verifyFirstPosting(txn);
   });
 
   it("should be able to parse a transaction with two postings", function() {
@@ -91,12 +94,15 @@ describe("LedgerParser", function() {
       " Assets:The Country:Bank One:Account Two  $-1234.56"
     );
 
-    verifyDate(result);
-    expect(result.status).toEqual('*');
-    expect(result.payee).toEqual('other');
-    expect(result.posting.length).toEqual(2);
-    verifyFirstPosting(result);
-    verifySecondPosting(result);
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('*');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(2);
+    verifyFirstPosting(txn);
+    verifySecondPosting(txn);
   });
 
   it("should be able to parse a transaction with line comment", function() {
@@ -106,11 +112,14 @@ describe("LedgerParser", function() {
       " Expenses:Utilities:Phone 1  $1234.56"
     );
 
-    verifyDate(result);
-    expect(result.status).toEqual('*');
-    expect(result.payee).toEqual('other');
-    expect(result.posting.length).toEqual(1);
-    verifyFirstPosting(result);
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('*');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(1);
+    verifyFirstPosting(txn);
   });
 
   it("should be able to parse a transaction with top level transaction note", function() {
@@ -118,12 +127,16 @@ describe("LedgerParser", function() {
       "2016/08/23 * other  ; First phone bill\n" +
       " Expenses:Utilities:Phone 1  $1234.56"
     );
-    verifyDate(result);
-    expect(result.note).toEqual(' First phone bill');
-    expect(result.status).toEqual('*');
-    expect(result.payee).toEqual('other');
-    expect(result.posting.length).toEqual(1);
-    verifyFirstPosting(result);
+
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.note).toEqual(' First phone bill');
+    expect(txn.status).toEqual('*');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(1);
+    verifyFirstPosting(txn);
   });
 
 
@@ -134,13 +147,16 @@ describe("LedgerParser", function() {
       " Expenses:Utilities:Phone 1  $1234.56"
     );
 
-    verifyDate(result);
-    expect(result.status).toEqual('');
-    expect(result.payee).toEqual('other');
-    expect(result.posting.length).toEqual(2);
-    expect(result.posting[0].isComment).toEqual(true);
-    expect(result.posting[0].text).toEqual('First phone bill');
-    verifyPhonePosting(result, 1);
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(2);
+    expect(txn.posting[0].isComment).toEqual(true);
+    expect(txn.posting[0].text).toEqual('First phone bill');
+    verifyPhonePosting(txn, 1);
   });
 
   it("should be able to parse a transaction with posting note", function() {
@@ -149,12 +165,15 @@ describe("LedgerParser", function() {
       " Expenses:Utilities:Phone 1  $1234.56 ; second bill"
     );
 
-    verifyDate(result);
-    expect(result.status).toEqual('');
-    expect(result.payee).toEqual('other');
-    expect(result.posting.length).toEqual(1);
-    verifyPhonePosting(result, 0);
-    expect(result.posting[0].note).toEqual(' second bill');
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(1);
+    verifyPhonePosting(txn, 0);
+    expect(txn.posting[0].note).toEqual(' second bill');
   });
 
   var verifyFirstPosting = function(result){
