@@ -112,12 +112,14 @@ Separators
 ----------
 */
 
+emptyLine
+  = space* newline
+
 hardSeparator
   = "\t"+ / " " " "+ / " " "\t"+
 
 space
   = [ \t]+
-
 
 newline
   = "\n" / "\r\n"
