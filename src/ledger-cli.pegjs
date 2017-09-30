@@ -1,14 +1,14 @@
-start
+transaction
   = lineComment*
-    newline? date:date space status:status payee:payee
+    newline? date:date space status:status payee:payee note:transactionNote?
     posting:posting+
     {
       return {
         date: date,
         status: status,
-        payee: payee.payee,
+        payee: payee,
         posting: posting,
-        note: payee.note
+        note: note
       };
     }
 
@@ -36,20 +36,10 @@ status
      "" {return ""}
 
 payee
-  = payee:[^\r\n]+  { return {payee: payee.join(""), note: ""}}
-
-
-
-/*
-  // note:transactionNote? { return {payee: payee.join(""), note: note == null ? "" : note.join("")}}
-  /
-  [^\r\n]+ { return {payee: payee.join(""), note: ""}}
-*/
-
+  = (!hardSeparator !newline .)* { return text();}
 
 transactionNote
   = hardSeparator+ comment:comment { return comment; }
-
 
 posting
   = postingPrefix account:account amount:amount note:postingNote? {return {account:account, currency:amount.currency, amount:amount.amount, note: note}} /
@@ -65,10 +55,8 @@ postingNote
   = space+ comment:comment { return comment; }
 
 comment
-  = ";" comment:[^\r\n]* { return comment.join(""); }
+  = ";" comment:upToNewline  { return comment; }
 
-hardSeparator
-  = "\t"+ / " " " "+ / " " "\t"+
 
 amount
   = currency:"$" amount:number {return {currency:currency, amount:amount};}
@@ -105,11 +93,31 @@ accountLevel
   = start:word space:space end:word {return start.join("") + space.join("") + end.join(""); } / word:word  { return word.join("")}
 
 
+/*
+-------------------
+Simple expressions
+-------------------
+*/
+
 word
  = [a-zA-Z0-9]+
 
+upToNewline
+  = (!newline .)+ { return text(); }
+
+
+/*
+----------
+Separators
+----------
+*/
+
+hardSeparator
+  = "\t"+ / " " " "+ / " " "\t"+
+
 space
   = [ \t]+
+
 
 newline
   = "\n" / "\r\n"
