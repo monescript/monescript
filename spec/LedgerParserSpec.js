@@ -69,6 +69,21 @@ describe("LedgerParser", function() {
 
   */
 
+  it("should be able to parse empty lines", function() {
+
+    var result = this.parser.parse("");
+    expect(result.length).toEqual(0);
+
+    var result = this.parser.parse("\n");
+    expect(result.length).toEqual(0);
+
+    var result = this.parser.parse("\n\n\n\r\n");
+    expect(result.length).toEqual(0);
+
+    var result = this.parser.parse("   \n");
+    expect(result.length).toEqual(0);
+  });
+
   it("should be able to parse a simple transaction", function() {
 
     var result = this.parser.parse(

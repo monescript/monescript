@@ -1,5 +1,5 @@
 start
-  = transaction*
+  = emptyLine* transaction:transaction* { return transaction; }
 
 transaction
   = lineComment*
