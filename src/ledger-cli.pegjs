@@ -89,7 +89,7 @@ comment
 
 
 amount
-  = currency:"$" amount:number {return {currency:currency, amount:amount};} /
+  = currency:"$" amount:Number {return {currency:currency, amount:amount};} /
     expression:valueExpression {return {amount:expression};}
 
 
@@ -150,7 +150,7 @@ Value Expression
 valueExpression
   = Identifier
   / AmountLiteral
-  / number
+  / Number
   / "(" __ expression:AdditiveExpression __ ")" { return expression; }
 
 
@@ -158,7 +158,7 @@ Identifier
   = [a-zA-Z]+
 
 AmountLiteral
-  = Currency number
+  = Currency Number
 
 Currency
  = "$"
@@ -203,7 +203,7 @@ AdditiveOperator
   / $("-" ![-=])
 
 
-number "number"
+Number
   = minus? int frac? exp? { return parseFloat(text()); }
 
   decimal_point = "."
