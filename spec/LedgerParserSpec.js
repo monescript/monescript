@@ -203,6 +203,24 @@ describe("LedgerParser", function() {
     verifyPhoneTransactionWithPostingNote(result[0]);
   });
 
+/*
+  http://ledger-cli.org/3.0/doc/ledger3.html#Value-Expressions
+*/
+
+  it("should be able to parse a transaction with value expression in amount", function() {
+    var result = this.parser.parse(
+      "2016/08/23 other\n" +
+      " Expenses:Utilities:Phone 1  ($1234.56 + $5676.13) ; second bill"
+    );
+
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    //console.log(txn.posting[0].amount)
+
+
+  });
+
  it("should be able to parse multiple transactions and empty lines", function() {
     var result = this.parser.parse(
       "\n" +
@@ -242,7 +260,6 @@ describe("LedgerParser", function() {
     expect(txn.posting[1].account[1]).toEqual('Salary');
     expect(txn.posting[1].currency).toBeUndefined();
     expect(txn.posting[1].amount).toBeUndefined();
-
   }
 
   var verifyPhoneTransactionWithPostingNote = function(txn){
@@ -287,8 +304,6 @@ describe("LedgerParser", function() {
     expect(result.posting[1].account[3]).toEqual('Account Two');
 
   }
-
-
 
   var verifyDate = function(result){
     expect(result.date.year).toEqual(2016);

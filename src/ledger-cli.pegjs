@@ -1,3 +1,29 @@
+{
+
+  function buildTree(head, tail, builder) {
+    var result = head, i;
+
+    for (i = 0; i < tail.length; i++) {
+      result = builder(result, tail[i]);
+    }
+
+    return result;
+  }
+
+  function buildBinaryExpression(head, tail) {
+   return buildTree(head, tail, function(result, element) {
+     return {
+       type:     "BinaryExpression",
+       operator: element[1],
+       left:     result,
+       right:    element[3]
+     };
+   });
+  }
+
+}
+
+
 start
   = emptyLine* transaction:transaction* { return transaction; }
 
@@ -64,22 +90,9 @@ comment
 
 
 amount
-  = currency:"$" amount:number {return {currency:currency, amount:amount};}
+  = currency:"$" amount:number {return {currency:currency, amount:amount};} /
+    valueExpression
 
-
-number "number"
-  = minus? int frac? exp? { return parseFloat(text()); }
-
-  decimal_point = "."
-  digit1_9      = [1-9]
-  e             = [eE]
-  exp           = e (minus / plus)? DIGIT+
-  frac          = decimal_point DIGIT+
-  int           = zero / (digit1_9 DIGIT*)
-  minus         = "-"
-  plus          = "+"
-  zero          = "0"
-  DIGIT  = [0-9]
 
 account
   = accountWithSeparator+
@@ -128,3 +141,78 @@ space
 
 newline
   = "\n" / "\r\n"
+
+
+/*
+-----------------
+Value Expression
+-----------------
+*/
+valueExpression
+  = Identifier
+  / AmountLiteral
+  / "(" __ expression:AdditiveExpression __ ")" { return expression; }
+
+
+Identifier
+  = [a-zA-Z]+
+
+AmountLiteral
+  = Currency number
+
+Currency
+ = "$"
+
+__
+  = space*
+
+
+UnaryExpression
+  = valueExpression
+  / operator:UnaryOperator __ argument:UnaryExpression {
+      return {
+        type:     "UnaryExpression",
+        operator: operator,
+        argument: argument,
+        prefix:   true
+      };
+    }
+
+UnaryOperator
+  =
+   $("+" !"=")
+  / $("-" !"=")
+
+MultiplicativeExpression
+  = head:UnaryExpression
+    tail:(__ MultiplicativeOperator __ UnaryExpression)*
+    { return buildBinaryExpression(head, tail); }
+
+MultiplicativeOperator
+  = $("*" !"=")
+  / $("/" !"=")
+  / $("%" !"=")
+
+AdditiveExpression
+  = head:MultiplicativeExpression
+    tail:(__ AdditiveOperator __ MultiplicativeExpression)*
+    { return buildBinaryExpression(head, tail); }
+
+AdditiveOperator
+  = $("+" ![+=])
+  / $("-" ![-=])
+
+
+number "number"
+  = minus? int frac? exp? { return parseFloat(text()); }
+
+  decimal_point = "."
+  digit1_9      = [1-9]
+  e             = [eE]
+  exp           = e (minus / plus)? DIGIT+
+  frac          = decimal_point DIGIT+
+  int           = zero / (digit1_9 DIGIT*)
+  minus         = "-"
+  plus          = "+"
+  zero          = "0"
+  DIGIT  = [0-9]
