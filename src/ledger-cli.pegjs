@@ -24,16 +24,17 @@
 
 
 journal
-  = emptyLine* entries:entry* { return entries; }
+  = entries:entry* { return entries.filter(function(e){ return !e.empty}); }
 
 entry
-  = t:transaction { return t } / c:command {return c; }
+  = t:transaction { return t } /
+    c:command {return c; } /
+    emptyLine {return {empty: true}}
 
 command
   = "bucket" space account:account { return {type: "bucket", account:account}}
     / "include" upToNewline
     / "year" upToNewline
-
 
 transaction
   = lineComment*

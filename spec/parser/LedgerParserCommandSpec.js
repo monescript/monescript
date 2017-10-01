@@ -28,7 +28,7 @@ bucket
   });
 
   it("should be able to parse include command", function() {
-    var result = this.parser.parse("include file.txt");
+    var result = this.parser.parse("\ninclude budget 2017-09.dat\n");
     expect(result.length).toEqual(1);
   });
 
