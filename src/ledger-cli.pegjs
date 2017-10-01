@@ -31,6 +31,9 @@ entry
 
 command
   = "bucket" space account:account { return {type: "bucket", account:account}}
+    / "include" upToNewline
+    / "year" upToNewline
+
 
 transaction
   = lineComment*

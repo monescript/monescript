@@ -27,5 +27,13 @@ bucket
     expect(result[0].account).toEqual(['Assets', 'Checking']);
   });
 
+  it("should be able to parse include command", function() {
+    var result = this.parser.parse("include file.txt");
+    expect(result.length).toEqual(1);
+  });
 
+  it("should be able to parse year command", function() {
+    var result = this.parser.parse("year 2017");
+    expect(result.length).toEqual(1);
+  });
 })
