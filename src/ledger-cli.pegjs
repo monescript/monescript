@@ -5,6 +5,7 @@ transaction
   = lineComment*
     newline? date:date space status:status payee:payee note:transactionNote?
     posting:posting+
+    emptyLine*
     {
       return {
         date: date,
@@ -46,6 +47,7 @@ transactionNote
 
 posting
   = postingPrefix account:account amount:amount note:postingNote? {return {account:account, currency:amount.currency, amount:amount.amount, note: note}} /
+    postingPrefix account:account note:postingNote? {return {account:account, currency:undefined, amount:undefined, note: note}} /
     postingPrefix comment:comment { return {isComment: true, text: comment }; }
 
 postingPrefix

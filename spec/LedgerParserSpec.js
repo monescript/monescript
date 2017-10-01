@@ -120,6 +120,25 @@ describe("LedgerParser", function() {
     verifySecondPosting(txn);
   });
 
+  it("should be able to parse a transaction with two postings, one without amount", function() {
+
+    var result = this.parser.parse(
+      "2016/08/23 * other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56\n" +
+      " Assets:The Country:Bank One:Account Two  "
+    );
+
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('*');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(2);
+    verifyFirstPosting(txn);
+    verifySecondPostingWithoutAmount(txn);
+  });
+
   it("should be able to parse a transaction with line comment", function() {
     var result = this.parser.parse(
       "; First phone bill \n" +
@@ -181,15 +200,59 @@ describe("LedgerParser", function() {
     );
 
     expect(result.length).toEqual(1);
-    var txn = result[0];
+    verifyPhoneTransactionWithPostingNote(result[0]);
+  });
 
+ it("should be able to parse multiple transactions and empty lines", function() {
+    var result = this.parser.parse(
+      "\n" +
+      "\n" +
+      "\n" +
+      "2016/08/23 other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56 ; second bill" +
+      "\n" +
+      "\n" +
+      "2016/08/23 ! Company\n" +
+      " Assets:Chequing  $5678.91\n" +
+      " Income:Salary  " +
+      "\n"
+    );
+
+    expect(result.length).toEqual(2);
+
+    verifyPhoneTransactionWithPostingNote(result[0]);
+    verifyIncomeTransaction(result[1])
+  });
+
+  var verifyIncomeTransaction = function(txn){
+    verifyDate(txn);
+    expect(txn.status).toEqual('!');
+    expect(txn.payee).toEqual('Company');
+
+    expect(txn.posting.length).toEqual(2);
+
+    expect(txn.posting[0].account.length).toEqual(2);
+    expect(txn.posting[0].account[0]).toEqual('Assets');
+    expect(txn.posting[0].account[1]).toEqual('Chequing');
+    expect(txn.posting[0].amount).toEqual(5678.91);
+    expect(txn.posting[0].currency).toEqual('$');
+
+    expect(txn.posting[1].account.length).toEqual(2);
+    expect(txn.posting[1].account[0]).toEqual('Income');
+    expect(txn.posting[1].account[1]).toEqual('Salary');
+    expect(txn.posting[1].currency).toBeUndefined();
+    expect(txn.posting[1].amount).toBeUndefined();
+
+  }
+
+  var verifyPhoneTransactionWithPostingNote = function(txn){
     verifyDate(txn);
     expect(txn.status).toEqual('');
     expect(txn.payee).toEqual('other');
     expect(txn.posting.length).toEqual(1);
     verifyPhonePosting(txn, 0);
     expect(txn.posting[0].note).toEqual(' second bill');
-  });
+  }
 
   var verifyFirstPosting = function(result){
       verifyPhonePosting(result, 0);
@@ -205,14 +268,27 @@ describe("LedgerParser", function() {
   }
 
   var verifySecondPosting = function(result){
+    verifySecondPostingFields(result);
+    expect(result.posting[1].currency).toEqual('$');
+    expect(result.posting[1].amount).toEqual(-1234.56);
+  }
+
+  var verifySecondPostingWithoutAmount = function(result){
+    verifySecondPostingFields(result);
+    expect(result.posting[1].currency).toBeUndefined();
+    expect(result.posting[1].amount).toBeUndefined();
+  }
+
+  var verifySecondPostingFields = function(result, amount){
     expect(result.posting[1].account.length).toEqual(4);
     expect(result.posting[1].account[0]).toEqual('Assets');
     expect(result.posting[1].account[1]).toEqual('The Country');
     expect(result.posting[1].account[2]).toEqual('Bank One');
     expect(result.posting[1].account[3]).toEqual('Account Two');
-    expect(result.posting[1].amount).toEqual(-1234.56);
-    expect(result.posting[1].currency).toEqual('$');
+
   }
+
+
 
   var verifyDate = function(result){
     expect(result.date.year).toEqual(2016);
