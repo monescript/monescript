@@ -82,6 +82,13 @@ describe("LedgerParser", function() {
 
   });
 
+  it("should be able to parse a simple transaction with thousands separator", function() {
+    var result = this.parser.parse(
+      "2016/08/23 ! Payee Name 1234\n"
+      + " Expenses:Utilities:Phone 1  $1,234.56"
+    );
+    verifySimpleTransaction(result);
+  });
 
   it("should be able to parse a transaction with two postings", function() {
 
@@ -127,15 +134,14 @@ describe("LedgerParser", function() {
       " Expenses:Utilities:Phone 1  $1234.56"
     );
 
-    expect(result.length).toEqual(1);
-    var txn = result[0];
+    verifyTopLevelTransactionNote(result, ' First phone bill');
 
-    verifyDate(txn);
-    expect(txn.note).toEqual(' First phone bill');
-    expect(txn.status).toEqual('*');
-    expect(txn.payee).toEqual('other');
-    expect(txn.posting.length).toEqual(1);
-    verifyFirstPosting(txn);
+    var result = this.parser.parse(
+      "2016/08/23 * other  ;\n" +
+      " Expenses:Utilities:Phone 1  $1234.56"
+    );
+
+    verifyTopLevelTransactionNote(result, '');
   });
 
 
@@ -228,6 +234,19 @@ describe("LedgerParser", function() {
     verifyFirstPosting(txn);
     verifySecondPostingWithoutAmount(txn);
   }
+
+  var verifyTopLevelTransactionNote = function(result, expectedNote){
+      expect(result.length).toEqual(1);
+      var txn = result[0];
+
+      verifyDate(txn);
+      expect(txn.note).toEqual(expectedNote);
+      expect(txn.status).toEqual('*');
+      expect(txn.payee).toEqual('other');
+      expect(txn.posting.length).toEqual(1);
+      verifyFirstPosting(txn);
+  }
+
 
   var verifyIncomeTransaction = function(txn){
     verifyDate(txn);

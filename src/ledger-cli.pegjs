@@ -136,7 +136,7 @@ word
  = [a-zA-Z0-9]+
 
 upToNewline
-  = (!newline .)+ { return text(); }
+  = (!newline .)* { return text(); }
 
 
 /*
@@ -220,7 +220,7 @@ AdditiveOperator
 
 
 Number
-  = minus? int frac? exp? { return parseFloat(text()); }
+  = minus? int frac? exp? { return parseFloat(text().replace(/,/g, '')); }
 
   decimal_point = "."
   digit1_9      = [1-9]
@@ -231,4 +231,4 @@ Number
   minus         = "-"
   plus          = "+"
   zero          = "0"
-  DIGIT  = [0-9]
+  DIGIT  = [0-9,]
