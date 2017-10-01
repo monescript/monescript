@@ -58,8 +58,6 @@ describe("LedgerParser", function() {
 
           After this initial line there should be a set of one or more postings, just as if it were a normal transaction.
 
-      ; # % | *
-          A line beginning with a semicolon, pound, percent, bar or asterisk indicates a comment, and is ignored. Comments will not be returned in a “print” response.
 
       indented ;
 
@@ -68,21 +66,6 @@ describe("LedgerParser", function() {
 
 
   */
-
-  it("should be able to parse empty lines", function() {
-
-    var result = this.parser.parse("");
-    expect(result.length).toEqual(0);
-
-    var result = this.parser.parse("\n");
-    expect(result.length).toEqual(0);
-
-    var result = this.parser.parse("\n\n\n\r\n");
-    expect(result.length).toEqual(0);
-
-    var result = this.parser.parse("   \n");
-    expect(result.length).toEqual(0);
-  });
 
   it("should be able to parse a simple transaction", function() {
 
@@ -138,23 +121,6 @@ describe("LedgerParser", function() {
     expect(txn.posting.length).toEqual(2);
     verifyFirstPosting(txn);
     verifySecondPostingWithoutAmount(txn);
-  });
-
-  it("should be able to parse a transaction with line comment", function() {
-    var result = this.parser.parse(
-      "; First phone bill \n" +
-      "2016/08/23 * other\n" +
-      " Expenses:Utilities:Phone 1  $1234.56"
-    );
-
-    expect(result.length).toEqual(1);
-    var txn = result[0];
-
-    verifyDate(txn);
-    expect(txn.status).toEqual('*');
-    expect(txn.payee).toEqual('other');
-    expect(txn.posting.length).toEqual(1);
-    verifyFirstPosting(txn);
   });
 
   it("should be able to parse a transaction with top level transaction note", function() {

@@ -29,6 +29,7 @@ journal
 entry
   = t:transaction { return t } /
     c:command {return c; } /
+    c:lineComment {return {empty: true}; } /
     emptyLine {return {empty: true}}
 
 command
@@ -37,8 +38,7 @@ command
     / "year" upToNewline
 
 transaction
-  = lineComment*
-    newline? date:date space status:status payee:payee note:transactionNote?
+  = date:date space status:status payee:payee note:transactionNote?
     posting:posting+
     emptyLine*
     {
@@ -93,7 +93,9 @@ postingPrefix
   = newline space
 
 lineComment
-  = newline? comment:comment { return comment; }
+  = comment:comment { return comment; } /
+    "#" upToNewline
+
 
 postingNote
   = space+ comment:comment { return comment; }
