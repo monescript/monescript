@@ -117,7 +117,7 @@ accountLevelWithSeparator
     a:accountLevel { return a }
 
 accountAmountSep
-  = "  "
+  = [ \t] [ \t]+
 
 accountLevelSep
   = ":"
