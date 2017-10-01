@@ -110,15 +110,15 @@ describe("LedgerParser", function() {
       " Assets:The Country:Bank One:Account Two  "
     );
 
-    expect(result.length).toEqual(1);
-    var txn = result[0];
+    verifyEmptyAmountPostingTransaction(result);
 
-    verifyDate(txn);
-    expect(txn.status).toEqual('*');
-    expect(txn.payee).toEqual('other');
-    expect(txn.posting.length).toEqual(2);
-    verifyFirstPosting(txn);
-    verifySecondPostingWithoutAmount(txn);
+    var result = this.parser.parse(
+      "2016/08/23 * other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56\n" +
+      " Assets:The Country:Bank One:Account Two"
+    );
+
+    verifyEmptyAmountPostingTransaction(result);
   });
 
   it("should be able to parse a transaction with top level transaction note", function() {
@@ -215,6 +215,18 @@ describe("LedgerParser", function() {
       expect(txn.payee).toEqual('Payee Name 1234');
       expect(txn.posting.length).toEqual(1);
       verifyFirstPosting(txn);
+  }
+
+  var verifyEmptyAmountPostingTransaction = function(result){
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.status).toEqual('*');
+    expect(txn.payee).toEqual('other');
+    expect(txn.posting.length).toEqual(2);
+    verifyFirstPosting(txn);
+    verifySecondPostingWithoutAmount(txn);
   }
 
   var verifyIncomeTransaction = function(txn){

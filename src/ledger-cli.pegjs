@@ -82,7 +82,7 @@ transactionNote
   = hardSeparator+ comment:comment { return comment; }
 
 posting
-  = postingPrefix account:account accountAmountSep amount:amount? note:postingNote? {
+  = postingPrefix account:account amount:(accountAmountSep a:amount {return a})? note:postingNote? space? {
     var currency = amount == null ? undefined : amount.currency;
     var value = amount == null ? undefined : amount.amount;
     return {account:account, currency:currency, amount:value, note: note}
