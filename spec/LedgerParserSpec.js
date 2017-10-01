@@ -210,15 +210,13 @@ describe("LedgerParser", function() {
   it("should be able to parse a transaction with value expression in amount", function() {
     var result = this.parser.parse(
       "2016/08/23 other\n" +
-      " Expenses:Utilities:Phone 1  ($1234.56 + $5676.13) ; second bill"
+      " Expenses:Utilities:Phone 1  ($1234.56 * 1.2 + ($56 -  $134) - $0) ; second bill"
     );
 
     expect(result.length).toEqual(1);
     var txn = result[0];
 
-    //console.log(txn.posting[0].amount)
-
-
+    expect(txn.posting[0].amount.type).toEqual('BinaryExpression');
   });
 
  it("should be able to parse multiple transactions and empty lines", function() {

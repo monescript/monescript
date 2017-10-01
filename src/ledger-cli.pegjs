@@ -20,7 +20,6 @@
      };
    });
   }
-
 }
 
 
@@ -91,7 +90,7 @@ comment
 
 amount
   = currency:"$" amount:number {return {currency:currency, amount:amount};} /
-    valueExpression
+    expression:valueExpression {return {amount:expression};}
 
 
 account
@@ -151,6 +150,7 @@ Value Expression
 valueExpression
   = Identifier
   / AmountLiteral
+  / number
   / "(" __ expression:AdditiveExpression __ ")" { return expression; }
 
 
