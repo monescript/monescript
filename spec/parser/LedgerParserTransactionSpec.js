@@ -95,6 +95,7 @@ describe("LedgerParser", function() {
     var txn = result[0];
 
     verifyDate(txn);
+    expect(txn.type).toEqual('transaction');
     expect(txn.status).toEqual('!');
     expect(txn.payee).toEqual('Payee Name 1234');
     expect(txn.posting.length).toEqual(1);

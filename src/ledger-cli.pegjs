@@ -23,8 +23,14 @@
 }
 
 
-start
-  = emptyLine* transaction:transaction* { return transaction; }
+journal
+  = emptyLine* entries:entry* { return entries; }
+
+entry
+  = t:transaction { return t } / c:command {return c; }
+
+command
+  = "bucket" space account:account { return {type: "bucket", account:account}}
 
 transaction
   = lineComment*
@@ -33,6 +39,7 @@ transaction
     emptyLine*
     {
       return {
+        type: 'transaction',
         date: date,
         status: status,
         payee: payee,
@@ -71,9 +78,12 @@ transactionNote
   = hardSeparator+ comment:comment { return comment; }
 
 posting
-  = postingPrefix account:account amount:amount note:postingNote? {return {account:account, currency:amount.currency, amount:amount.amount, note: note}} /
-    postingPrefix account:account note:postingNote? {return {account:account, currency:undefined, amount:undefined, note: note}} /
-    postingPrefix comment:comment { return {isComment: true, text: comment }; }
+  = postingPrefix account:account accountAmountSep amount:amount? note:postingNote? {
+    var currency = amount == null ? undefined : amount.currency;
+    var value = amount == null ? undefined : amount.amount;
+    return {account:account, currency:currency, amount:value, note: note}
+  }
+  / postingPrefix comment:comment { return {isComment: true, text: comment }; }
 
 postingPrefix
   = newline space
@@ -94,11 +104,11 @@ amount
 
 
 account
-  = accountWithSeparator+
+  = accountLevelWithSeparator+
 
-accountWithSeparator
+accountLevelWithSeparator
   = a:accountLevel accountLevelSep { return a } /
-  a:accountLevel accountAmountSep { return a }
+    a:accountLevel { return a }
 
 accountAmountSep
   = "  "
