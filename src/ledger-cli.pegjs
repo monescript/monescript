@@ -81,10 +81,21 @@ transactionNote
   = hardSeparator+ comment:comment { return comment; }
 
 posting
-  = postingPrefix !mainCommentPrefix account:account amount:(accountAmountSep a:amount {return a})? note:postingNote? space? {
+  = postingPrefix
+   !mainCommentPrefix account:account
+   amount:postingAmount?
+   note:postingNote? space?
+  {
     var currency = amount == null ? undefined : amount.currency;
     var value = amount == null ? undefined : amount.amount;
-    return {account:account, currency:currency, amount:value, note: note}
+    var assignment = amount == null ? undefined : amount.assignment;
+    return {
+      account:account,
+      currency:currency,
+      amount:value,
+      assignment: assignment,
+      note: note
+    }
   }
   / postingPrefix comment:comment { return {isComment: true, text: comment }; }
 
@@ -95,6 +106,18 @@ lineComment
   = comment:comment { return comment; } /
     "#" upToNewline
 
+postingAmount
+  = accountAmountSep s:postingAssignment a:amount {
+    var amount = a;
+    amount.assignment = s;
+    return amount;
+  }
+
+postingAssignment
+  = s:assignment? space* {return s != undefined}
+
+assignment
+  = "="
 
 postingNote
   = space* comment:comment { return comment; }

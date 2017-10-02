@@ -64,6 +64,10 @@ describe("LedgerParser", function() {
           If the semicolon is indented and occurs inside a transaction, it is parsed as a persistent note for its preceding category. These notes or tags
           can be used to augment the reporting and filtering capabilities of Ledger.
 
+------------------------------------------------------------------------------------------------------------------------------------
+
+  From: http://ledger-cli.org/3.0/doc/ledger3.html#Resetting-a-balance
+
 
   */
 
@@ -105,6 +109,20 @@ describe("LedgerParser", function() {
     expect(txn.posting[0].account[1]).toEqual('Bills');
     expect(txn.posting[0].account[2]).toEqual('Utilities');
     expect(txn.posting[0].account[3]).toEqual('Abc def ghi');
+  });
+
+  it("should be able to parse a simple transaction with balance assignment", function() {
+    var result = this.parser.parse(
+      "2016/08/23 ! Payee Name 1234\n"
+      + " Assets:Cash    =$27.60\n"
+      + " Bssets:Bank2:Checking   =   $560.12"
+    );
+    expect(result.length).toEqual(1);
+    var txn = result[0];
+
+    verifyDate(txn);
+    expect(txn.posting.length).toEqual(2);
+    expect(txn.posting[0].assignment).toEqual(true);
   });
 
   it("should be able to parse a transaction with two postings", function() {
