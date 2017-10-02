@@ -81,7 +81,7 @@ transactionNote
   = hardSeparator+ comment:comment { return comment; }
 
 posting
-  = postingPrefix account:account amount:(accountAmountSep a:amount {return a})? note:postingNote? space? {
+  = postingPrefix !mainCommentPrefix account:account amount:(accountAmountSep a:amount {return a})? note:postingNote? space? {
     var currency = amount == null ? undefined : amount.currency;
     var value = amount == null ? undefined : amount.amount;
     return {account:account, currency:currency, amount:value, note: note}
@@ -100,13 +100,14 @@ postingNote
   = space* comment:comment { return comment; }
 
 comment
-  = ";" comment:upToNewline  { return comment; }
+  = mainCommentPrefix comment:upToNewline  { return comment; }
 
+mainCommentPrefix
+  = ";"
 
 amount
   = currency:"$" amount:Number {return {currency:currency, amount:amount};} /
     expression:valueExpression {return {amount:expression};}
-
 
 account
   = accountLevelWithSeparator+
@@ -122,8 +123,7 @@ accountLevelSep
   = ":"
 
 accountLevel
-  = start:word space:space end:word {return start.join("") + space.join("") + end.join(""); } / word:word  { return word.join("")}
-
+  = (!hardSeparator !newline !accountLevelSep .)+ { return text(); }
 
 /*
 -------------------
