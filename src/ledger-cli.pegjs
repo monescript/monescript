@@ -40,7 +40,6 @@ command
 transaction
   = date:date space status:status payee:payee note:transactionNote?
     posting:posting+
-    emptyLine*
     {
       return {
         type: 'transaction',
@@ -98,7 +97,7 @@ lineComment
 
 
 postingNote
-  = space+ comment:comment { return comment; }
+  = space* comment:comment { return comment; }
 
 comment
   = ";" comment:upToNewline  { return comment; }

@@ -174,6 +174,16 @@ describe("LedgerParser", function() {
     verifyPhoneTransactionWithPostingNote(result[0]);
   });
 
+  it("should be able to parse a transaction with posting note without space", function() {
+    var result = this.parser.parse(
+      "2016/08/23 other\n" +
+      " Expenses:Purchases:Grocery  $55.66; reimburse"
+    );
+
+    expect(result.length).toEqual(1);
+    expect(result[0].posting[0].note).toEqual(' reimburse');
+  });
+
 /*
   http://ledger-cli.org/3.0/doc/ledger3.html#Value-Expressions
 */
