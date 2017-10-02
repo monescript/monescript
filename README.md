@@ -1,4 +1,3 @@
-
 [![Build status](https://travis-ci.org/abtechbit/lui.svg?branch=master)](https://travis-ci.org/abtechbit/lui)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -13,7 +12,7 @@ lui supports only subset of the Ledger v3 journal syntax as detailed below. Depe
 continuously evolve the functionality to come close to covering all Ledger journal features. 
 
 ## References
-- Ledger syntax: http://ledger-cli.org/3.0/doc/ledger3.htm
+- [Ledger journal syntax](http://ledger-cli.org/3.0/doc/ledger3.html)
 
 
 ## Milestones
