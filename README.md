@@ -1,4 +1,4 @@
-[![Build status](https://travis-ci.org/abtechbit/lui.svg?branch=master)](https://travis-ci.org/abtechbit/lui)
+[![Build status](https://travis-ci.org/abtechbit/luini.svg?branch=master)](https://travis-ci.org/abtechbit/luini)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # luini
