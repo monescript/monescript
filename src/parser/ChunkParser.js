@@ -1,19 +1,21 @@
-var ChunkParser = {
-  moo : require('moo'),
+function ChunkParser() {
 
-  rules: {
+  var rules = {
     data:  {match:/(?:.+(?:\n|\r\n|\r)?)+/, lineBreaks: true},
     emptyLines:  { match: /\n+|(?:\r\n)+|\r+/, lineBreaks: true },
-  },
+  };
 
+  var moo = require('moo');
+  this.lexer = moo.compile(rules);
+}
+
+ChunkParser.prototype = {
   reset: function(value){
-     this.lexer = this.moo.compile(this.rules);
      this.lexer.reset(value);
   },
-
   next: function(){
     return this.lexer.next();
   }
 }
 
-module.exports = ChunkParser;
+module.exports = new ChunkParser();

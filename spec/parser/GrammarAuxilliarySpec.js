@@ -1,5 +1,5 @@
-describe("LedgerParser", function() {
-  var parser = require("../../../src/parser/grammar/GrammarParser.js");
+describe("Ledger Grammar Parser", function() {
+  var parser = require("../../src/parser/GrammarParser.js");
 
 /*
 
