@@ -131,4 +131,24 @@ describe("Chunk Parser", function() {
      expect(chunk02.type).toEqual('data');
      expect(chunk02.value).toEqual(part02);
   });
+
+    it("should be able to parse multiple command and comment chunks", function() {
+       cp.reset(
+          "bucket Assets:Checking\n"+
+          "\n"+
+          ";;;;;;;;;;;\n"
+       );
+
+       var result = cp.next()
+       expect(result.type).toEqual('data');
+       expect(result.value).toEqual("bucket Assets:Checking\n");
+
+       var result = cp.next()
+       expect(result.type).toEqual('emptyLines');
+
+       var result = cp.next()
+       expect(result.type).toEqual('data');
+       expect(result.value).toEqual(";;;;;;;;;;;\n");
+
+    });
 })
