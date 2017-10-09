@@ -1,7 +1,7 @@
 describe("Ledger Parser", function() {
 
   var fs = require('fs');
-  var parser = require('../../src/parser/LedgerJournalParser.js');
+  var parser = require('../../src/parser/JournalParser.js');
 
   it("should be able to parse empty lines", function() {
     var result = parser.reset("").next();
