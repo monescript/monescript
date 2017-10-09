@@ -1,11 +1,5 @@
 describe("LedgerParser", function() {
-  var peg = require("pegjs");
-  var fs = require('fs');
-
-  beforeEach(function() {
-      var cliGrammar = fs.readFileSync('src/ledger-cli.pegjs', 'utf8');
-      this.parser = peg.generate(cliGrammar);
-  });
+  var parser = require("../../../src/parser/grammar/GrammarParser.js");
 
 /*
 
@@ -22,7 +16,7 @@ bucket
 
   it("should be able to parse bucket command", function() {
 
-    var result = this.parser.parse("bucket Assets:Checking");
+    var result = parser.parse("bucket Assets:Checking");
     expect(result).toEqual({
       type: 'bucket',
       account: ['Assets', 'Checking']
@@ -30,12 +24,12 @@ bucket
   });
 
   it("should be able to parse include command", function() {
-    var result = this.parser.parse("include budget 2017-09.dat\n");
+    var result = parser.parse("include budget 2017-09.dat\n");
     expect(result).toEqual({type: 'include'});
   });
 
   it("should be able to parse year command", function() {
-    var result = this.parser.parse("year 2017");
+    var result = parser.parse("year 2017");
     expect(result).toEqual({type: 'year', year: 2017});
   });
 })

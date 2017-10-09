@@ -1,11 +1,5 @@
 describe("LedgerParser", function() {
-  var peg = require("pegjs");
-  var fs = require('fs');
-
-  beforeEach(function() {
-      var cliGrammar = fs.readFileSync('src/ledger-cli.pegjs', 'utf8');
-      this.parser = peg.generate(cliGrammar);
-  });
+  var parser = require("../../../src/parser/grammar/GrammarParser.js");
 
   /*
   From: http://ledger-cli.org/3.0/doc/ledger3.html#Keeping-a-Journal
@@ -80,7 +74,7 @@ describe("LedgerParser", function() {
   };
 
   it("should be able to parse a simple transaction", function() {
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23 ! Payee Name 1234\n"
       + " Expenses:Utilities:Phone 1  $1234.56"
     );
@@ -89,7 +83,7 @@ describe("LedgerParser", function() {
   });
 
   it("should be able to parse a simple transaction with spaces and dos newlines", function() {
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23    !     Payee Name 1234\r\n"
       + "       Expenses:Utilities:Phone 1       $1234.56\n"
     );
@@ -98,7 +92,7 @@ describe("LedgerParser", function() {
   });
 
   it("should be able to parse a simple transaction with spaces after payee name", function() {
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23    !     Payee Name 1234     \r\n"
       + "       Expenses:Utilities:Phone 1       $1234.56\n"
     );
@@ -107,7 +101,7 @@ describe("LedgerParser", function() {
   });
 
   it("should be able to parse a simple transaction with thousands separator", function() {
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23 ! Payee Name 1234\n"
       + " Expenses:Utilities:Phone 1  $1,234.56"
     );
@@ -124,7 +118,7 @@ describe("LedgerParser", function() {
       posting: [{account: [ 'Expenses', 'Bills', 'Utilities', 'Abc def ghi'], currency: '$', amount: 27.6}]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23 ! Payee Name 1234\n"
       + " Expenses:Bills:Utilities:Abc def ghi   $27.60"
     );
@@ -146,7 +140,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/10/12 * other\n" +
       " Expenses:Utilities:Phone 1  $1234.56\n" +
       " Assets:The Country:Bank One:Account Two  $-1234.56"
@@ -167,7 +161,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23 ! Payee Name 1234\n"
       + " Assets:Cash    =$27.60\n"
       + " Bssets:Bank2:Checking   =   $560.12"
@@ -188,7 +182,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/01/15     other payee value    \n" +
       " Expenses:Utilities:Phone 1  $1234.56\n" +
       " Assets:The Country:Bank One:Account Two  "
@@ -196,7 +190,7 @@ describe("LedgerParser", function() {
 
     expect(result).toEqual(expectedTransaction);
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/01/15          other payee value\r" +
       " Expenses:Utilities:Phone 1  $1234.56   \r" +
       " Assets:The Country:Bank One:Account Two\r"
@@ -219,7 +213,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/11/29 * other  ; First phone bill\n" +
       " Expenses:Utilities:Phone 1  $1234.56"
     );
@@ -240,7 +234,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/11/29 other  ;\n" +
       " Expenses:Utilities:Phone 1  $1234.56"
     );
@@ -258,7 +252,7 @@ describe("LedgerParser", function() {
         {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56}
       ]
     };
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/11/29 other\n" +
       " ;First phone bill\n" +
       " Expenses:Utilities:Phone 1  $1234.56"
@@ -277,7 +271,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/11/29 other\n" +
       " Expenses:Utilities:Phone 1  $1234.56 ; second bill"
     );
@@ -296,7 +290,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2017/11/29 other\n" +
       " Expenses:Utilities:Phone 1  $1234.56;second bill"
     );
@@ -342,7 +336,7 @@ describe("LedgerParser", function() {
       ]
     };
 
-    var result = this.parser.parse(
+    var result = parser.parse(
       "2016/08/23 other\n" +
       " Expenses:Utilities:Phone 1  ($1234.56 * 1.2 + ($56 -  $134) - $0) ; second bill"
     );
