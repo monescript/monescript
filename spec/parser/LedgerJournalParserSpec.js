@@ -60,4 +60,27 @@ describe("Ledger Parser", function() {
 
      expect(parser.next()).toBeUndefined();
   });
+
+  it("should fail on invalid format and report failure details", function() {
+    try{
+      var data = '1234';
+      parser.reset(data).next();
+      fail('Did not throw exception');
+    }catch(e){
+      expect(e.chunk.line).toEqual(1);
+      expect(e.chunk.value).toEqual(data);
+      expect(e.message).toEqual(e.cause.message);
+    }
+
+    try{
+      var data = ' abcd';
+      var input = '\n\n\n' + data;
+      parser.reset(input).next();
+      fail('Did not throw exception');
+    }catch(e){
+      expect(e.chunk.line).toEqual(4);
+      expect(e.chunk.value).toEqual(data);
+      expect(e.message).toEqual(e.cause.message);
+    }
+  });
 })
