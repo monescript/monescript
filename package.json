@@ -11,6 +11,7 @@
   "contributors": [],
   "devDependencies": {
     "jasmine": "^2.8.0",
+    "moo": "^0.4.3",
     "pegjs": "^0.10.0"
   },
   "scripts": {
