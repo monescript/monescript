@@ -1,7 +1,7 @@
 describe("Chunk Parser", function() {
 
   var fs = require('fs');
-  var cp = require('../../src/parser/ChunkParser.js');
+  var cp = require('../../src/parser/chunk-parser.js');
 
   it("should be able to parse empty lines", function() {
      expect(cp.reset('').next()).toBeUndefined();

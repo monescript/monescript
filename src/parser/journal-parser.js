@@ -1,6 +1,6 @@
 var LedgerParser = {
-  chunks: require('./ChunkParser.js'),
-  grammar: require('./GrammarParser'),
+  chunks: require('./chunk-parser.js'),
+  grammar: require('./grammar-parser'),
 
   reset: function(value){
      this.chunks.reset(value);

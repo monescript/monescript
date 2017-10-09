@@ -1,5 +1,5 @@
 describe("Ledger Grammar Parser", function() {
-  var parser = require("../../src/parser/GrammarParser.js");
+  var parser = require("../../src/parser/grammar-parser.js");
 
   /*
   From: http://ledger-cli.org/3.0/doc/ledger3.html#Keeping-a-Journal
