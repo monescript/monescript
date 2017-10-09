@@ -61,7 +61,7 @@ describe("Ledger Parser", function() {
      expect(parser.next()).toBeUndefined();
   });
 
-  it("should fail on invalid format and report failure details", function() {
+  it("should fail on invalid format and report failure details on first line", function() {
     try{
       var data = '1234';
       parser.reset(data).next();
@@ -71,7 +71,9 @@ describe("Ledger Parser", function() {
       expect(e.chunk.value).toEqual(data);
       expect(e.message).toEqual(e.cause.message);
     }
+  });
 
+  it("should fail on invalid format and report failure details on first line", function() {
     try{
       var data = ' abcd';
       var input = '\n\n\n' + data;

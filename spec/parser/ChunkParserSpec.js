@@ -56,7 +56,65 @@ describe("Chunk Parser", function() {
      expect(cp.next()).toBeUndefined();
   });
 
-  it("should be able to parse transaction chunks", function() {
+
+  it("should be able to parse single command chunks", function() {
+     cp.reset('include budget 2017-09.dat\n')
+     var chunk01 = cp.next()
+     expect(chunk01.type).toEqual('data');
+     expect(chunk01.value).toEqual('include budget 2017-09.dat\n');
+  });
+
+  it("should be able to parse single transaction chunks", function() {
+    var txnText = "2017/11/29 other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56 ; second bill"
+
+    cp.reset(txnText);
+    var chunk01 = cp.next()
+    expect(chunk01.type).toEqual('data');
+    expect(chunk01.value).toEqual(txnText);
+  });
+
+  it("should be able to parse multiple subsequent command chunks", function() {
+     cp.reset(
+        "bucket Assets:Checking\n"+
+        "include budget 2017-09.dat\n"+
+        "year 2017\n"
+     );
+
+     var chunk01 = cp.next()
+     expect(chunk01.type).toEqual('data');
+     expect(chunk01.value).toEqual("bucket Assets:Checking\n");
+
+     var chunk01 = cp.next()
+     expect(chunk01.type).toEqual('data');
+     expect(chunk01.value).toEqual("include budget 2017-09.dat\n");
+
+     var chunk01 = cp.next()
+     expect(chunk01.type).toEqual('data');
+     expect(chunk01.value).toEqual("year 2017\n");
+  });
+
+  it("should be able to parse multiple subsequent transaction chunks", function() {
+    var txn1Text =
+      "2017/11/29 other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56 ; second bill\n"
+
+    var txn2Text =
+      "2017/01/15     other payee value    \n" +
+       " Expenses:Utilities:Phone 1  $1234.56\n" +
+       " Assets:The Country:Bank One:Account Two  "
+
+    cp.reset(txn1Text + txn2Text);
+    var result = cp.next()
+    expect(result.type).toEqual('data');
+    expect(result.value).toEqual(txn1Text);
+
+    var result = cp.next()
+    expect(result.type).toEqual('data');
+    expect(result.value).toEqual(txn2Text);
+  });
+
+  it("should be able to parse transaction chunks with empty lines in between", function() {
      var file = fs.readFileSync('spec/resources/001 ledger.journal', 'utf8');
      var part01 = fs.readFileSync('spec/resources/001.01 ledger.journal', 'utf8');
      var part02 = fs.readFileSync('spec/resources/001.02 ledger.journal', 'utf8');

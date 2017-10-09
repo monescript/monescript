@@ -8,22 +8,25 @@ var LedgerParser = {
   },
 
   next: function(){
-
     var chunk;
-    while((chunk = this.chunks.next()) != null){
-      if(chunk.type != 'data')
-        continue;
-      try{
+    try{
+      while((chunk = this.chunks.next()) != null){
+        if(chunk.type == 'error')
+          throw new Error('Chunk parsing error');
+
+        if(chunk.type != 'data')
+          continue;
+
         return this.grammar.parse(chunk.value);
-      }catch(e){
-        var error = new Error();
-        error.message = e.message;
-        error.cause = e;
-        error.chunk = chunk;
-        throw error;
       }
+      return undefined;
+    }catch(e){
+      var error = {};
+      error.message = e.message;
+      error.cause = e;
+      error.chunk = chunk;
+      throw error;
     }
-    return undefined;
   }
 }
 
