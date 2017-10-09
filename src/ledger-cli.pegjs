@@ -42,10 +42,13 @@ transaction
       var txn = {
         type: 'transaction',
         date: date,
-        status: status,
         payee: payee,
         posting: posting
       };
+
+      if(status != null && status != '')
+        txn.status = status;
+
       if(note != null)
         txn.note = note;
 
@@ -79,7 +82,7 @@ payee
   = (!hardSeparator !newline .)* { return text();}
 
 transactionNote
-  = hardSeparator+ comment:comment { return comment; }
+  = hardSeparator+ comment:comment? { return comment; }
 
 posting
   = postingPrefix
@@ -87,15 +90,17 @@ posting
    amount:postingAmount?
    note:postingNote? space?
   {
-    var currency = amount == null ? undefined : amount.currency;
-    var value = amount == null ? undefined : amount.amount;
     var assignment = amount == null ? undefined : amount.assignment;
 
     var posting = {
       account:account,
-      currency:currency,
-      amount:value
     };
+
+    if(amount != null){
+      if(amount.currency != null)
+        posting.currency = amount.currency;
+      posting.amount = amount.amount;
+    }
 
     if(note != null)
       posting.note = note;
@@ -105,7 +110,7 @@ posting
 
     return posting;
   }
-  / postingPrefix comment:comment { return {isComment: true, text: comment }; }
+  / postingPrefix comment:comment { return {type: 'comment', text: comment }; }
 
 postingPrefix
   = newline space
@@ -185,7 +190,7 @@ space
   = [ \t]+
 
 newline
-  = "\n" / "\r\n"
+  = "\n" / "\r\n" / "\r"
 
 
 /*

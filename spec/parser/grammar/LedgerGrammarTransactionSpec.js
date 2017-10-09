@@ -86,7 +86,9 @@ describe("LedgerParser", function() {
     );
 
     expect(result).toEqual(expectedSimpleTransaction);
+  });
 
+  it("should be able to parse a simple transaction with spaces and dos newlines", function() {
     var result = this.parser.parse(
       "2016/08/23    !     Payee Name 1234\r\n"
       + "       Expenses:Utilities:Phone 1       $1234.56\n"
@@ -95,6 +97,14 @@ describe("LedgerParser", function() {
     expect(result).toEqual(expectedSimpleTransaction);
   });
 
+  it("should be able to parse a simple transaction with spaces after payee name", function() {
+    var result = this.parser.parse(
+      "2016/08/23    !     Payee Name 1234     \r\n"
+      + "       Expenses:Utilities:Phone 1       $1234.56\n"
+    );
+
+    expect(result).toEqual(expectedSimpleTransaction);
+  });
 
   it("should be able to parse a simple transaction with thousands separator", function() {
     var result = this.parser.parse(
@@ -121,234 +131,222 @@ describe("LedgerParser", function() {
 
     expect(result).toEqual(expectedTransaction);
   });
-//
-//  it("should be able to parse a simple transaction with balance assignment", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 ! Payee Name 1234\n"
-//      + " Assets:Cash    =$27.60\n"
-//      + " Bssets:Bank2:Checking   =   $560.12"
-//    );
-//    expect(result.length).toEqual(1);
-//    var txn = result[0];
-//
-//    verifyDate(txn);
-//    expect(txn.posting.length).toEqual(2);
-//    expect(txn.posting[0].assignment).toEqual(true);
-//  });
-//
-//  it("should be able to parse a transaction with two postings", function() {
-//
-//    var result = this.parser.parse(
-//      "2016/08/23 * other\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56\n" +
-//      " Assets:The Country:Bank One:Account Two  $-1234.56"
-//    );
-//
-//    expect(result.length).toEqual(1);
-//    var txn = result[0];
-//
-//    verifyDate(txn);
-//    expect(txn.status).toEqual('*');
-//    expect(txn.payee).toEqual('other');
-//    expect(txn.posting.length).toEqual(2);
-//    verifyFirstPosting(txn);
-//    verifySecondPosting(txn);
-//  });
-//
-//  it("should be able to parse a transaction with two postings, one without amount", function() {
-//
-//    var result = this.parser.parse(
-//      "2016/08/23 * other\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56\n" +
-//      " Assets:The Country:Bank One:Account Two  "
-//    );
-//
-//    verifyEmptyAmountPostingTransaction(result);
-//
-//    var result = this.parser.parse(
-//      "2016/08/23 * other\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56\n" +
-//      " Assets:The Country:Bank One:Account Two"
-//    );
-//
-//    verifyEmptyAmountPostingTransaction(result);
-//  });
-//
-//  it("should be able to parse a transaction with top level transaction note", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 * other  ; First phone bill\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56"
-//    );
-//
-//    verifyTopLevelTransactionNote(result, ' First phone bill');
-//
-//    var result = this.parser.parse(
-//      "2016/08/23 * other  ;\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56"
-//    );
-//
-//    verifyTopLevelTransactionNote(result, '');
-//  });
-//
-//
-//  it("should be able to parse a transaction with full posting comment", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 other\n" +
-//      " ;First phone bill\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56"
-//    );
-//
-//    expect(result.length).toEqual(1);
-//    var txn = result[0];
-//
-//    verifyDate(txn);
-//    expect(txn.status).toEqual('');
-//    expect(txn.payee).toEqual('other');
-//    expect(txn.posting.length).toEqual(2);
-//    expect(txn.posting[0].isComment).toEqual(true);
-//    expect(txn.posting[0].text).toEqual('First phone bill');
-//    verifyPhonePosting(txn, 1);
-//  });
-//
-//  it("should be able to parse a transaction with posting note", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 other\n" +
-//      " Expenses:Utilities:Phone 1  $1234.56 ; second bill"
-//    );
-//
-//    expect(result.length).toEqual(1);
-//    verifyPhoneTransactionWithPostingNote(result[0]);
-//  });
-//
-//  it("should be able to parse a transaction with posting note without space", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 other\n" +
-//      " Expenses:Purchases:Grocery  $55.66; reimburse"
-//    );
-//
-//    expect(result.length).toEqual(1);
-//    expect(result[0].posting[0].note).toEqual(' reimburse');
-//  });
-//
-///*
-//  http://ledger-cli.org/3.0/doc/ledger3.html#Value-Expressions
-//*/
-//
-//  it("should be able to parse a transaction with value expression in amount", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 other\n" +
-//      " Expenses:Utilities:Phone 1  ($1234.56 * 1.2 + ($56 -  $134) - $0) ; second bill"
-//    );
-//
-//    expect(result.length).toEqual(1);
-//    var txn = result[0];
-//
-//    expect(txn.posting[0].amount.type).toEqual('BinaryExpression');
-//  });
-
-  var verifySimpleTransaction = function(result){
-      expect(result.length).toEqual(1);
-      var txn = result[0];
-
-      verifyDate(txn);
-      expect(txn.type).toEqual('transaction');
-      expect(txn.status).toEqual('!');
-      expect(txn.payee).toEqual('Payee Name 1234');
-      expect(txn.posting.length).toEqual(1);
-      verifyFirstPosting(txn);
-  }
-
-  var verifyEmptyAmountPostingTransaction = function(result){
-    expect(result.length).toEqual(1);
-    var txn = result[0];
-
-    verifyDate(txn);
-    expect(txn.status).toEqual('*');
-    expect(txn.payee).toEqual('other');
-    expect(txn.posting.length).toEqual(2);
-    verifyFirstPosting(txn);
-    verifySecondPostingWithoutAmount(txn);
-  }
-
-  var verifyTopLevelTransactionNote = function(result, expectedNote){
-      expect(result.length).toEqual(1);
-      var txn = result[0];
-
-      verifyDate(txn);
-      expect(txn.note).toEqual(expectedNote);
-      expect(txn.status).toEqual('*');
-      expect(txn.payee).toEqual('other');
-      expect(txn.posting.length).toEqual(1);
-      verifyFirstPosting(txn);
-  }
 
 
-  var verifyIncomeTransaction = function(txn){
-    verifyDate(txn);
-    expect(txn.status).toEqual('!');
-    expect(txn.payee).toEqual('Company');
+  it("should be able to parse a transaction with two postings", function() {
 
-    expect(txn.posting.length).toEqual(2);
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2016, month: 10, day: 12 },
+      status: '*',
+      payee: 'other',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56},
+        {account: [ 'Assets', 'The Country', 'Bank One', 'Account Two'], currency: '$', amount: -1234.56}
+      ]
+    };
 
-    expect(txn.posting[0].account.length).toEqual(2);
-    expect(txn.posting[0].account[0]).toEqual('Assets');
-    expect(txn.posting[0].account[1]).toEqual('Chequing');
-    expect(txn.posting[0].amount).toEqual(5678.91);
-    expect(txn.posting[0].currency).toEqual('$');
+    var result = this.parser.parse(
+      "2016/10/12 * other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56\n" +
+      " Assets:The Country:Bank One:Account Two  $-1234.56"
+    );
 
-    expect(txn.posting[1].account.length).toEqual(2);
-    expect(txn.posting[1].account[0]).toEqual('Income');
-    expect(txn.posting[1].account[1]).toEqual('Salary');
-    expect(txn.posting[1].currency).toBeUndefined();
-    expect(txn.posting[1].amount).toBeUndefined();
-  }
+    expect(result).toEqual(expectedTransaction);
+  });
 
-  var verifyPhoneTransactionWithPostingNote = function(txn){
-    verifyDate(txn);
-    expect(txn.status).toEqual('');
-    expect(txn.payee).toEqual('other');
-    expect(txn.posting.length).toEqual(1);
-    verifyPhonePosting(txn, 0);
-    expect(txn.posting[0].note).toEqual(' second bill');
-  }
+  it("should be able to parse a simple transaction with balance assignment", function() {
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 23 },
+      status: '!',
+      payee: 'Payee Name 1234',
+      posting: [
+        {account: [ 'Assets', 'Cash'], currency: '$', amount: 27.6, assignment: true},
+        {account: [ 'Bssets', 'Bank2', 'Checking'], currency: '$', amount: 560.12, assignment: true}
+      ]
+    };
 
-  var verifyFirstPosting = function(result){
-      verifyPhonePosting(result, 0);
-  }
+    var result = this.parser.parse(
+      "2016/08/23 ! Payee Name 1234\n"
+      + " Assets:Cash    =$27.60\n"
+      + " Bssets:Bank2:Checking   =   $560.12"
+    );
+    expect(result).toEqual(expectedTransaction);
+  });
 
-  var verifyPhonePosting = function(result, i){
-    expect(result.posting[i].account.length).toEqual(3);
-    expect(result.posting[i].account[0]).toEqual('Expenses');
-    expect(result.posting[i].account[1]).toEqual('Utilities');
-    expect(result.posting[i].account[2]).toEqual('Phone 1');
-    expect(result.posting[i].amount).toEqual(1234.56);
-    expect(result.posting[i].currency).toEqual('$');
-  }
 
-  var verifySecondPosting = function(result){
-    verifySecondPostingFields(result);
-    expect(result.posting[1].currency).toEqual('$');
-    expect(result.posting[1].amount).toEqual(-1234.56);
-  }
+  it("should be able to parse a transaction with two postings, one without amount", function() {
 
-  var verifySecondPostingWithoutAmount = function(result){
-    verifySecondPostingFields(result);
-    expect(result.posting[1].currency).toBeUndefined();
-    expect(result.posting[1].amount).toBeUndefined();
-  }
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 1, day: 15 },
+      payee: 'other payee value',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56},
+        {account: [ 'Assets', 'The Country', 'Bank One', 'Account Two']}
+      ]
+    };
 
-  var verifySecondPostingFields = function(result, amount){
-    expect(result.posting[1].account.length).toEqual(4);
-    expect(result.posting[1].account[0]).toEqual('Assets');
-    expect(result.posting[1].account[1]).toEqual('The Country');
-    expect(result.posting[1].account[2]).toEqual('Bank One');
-    expect(result.posting[1].account[3]).toEqual('Account Two');
+    var result = this.parser.parse(
+      "2017/01/15     other payee value    \n" +
+      " Expenses:Utilities:Phone 1  $1234.56\n" +
+      " Assets:The Country:Bank One:Account Two  "
+    );
 
-  }
+    expect(result).toEqual(expectedTransaction);
 
-  var verifyDate = function(result){
-    expect(result.date.year).toEqual(2016);
-    expect(result.date.month).toEqual(8);
-    expect(result.date.day).toEqual(23);
-  }
+    var result = this.parser.parse(
+      "2017/01/15          other payee value\r" +
+      " Expenses:Utilities:Phone 1  $1234.56   \r" +
+      " Assets:The Country:Bank One:Account Two\r"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+
+  });
+
+  it("should be able to parse a transaction with header transaction note", function() {
+
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 11, day: 29 },
+      payee: 'other',
+      status: '*',
+      note: ' First phone bill',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56}
+      ]
+    };
+
+    var result = this.parser.parse(
+      "2017/11/29 * other  ; First phone bill\n" +
+      " Expenses:Utilities:Phone 1  $1234.56"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
+
+
+  it("should be able to parse a transaction with empty header transaction note", function() {
+
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 11, day: 29 },
+      payee: 'other',
+      note: '',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56}
+      ]
+    };
+
+    var result = this.parser.parse(
+      "2017/11/29 other  ;\n" +
+      " Expenses:Utilities:Phone 1  $1234.56"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
+
+  it("should be able to parse a transaction with full posting comment", function() {
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 11, day: 29 },
+      payee: 'other',
+      posting: [
+        {type: 'comment', text: 'First phone bill'},
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56}
+      ]
+    };
+    var result = this.parser.parse(
+      "2017/11/29 other\n" +
+      " ;First phone bill\n" +
+      " Expenses:Utilities:Phone 1  $1234.56"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
+
+  it("should be able to parse a transaction with posting note", function() {
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 11, day: 29 },
+      payee: 'other',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56, note: ' second bill'}
+      ]
+    };
+
+    var result = this.parser.parse(
+      "2017/11/29 other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56 ; second bill"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
+
+
+  it("should be able to parse a transaction with posting note without space", function() {
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 11, day: 29 },
+      payee: 'other',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56, note: 'second bill'}
+      ]
+    };
+
+    var result = this.parser.parse(
+      "2017/11/29 other\n" +
+      " Expenses:Utilities:Phone 1  $1234.56;second bill"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
+
+/*
+  http://ledger-cli.org/3.0/doc/ledger3.html#Value-Expressions
+*/
+
+  it("should be able to parse a transaction with value expression in amount", function() {
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 23 },
+      payee: 'other',
+      posting: [
+        {
+          account: [ 'Expenses', 'Utilities', 'Phone 1'],
+          amount: {
+            type: 'BinaryExpression',
+            operator: '-',
+            left: {
+              type: 'BinaryExpression',
+              operator: '+',
+              left: {
+                type: 'BinaryExpression',
+                operator: '*',
+                left: [ '$', 1234.56 ],
+                right: 1.2
+              },
+              right: {
+                  type: 'BinaryExpression',
+                  operator: '-',
+                  left: [ '$', 56 ],
+                  right: [ '$', 134 ]
+              }
+            },
+            right: [ '$', 0 ]
+          },
+          note: ' second bill'
+        }
+      ]
+    };
+
+    var result = this.parser.parse(
+      "2016/08/23 other\n" +
+      " Expenses:Utilities:Phone 1  ($1234.56 * 1.2 + ($56 -  $134) - $0) ; second bill"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
 });
