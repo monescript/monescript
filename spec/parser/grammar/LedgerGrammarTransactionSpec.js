@@ -71,54 +71,56 @@ describe("LedgerParser", function() {
 
   */
 
-  it("should be able to parse a simple transaction", function() {
-    const expectedTransaction = {
-      type: 'transaction',
-      date: { year: 2016, month: 8, day: 23 },
-      status: '!',
-      payee: 'Payee Name 1234',
-      posting: [{account: [ 'Expenses', 'Utilities', 'Phone 1' ], currency: '$', amount: 1234.56, assignment: false }]
-    };
+  const expectedSimpleTransaction = {
+    type: 'transaction',
+    date: { year: 2016, month: 8, day: 23 },
+    status: '!',
+    payee: 'Payee Name 1234',
+    posting: [{account: [ 'Expenses', 'Utilities', 'Phone 1' ], currency: '$', amount: 1234.56 }]
+  };
 
+  it("should be able to parse a simple transaction", function() {
     var result = this.parser.parse(
       "2016/08/23 ! Payee Name 1234\n"
       + " Expenses:Utilities:Phone 1  $1234.56"
     );
 
-    expect(result).toEqual(expectedTransaction);
+    expect(result).toEqual(expectedSimpleTransaction);
 
     var result = this.parser.parse(
       "2016/08/23    !     Payee Name 1234\r\n"
       + "       Expenses:Utilities:Phone 1       $1234.56\n"
     );
 
+    expect(result).toEqual(expectedSimpleTransaction);
+  });
+
+
+  it("should be able to parse a simple transaction with thousands separator", function() {
+    var result = this.parser.parse(
+      "2016/08/23 ! Payee Name 1234\n"
+      + " Expenses:Utilities:Phone 1  $1,234.56"
+    );
+    expect(result).toEqual(expectedSimpleTransaction);
+  });
+
+  it("should be able to parse a simple transaction with long posting account", function() {
+
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 23 },
+      status: '!',
+      payee: 'Payee Name 1234',
+      posting: [{account: [ 'Expenses', 'Bills', 'Utilities', 'Abc def ghi'], currency: '$', amount: 27.6}]
+    };
+
+    var result = this.parser.parse(
+      "2016/08/23 ! Payee Name 1234\n"
+      + " Expenses:Bills:Utilities:Abc def ghi   $27.60"
+    );
+
     expect(result).toEqual(expectedTransaction);
   });
-//
-//  it("should be able to parse a simple transaction with thousands separator", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 ! Payee Name 1234\n"
-//      + " Expenses:Utilities:Phone 1  $1,234.56"
-//    );
-//    verifySimpleTransaction(result);
-//  });
-//
-//  it("should be able to parse a simple transaction with long posting account", function() {
-//    var result = this.parser.parse(
-//      "2016/08/23 ! Payee Name 1234\n"
-//      + " Expenses:Bills:Utilities:Abc def ghi   $27.60"
-//    );
-//    expect(result.length).toEqual(1);
-//    var txn = result[0];
-//
-//    verifyDate(txn);
-//    expect(txn.posting.length).toEqual(1);
-//    expect(txn.posting[0].account.length).toEqual(4);
-//    expect(txn.posting[0].account[0]).toEqual('Expenses');
-//    expect(txn.posting[0].account[1]).toEqual('Bills');
-//    expect(txn.posting[0].account[2]).toEqual('Utilities');
-//    expect(txn.posting[0].account[3]).toEqual('Abc def ghi');
-//  });
 //
 //  it("should be able to parse a simple transaction with balance assignment", function() {
 //    var result = this.parser.parse(

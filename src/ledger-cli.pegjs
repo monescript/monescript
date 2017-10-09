@@ -90,14 +90,18 @@ posting
     var currency = amount == null ? undefined : amount.currency;
     var value = amount == null ? undefined : amount.amount;
     var assignment = amount == null ? undefined : amount.assignment;
+
     var posting = {
       account:account,
       currency:currency,
-      amount:value,
-      assignment: assignment,
+      amount:value
     };
+
     if(note != null)
       posting.note = note;
+
+    if(assignment != null && assignment)
+      posting.assignment = assignment;
 
     return posting;
   }
