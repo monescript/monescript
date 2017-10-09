@@ -21,19 +21,21 @@ bucket
 */
 
   it("should be able to parse bucket command", function() {
+
     var result = this.parser.parse("bucket Assets:Checking");
-    expect(result.length).toEqual(1);
-    expect(result[0].type).toEqual('bucket');
-    expect(result[0].account).toEqual(['Assets', 'Checking']);
+    expect(result).toEqual({
+      type: 'bucket',
+      account: ['Assets', 'Checking']
+    });
   });
 
   it("should be able to parse include command", function() {
-    var result = this.parser.parse("\ninclude budget 2017-09.dat\n");
-    expect(result.length).toEqual(1);
+    var result = this.parser.parse("include budget 2017-09.dat\n");
+    expect(result).toEqual({type: 'include'});
   });
 
   it("should be able to parse year command", function() {
     var result = this.parser.parse("year 2017");
-    expect(result.length).toEqual(1);
+    expect(result).toEqual({type: 'year', year: 2017});
   });
 })

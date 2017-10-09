@@ -22,33 +22,34 @@
   }
 }
 
-
-journal
-  = entries:entry* { return entries.filter(function(e){ return !e.empty}); }
+journalEntry
+  = e: entry newline? {return e}
 
 entry
   = t:transaction { return t } /
     c:command {return c; } /
-    c:lineComment {return {empty: true}; } /
-    emptyLine {return {empty: true}}
+    c:lineComment {return {type: 'comment'}; }
 
 command
   = "bucket" space account:account { return {type: "bucket", account:account}}
-    / "include" upToNewline
-    / "year" upToNewline
+    / "include" upToNewline { return {type: "include"}}
+    / "year" space year:year space?  { return {type: "year", year:year}}
 
 transaction
   = date:date space status:status payee:payee note:transactionNote?
     posting:posting+
     {
-      return {
+      var txn = {
         type: 'transaction',
         date: date,
         status: status,
         payee: payee,
-        posting: posting,
-        note: note
+        posting: posting
       };
+      if(note != null)
+        txn.note = note;
+
+      return txn;
     }
 
 date
@@ -89,13 +90,16 @@ posting
     var currency = amount == null ? undefined : amount.currency;
     var value = amount == null ? undefined : amount.amount;
     var assignment = amount == null ? undefined : amount.assignment;
-    return {
+    var posting = {
       account:account,
       currency:currency,
       amount:value,
       assignment: assignment,
-      note: note
-    }
+    };
+    if(note != null)
+      posting.note = note;
+
+    return posting;
   }
   / postingPrefix comment:comment { return {isComment: true, text: comment }; }
 

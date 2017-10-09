@@ -16,28 +16,25 @@ http://ledger-cli.org/3.0/doc/ledger3.html#Transactions-and-Comments
 
 */
 
-  it("should be able to parse empty lines", function() {
-    var result = this.parser.parse("");
-    expect(result.length).toEqual(0);
-
-    var result = this.parser.parse("\n");
-    expect(result.length).toEqual(0);
-
-    var result = this.parser.parse("\n\n\n\r\n");
-    expect(result.length).toEqual(0);
-
-    var result = this.parser.parse("   \n");
-    expect(result.length).toEqual(0);
-  });
-
-
   it("should be able to parse line comments", function() {
     var result = this.parser.parse(
-      "; First phone bill \n\n\n" +
+      "; First phone bill "
+    );
+    expect(result).toEqual({type: 'comment'});
+  });
+
+  it("should be able to parse line comments with new line ", function() {
+    var result = this.parser.parse(
+      "; First phone bill \n"
+    );
+    expect(result).toEqual({type: 'comment'});
+  });
+
+  it("should be able to parse line comments starting with #", function() {
+    var result = this.parser.parse(
       "# comment \n"
     );
-
-    expect(result.length).toEqual(0);
+    expect(result).toEqual({type: 'comment'});
   });
 
 })
