@@ -1,7 +1,7 @@
 describe("Journal.balance() ", function() {
 
   var journal = require('../src/journal');
-
+  var Big = require('big.js');
 
   beforeEach(function() {
     journal.reset();
@@ -16,7 +16,7 @@ describe("Journal.balance() ", function() {
     journal.add({"type":"bucket","account":["Assets","Checking"]});
     var balance = journal.balance();
     expect(balance).toEqual({
-      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: 0}
+      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(0.0)}
     });
   });
 
@@ -33,8 +33,8 @@ describe("Journal.balance() ", function() {
     });
 
     expect(journal.balance()).toEqual({
-      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: 1234.56},
-      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: -1234.56}
+      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(1234.56)},
+      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-1234.56)}
     });
   });
 })

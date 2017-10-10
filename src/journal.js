@@ -1,5 +1,6 @@
-var Journal = {
+var Big = require('big.js');
 
+var Journal = {
   reset: function(){
     this.bucketAccount = {};
     this.accounts = {};
@@ -40,7 +41,7 @@ var Journal = {
       this.accounts[accountName] = {
         account: entry.account,
         currency: '$',
-        balance: 0,
+        balance: Big(0),
       }
     }
   },
@@ -54,7 +55,7 @@ var Journal = {
         journal.accounts[accountName] = {
           account: p.account,
           currency: p.currency,
-          balance: p.amount,
+          balance: Big(p.amount),
         }
       }
     })

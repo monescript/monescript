@@ -10,11 +10,14 @@
   "license": "GPL-3.0",
   "contributors": [],
   "devDependencies": {
-    "jasmine": "^2.8.0",
-    "moo": "^0.4.3",
-    "pegjs": "^0.10.0"
+    "jasmine": "^2.8.0"
   },
   "scripts": {
     "test": "jasmine"
+  },
+  "dependencies": {
+    "big.js": "^4.0.2",
+    "moo": "^0.4.3",
+    "pegjs": "^0.10.0"
   }
 }
