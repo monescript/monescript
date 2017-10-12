@@ -38,6 +38,37 @@ describe("Journal.balance() ", function() {
     });
   });
 
+  it("can process two transactions and update balance", function() {
+    journal.add({
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 23 },
+      status: '!',
+      payee: 'Payee Name 1234',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1' ], currency: '$', amount: 100.11 },
+        {account: [ 'Assets', 'Checking'], currency: '$', amount: -100.11 }
+      ]
+    });
+    journal.add({
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 24 },
+      status: '!',
+      payee: 'Payee Name 1234',
+      posting: [
+        {account: [ 'Expenses', 'Purchases', 'Department' ], currency: '$', amount: 20.00 },
+        {account: [ 'Expenses', 'Purchases', 'Grocery' ], currency: '$', amount: 50.12 },
+        {account: [ 'Assets', 'Checking'], currency: '$', amount: -70.12 }
+      ]
+    });
+
+    expect(journal.balance()).toEqual({
+      'Expenses:Purchases:Department': {account: ['Expenses', 'Purchases', 'Department' ], currency: '$', balance: Big(20.00)},
+      'Expenses:Purchases:Grocery': {account: ['Expenses', 'Purchases', 'Grocery' ], currency: '$', balance: Big(50.12)},
+      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(100.11)},
+      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-170.23)}
+    });
+  });
+
   it("accepts a transaction with a single posting when bucket is defined", function() {
     journal.add({"type":"bucket","account":["Assets","Checking"]});
     journal.add({

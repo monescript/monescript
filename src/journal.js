@@ -57,13 +57,16 @@ var Journal = {
 
     txn.posting.forEach(function(p) {
       var accountName = p.account.join(':');
-      if(journal.accounts[accountName] == null)
-      {
+      var postingAmount = journal.amount(p);
+      if(journal.accounts[accountName] == null){
         journal.accounts[accountName] = {
           account: p.account,
           currency: p.currency,
-          balance: journal.amount(p),
+          balance: postingAmount,
         }
+      } else {
+        var accountBalance = journal.accounts[accountName].balance;
+        journal.accounts[accountName].balance = accountBalance.add(postingAmount);
       }
     });
 
