@@ -35,7 +35,7 @@ var Journal = {
 
   bucket: function(entry){
     this.bucketAccount = entry.account;
-    var accountName = entry.account.join(':');
+    var accountName = this.encodeAccountName(entry.account);
     if(this.accounts[accountName] == null)
     {
       this.accounts[accountName] = {
@@ -46,20 +46,65 @@ var Journal = {
     }
   },
 
-  transaction: function(entry){
+  encodeAccountName: function(accountArray){
+    return accountArray.join(':');
+  },
+
+  transaction: function(txn){
     var journal = this;
-    entry.posting.forEach(function(p) {
+
+    this.validateTransaction(txn);
+
+    txn.posting.forEach(function(p) {
       var accountName = p.account.join(':');
       if(journal.accounts[accountName] == null)
       {
         journal.accounts[accountName] = {
           account: p.account,
           currency: p.currency,
-          balance: Big(p.amount),
+          balance: journal.amount(p),
         }
       }
-    })
+    });
+
+    var totalSum = this.transactionBalance(txn);
+    if(!totalSum.eq(Big(0))){
+      this.balanceWithBucketAccount(totalSum);
+    }
   },
+
+  balanceWithBucketAccount: function(totalSum){
+      var bucketAccountName = this.encodeAccountName(this.bucketAccount);
+      var bucketAccountBalance = this.accounts[bucketAccountName].balance;
+      this.accounts[bucketAccountName].balance = bucketAccountBalance.minus(totalSum);
+  },
+
+  transactionBalance: function(txn){
+    var journal = this;
+    var totalSum = Big(0);
+    txn.posting.forEach(function(p) {
+      totalSum = totalSum.add(journal.amount(p));
+    });
+    return totalSum;
+  },
+
+  validateTransaction: function(txn){
+    var totalSum = this.transactionBalance(txn);
+
+    if(txn.posting.length == 1 && this.bucketAccount.length > 0 ){
+      return;
+    }
+
+    if(!totalSum.eq(Big(0))){
+      var error = new Error('Transaction is not balanced');
+      error.txn = txn;
+      throw error;
+    }
+  },
+
+  amount: function(p){
+    return Big(p.amount);
+  }
 }
 
 module.exports = Journal;
