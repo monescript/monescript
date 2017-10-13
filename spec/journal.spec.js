@@ -69,6 +69,30 @@ describe("Journal.balance() ", function() {
     });
   });
 
+
+
+  it("can process a transactions with balancing amountless posting", function() {
+    journal.add({
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 24 },
+      status: '!',
+      payee: 'Payee Name 1234',
+      posting: [
+        {account: [ 'Expenses', 'Purchases', 'Department' ], currency: '$', amount: 40.00 },
+        {account: [ 'Expenses', 'Purchases', 'Grocery' ], currency: '$', amount: 50.12 },
+        {account: [ 'Assets', 'Checking'], currency: '$', amount: -70.12 },
+        {account: [ 'Assets', 'Savings']}
+      ]
+    });
+
+    expect(journal.balance()).toEqual({
+      'Expenses:Purchases:Department': {account: ['Expenses', 'Purchases', 'Department' ], currency: '$', balance: Big(40.00)},
+      'Expenses:Purchases:Grocery': {account: ['Expenses', 'Purchases', 'Grocery' ], currency: '$', balance: Big(50.12)},
+      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-70.12)},
+      'Assets:Savings': {account: ["Assets","Savings"], currency: '$', balance: Big(-20.00)}
+    });
+  });
+
   it("accepts a transaction with a single posting when bucket is defined", function() {
     journal.add({"type":"bucket","account":["Assets","Checking"]});
     journal.add({

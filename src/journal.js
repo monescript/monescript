@@ -7,7 +7,6 @@ var Journal = {
   },
 
   add: function(entry){
-
     switch(entry.type)
     {
       case 'bucket':
@@ -54,32 +53,48 @@ var Journal = {
     var journal = this;
 
     this.validateTransaction(txn);
-
+    var currency;
     txn.posting.forEach(function(p) {
-      var accountName = p.account.join(':');
       var postingAmount = journal.amount(p);
-      if(journal.accounts[accountName] == null){
-        journal.accounts[accountName] = {
-          account: p.account,
-          currency: p.currency,
-          balance: postingAmount,
-        }
-      } else {
-        var accountBalance = journal.accounts[accountName].balance;
-        journal.accounts[accountName].balance = accountBalance.add(postingAmount);
+      if(p.amount != null){
+        journal.balanceWithAccount(postingAmount, p.currency, p.account);
+        currency = p.currency;
       }
     });
 
     var totalSum = this.transactionBalance(txn);
+
     if(!totalSum.eq(Big(0))){
-      this.balanceWithBucketAccount(totalSum);
+      if(this.hasOnePostingWithoutAmount(txn)){
+          var accountWithoutAmount;
+          txn.posting.forEach(function(p) {
+            if(p.amount == null)
+              accountWithoutAmount = p.account;
+          });
+          this.balanceWithAccount(totalSum.times(-1.0), currency, accountWithoutAmount);
+      }else{
+        this.balanceWithBucketAccount(totalSum, currency);
+      }
     }
   },
 
-  balanceWithBucketAccount: function(totalSum){
-      var bucketAccountName = this.encodeAccountName(this.bucketAccount);
-      var bucketAccountBalance = this.accounts[bucketAccountName].balance;
-      this.accounts[bucketAccountName].balance = bucketAccountBalance.minus(totalSum);
+  balanceWithBucketAccount: function(totalSum, currency){
+      this.balanceWithAccount(totalSum.times(-1.0), currency, this.bucketAccount);
+  },
+
+  balanceWithAccount: function(amount, currency, account){
+      var accountName = this.encodeAccountName(account);
+
+      if(this.accounts[accountName] == null){
+        this.accounts[accountName] = {
+          account: account,
+          currency: currency,
+          balance: amount,
+        }
+      } else {
+        var accountBalance = this.accounts[accountName].balance;
+        this.accounts[accountName].balance = accountBalance.add(amount);
+      }
   },
 
   transactionBalance: function(txn){
@@ -94,9 +109,11 @@ var Journal = {
   validateTransaction: function(txn){
     var totalSum = this.transactionBalance(txn);
 
-    if(txn.posting.length == 1 && this.bucketAccount.length > 0 ){
+    if(txn.posting.length == 1 && this.bucketAccount.length > 0 )
       return;
-    }
+
+    if(this.hasOnePostingWithoutAmount(txn))
+      return;
 
     if(!totalSum.eq(Big(0))){
       var error = new Error('Transaction is not balanced');
@@ -105,7 +122,19 @@ var Journal = {
     }
   },
 
+  hasOnePostingWithoutAmount: function(txn){
+    var noAmountPostings = 0;
+    txn.posting.forEach(function(p) {
+      if(p.amount == null)
+        noAmountPostings++;
+    });
+    return txn.posting.length > 1 && noAmountPostings == 1;
+  },
+
   amount: function(p){
+    if(p.amount == null){
+      return Big(0);
+    }
     return Big(p.amount);
   }
 }
