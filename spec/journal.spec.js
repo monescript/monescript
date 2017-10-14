@@ -3,6 +3,8 @@ describe("Journal.balance() ", function() {
   var journal = require('../src/journal');
   var Big = require('big.js');
 
+  var grammarParser = require("../src/parser/grammar-parser.js");
+
   beforeEach(function() {
     journal.reset();
   });
@@ -69,8 +71,6 @@ describe("Journal.balance() ", function() {
     });
   });
 
-
-
   it("can process a transactions with balancing amountless posting", function() {
     journal.add({
       type: 'transaction',
@@ -110,6 +110,23 @@ describe("Journal.balance() ", function() {
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-1234.56)}
     });
   });
+
+  it("can process a transaction with expression as amount", function() {
+    var result = grammarParser.parse(
+      "2016/08/23 other\n" +
+      " Expenses:Utilities:Phone 1  ($1234.56 * 1.2 + ($56 -  $134) - $0) ; second bill \n" +
+      " Assets:Checking"
+    );
+
+    journal.add(result);
+
+    expect(journal.balance()).toEqual({
+      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(1403.472)},
+      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-1403.472)}
+    });
+
+  });
+
 
   it("fails on a transaction with a single posting when bucket is not defined", function() {
     var txn = {

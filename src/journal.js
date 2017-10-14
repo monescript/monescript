@@ -1,4 +1,5 @@
 var Big = require('big.js');
+var eval = require('./expression-evaluator.js');
 
 var Journal = {
   reset: function(){
@@ -56,9 +57,10 @@ var Journal = {
     var currency;
     txn.posting.forEach(function(p) {
       var postingAmount = journal.amount(p);
+      var postingCurrency = journal.currency(p);
       if(p.amount != null){
-        journal.balanceWithAccount(postingAmount, p.currency, p.account);
-        currency = p.currency;
+        journal.balanceWithAccount(postingAmount, postingCurrency, p.account);
+        currency = postingCurrency;
       }
     });
 
@@ -128,12 +130,29 @@ var Journal = {
       if(p.amount == null)
         noAmountPostings++;
     });
+
     return txn.posting.length > 1 && noAmountPostings == 1;
+  },
+
+  currency: function(p){
+      if( p.amount != null &&
+          p.amount.evaluated != null &&
+          p.amount.evaluated.currency != null){
+        return p.amount.evaluated.currency;
+      }
+
+      return p.currency;
   },
 
   amount: function(p){
     if(p.amount == null){
       return Big(0);
+    }else if(p.amount.type == 'BinaryExpression' ){
+      if(p.amount.evaluated == null)
+      {
+        p.amount.evaluated = eval.evaluate(p.amount);
+      }
+      return p.amount.evaluated.amount;
     }
     return Big(p.amount);
   }
