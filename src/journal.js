@@ -55,7 +55,7 @@ var Journal = {
 
     this.validateTransaction(txn);
     var currency;
-    txn.posting.forEach(function(p) {
+    this.postings(txn).forEach(function(p) {
       var postingAmount = journal.amount(p);
       var postingCurrency = journal.currency(p);
       if(p.amount != null){
@@ -69,7 +69,7 @@ var Journal = {
     if(!totalSum.eq(Big(0))){
       if(this.hasOnePostingWithoutAmount(txn)){
           var accountWithoutAmount;
-          txn.posting.forEach(function(p) {
+          this.postings(txn).forEach(function(p) {
             if(p.amount == null)
               accountWithoutAmount = p.account;
           });
@@ -102,7 +102,7 @@ var Journal = {
   transactionBalance: function(txn){
     var journal = this;
     var totalSum = Big(0);
-    txn.posting.forEach(function(p) {
+    this.postings(txn).forEach(function(p) {
       totalSum = totalSum.add(journal.amount(p));
     });
     return totalSum;
@@ -111,7 +111,7 @@ var Journal = {
   validateTransaction: function(txn){
     var totalSum = this.transactionBalance(txn);
 
-    if(txn.posting.length == 1 && this.bucketAccount.length > 0 )
+    if(this.postings(txn).length == 1 && this.bucketAccount.length > 0 )
       return;
 
     if(this.hasOnePostingWithoutAmount(txn))
@@ -126,12 +126,12 @@ var Journal = {
 
   hasOnePostingWithoutAmount: function(txn){
     var noAmountPostings = 0;
-    txn.posting.forEach(function(p) {
+    this.postings(txn).forEach(function(p) {
       if(p.amount == null)
         noAmountPostings++;
     });
 
-    return txn.posting.length > 1 && noAmountPostings == 1;
+    return this.postings(txn).length > 1 && noAmountPostings == 1;
   },
 
   currency: function(p){
@@ -155,6 +155,12 @@ var Journal = {
       return p.amount.evaluated.amount;
     }
     return Big(p.amount);
+  },
+
+  postings: function(txn){
+    return txn.posting.filter(function(p){
+      return p.account != null;
+    });
   }
 }
 

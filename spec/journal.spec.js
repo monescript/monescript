@@ -40,6 +40,21 @@ describe("Journal.balance() ", function() {
     });
   });
 
+  it("can process a transaction with comment posting", function() {
+    journal.add({"type":"bucket","account":["Assets","Checking"]});
+
+    journal.add({"type":"transaction","date":{"year":2017,"month":1,"day":7},
+      "payee":"ultramar","posting":[
+        {"type":"comment","text":" description: 1.099"},
+        {"account":["Expenses","Auto","Gas"],"currency":"$","amount":45.16}]
+      ,"status":"*"});
+
+    expect(journal.balance()).toEqual({
+      'Expenses:Auto:Gas': {account: ['Expenses', 'Auto', 'Gas' ], currency: '$', balance: Big(45.16)},
+      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-45.16)}
+    });
+  });
+
   it("can process two transactions and update balance", function() {
     journal.add({
       type: 'transaction',
