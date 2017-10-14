@@ -1,8 +1,5 @@
 function GrammarParser() {
-  var peg = require("pegjs");
-  var fs = require('fs');
-  var cliGrammar = fs.readFileSync('src/resources/ledger-cli.pegjs', 'utf8');
-  this.parser = peg.generate(cliGrammar);
+  this.parser = require("../resources/ledger-cli")
 }
 
 GrammarParser.prototype = {

@@ -4,7 +4,7 @@
 <body>
 
 <form>
-    <!--<script src="../journal.js" language="JavaScript" />-->
+    <script src="_js/bundle.js"></script>
     <script>
         //var inputElement = document.getElementById("input");
         function handleFiles(files) {
@@ -12,22 +12,23 @@
             var reader = new FileReader();
 
             reader.onload = function(e) {
-                document.getElementById('data').value = reader.result;
+                var text = reader.result
+                calculateBalance(text);
             }
-
             reader.onerror = function(err) {
-                console.log(err, err.loaded
-                        , err.loaded === 0
-                        );
-            button.removeAttribute("disabled");
+                console.log(err, err.loaded, err.loaded === 0);
+                button.removeAttribute("disabled");
             }
-             reader.readAsText(files[0]);
+            reader.readAsText(files[0]);
         }
 
     </script>
 
     <input type="file" id="input" onchange="handleFiles(this.files)">
     <textarea id="data">
+    </textarea>
+
+    <textarea id="balance">
     </textarea>
 </form>
 

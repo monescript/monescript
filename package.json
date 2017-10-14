@@ -13,6 +13,10 @@
     "jasmine": "^2.8.0"
   },
   "scripts": {
+    "build-grammar": "pegjs src/resources/ledger-cli.pegjs",
+    "build-ui-bundle": " browserify src/ui/main.js -o src/ui/_js/bundle.js",
+    "build-ui-bundle-min": "uglify -s src/ui/bundle.js -o src/ui/bundle-min.js",
+    "pretest": "npm run build-grammar",
     "test": "jasmine"
   },
   "dependencies": {
