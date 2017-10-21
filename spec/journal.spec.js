@@ -142,7 +142,7 @@ describe("Journal ", function() {
 
     var txnCopy = copy(txn);
     txnCopy.posting.push(
-      {account: [ "Assets","Checking" ], currency: '$', amount: -1234.56},
+      {account: [ "Assets","Checking" ], currency: '$', amount: -1234.56}
     );
     txnCopy = bigCopy(txnCopy);
 
