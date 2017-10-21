@@ -72,7 +72,7 @@ describe("Experiments ", function() {
     });
   });
 
-  fit("print txns for a month", function() {
+  xit("print txns for a month", function() {
 
     var filterAccount = 'Expenses:Purchases';
 
