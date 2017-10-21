@@ -1,4 +1,4 @@
-describe("Experiments ", function() {
+xdescribe("Experiments ", function() {
   var fs = require('fs');
   var parser = require('../src/parser/journal-parser');
   var journal = require('../src/journal');
