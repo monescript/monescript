@@ -1,9 +1,12 @@
 var Big = require('big.js');
+var _ = require('underscore');
 var eval = require('./expression-evaluator.js');
 
 var Journal = {
   reset: function(){
-    this.bucketAccount = {};
+    this.bucketAccount = [];
+    this.transactionList = [];
+
     this.accounts = {};
   },
 
@@ -22,45 +25,52 @@ var Journal = {
     return this;
   },
 
+  transactions: function(filter){
+    return this.transactionList;
+  },
+
   balance: function(){
     return this.accounts;
   },
 
   //----------- Internal state
 
-  bucketAccount: {},
+  transactionList: [],
+  bucketAccount: [],
+
+
   accounts: {},
 
   //----------- Internal methods
 
   bucket: function(entry){
     this.bucketAccount = entry.account;
-    var accountName = this.encodeAccountName(entry.account);
-    if(this.accounts[accountName] == null)
-    {
-      this.accounts[accountName] = {
-        account: entry.account,
-        currency: '$',
-        balance: Big(0),
-      }
-    }
   },
 
   encodeAccountName: function(accountArray){
     return accountArray.join(':');
   },
 
-  transaction: function(txn){
-    var journal = this;
+  copy : function(txn){
+    return JSON.parse(JSON.stringify(txn));
+  },
 
+  transaction: function(txnArgument){
+    var txn = this.copy(txnArgument);
+
+    var journal = this;
     this.validateTransaction(txn);
     var currency;
+
     this.postings(txn).forEach(function(p) {
       var postingAmount = journal.amount(p);
+
       var postingCurrency = journal.currency(p);
-      if(p.amount != null){
-        journal.balanceWithAccount(postingAmount, postingCurrency, p.account);
+      if(postingCurrency != null){
         currency = postingCurrency;
+      }
+      if(!p.emptyInitialAmount){
+        journal.balanceWithAccount(postingAmount, postingCurrency, p.account);
       }
     });
 
@@ -68,16 +78,19 @@ var Journal = {
 
     if(!totalSum.eq(Big(0))){
       if(this.hasOnePostingWithoutAmount(txn)){
-          var accountWithoutAmount;
-          this.postings(txn).forEach(function(p) {
-            if(p.amount == null)
-              accountWithoutAmount = p.account;
-          });
-          this.balanceWithAccount(totalSum.times(-1.0), currency, accountWithoutAmount);
+          this.assignBalancingAmount(txn, currency, totalSum);
       }else{
         this.balanceWithBucketAccount(totalSum, currency);
       }
     }
+
+    this.transactionList.push(txn)
+  },
+
+  assignBalancingAmount: function(txn, currency, remainder){
+      var emptyAmountPosting = this.postings(txn).filter(p => p.emptyInitialAmount)[0];
+      emptyAmountPosting.currency = currency;
+      emptyAmountPosting.amount = remainder.times(-1.0);
   },
 
   balanceWithBucketAccount: function(totalSum, currency){
@@ -103,7 +116,8 @@ var Journal = {
     var journal = this;
     var totalSum = Big(0);
     this.postings(txn).forEach(function(p) {
-      totalSum = totalSum.add(journal.amount(p));
+      var pAmt = journal.amount(p);
+      totalSum = totalSum.add(pAmt);
     });
     return totalSum;
   },
@@ -127,7 +141,7 @@ var Journal = {
   hasOnePostingWithoutAmount: function(txn){
     var noAmountPostings = 0;
     this.postings(txn).forEach(function(p) {
-      if(p.amount == null)
+      if(p.emptyInitialAmount)
         noAmountPostings++;
     });
 
@@ -146,15 +160,17 @@ var Journal = {
 
   amount: function(p){
     if(p.amount == null){
-      return Big(0);
-    }else if(p.amount.type == 'BinaryExpression' ){
-      if(p.amount.evaluated == null)
-      {
-        p.amount.evaluated = eval.evaluate(p.amount);
-      }
-      return p.amount.evaluated.amount;
+      p.emptyInitialAmount = true;
+      p.amount = Big(0);
+    } else if(p.amount.type == 'BinaryExpression' ){
+      p.amountExpression = p.amount;
+      var result = eval.evaluate(p.amountExpression);
+      p.amount = result.amount;
+      p.currency = result.currency;
+    } else if(!(p.amount instanceof Big)){
+      p.amount = Big(p.amount);
     }
-    return Big(p.amount);
+    return p.amount;
   },
 
   postings: function(txn){

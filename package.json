@@ -22,6 +22,7 @@
   "dependencies": {
     "big.js": "^4.0.2",
     "moo": "^0.4.3",
-    "pegjs": "^0.10.0"
+    "pegjs": "^0.10.0",
+    "underscore": "^1.8.3"
   }
 }
