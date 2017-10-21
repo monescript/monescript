@@ -81,7 +81,7 @@ var Journal = {
 
   createMissingPostingFromBucketAccount: function(txn, currency, remainder){
       txn.posting.push(
-        {account: _.clone(this.bucketAccount), currency: currency, amount: remainder.times(-1.0)},
+        {account: _.clone(this.bucketAccount), currency: currency, amount: remainder.times(-1.0)}
       );
   },
 
