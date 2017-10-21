@@ -3,11 +3,16 @@ var eval = require('./journal.js');
 
 var Balance = {
 
-  balance: function(journal){
+  balance: function(journal, txnFilter){
     this.reset();
     this.processBucketAccount(journal);
     var balancer = this;
-    journal.transactionList.forEach(t => balancer.processTransaction(journal, t));
+
+    if(txnFilter == null){
+      txnFilter = t => true;
+    }
+
+    journal.transactionList.filter(txnFilter).forEach(t => balancer.processTransaction(journal, t));
 
     return this.accounts;
   },
