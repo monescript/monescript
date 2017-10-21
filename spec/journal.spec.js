@@ -60,7 +60,9 @@ describe("Journal ", function() {
     var txn = {"type":"transaction","date":{"year":2017,"month":1,"day":7},
                     "payee":"ultramar","posting":[
                       {"type":"comment","text":" description: 1.099"},
-                      {"account":["Expenses","Auto","Gas"],"currency":"$","amount":45.16}]
+                      {"account":["Expenses","Auto","Gas"],"currency":"$","amount":45.16},
+                      {"account":["Assets","Chequing"],"currency":"$","amount":-45.16}
+                    ]
                     ,"status":"*"};
 
     var txnCopy = bigCopy(txn);
@@ -97,20 +99,10 @@ describe("Journal ", function() {
 
     var bigTxns = txns.map(t => bigCopy(t));
 
-
-
-
     expect(journal.transactions()).toEqual(bigTxns);
-
-//    expect(journal.balance()).toEqual({
-//      'Expenses:Purchases:Department': {account: ['Expenses', 'Purchases', 'Department' ], currency: '$', balance: Big(20.00)},
-//      'Expenses:Purchases:Grocery': {account: ['Expenses', 'Purchases', 'Grocery' ], currency: '$', balance: Big(50.12)},
-//      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(100.11)},
-//      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-170.23)}
-//    });
   });
 
-  it("can process a transactions with balancing amount-less posting", function() {
+  it("can process a transactions with balancing amount-less posting and reconstructs amount", function() {
     var txn = {
       type: 'transaction',
       date: { year: 2016, month: 8, day: 24 },
@@ -132,23 +124,13 @@ describe("Journal ", function() {
 
     journal.add(txn);
 
-
     expect(journal.transactions()).toEqual([txnCopy]);
-
-    /*expect(journal.balance()).toEqual({
-      'Expenses:Purchases:Department': {account: ['Expenses', 'Purchases', 'Department' ], currency: '$', balance: Big(40.00)},
-      'Expenses:Purchases:Grocery': {account: ['Expenses', 'Purchases', 'Grocery' ], currency: '$', balance: Big(50.12)},
-      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-70.12)},
-      'Assets:Savings': {account: ["Assets","Savings"], currency: '$', balance: Big(-20.00)}
-    });*/
   });
 
 
-
-
-  it("accepts a transaction with a single posting when bucket is defined", function() {
+  it("accepts a transaction with a single posting when bucket is defined and reconstructs missing posting", function() {
     journal.add({"type":"bucket","account":["Assets","Checking"]});
-    journal.add({
+    var txn = {
       type: 'transaction',
       date: { year: 2016, month: 8, day: 23 },
       status: '!',
@@ -156,12 +138,17 @@ describe("Journal ", function() {
       posting: [
         {account: [ 'Expenses', 'Utilities', 'Phone 1' ], currency: '$', amount: 1234.56},
       ]
-    });
+    };
 
-    expect(journal.balance()).toEqual({
-      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(1234.56)},
-      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-1234.56)}
-    });
+    var txnCopy = copy(txn);
+    txnCopy.posting.push(
+      {account: [ "Assets","Checking" ], currency: '$', amount: -1234.56},
+    );
+    txnCopy = bigCopy(txnCopy);
+
+    journal.add(txn);
+
+    expect(journal.transactions()).toEqual([txnCopy]);
   });
 
   it("can process a transaction with expression as amount", function() {
@@ -183,17 +170,7 @@ describe("Journal ", function() {
     txnCopy = bigCopy(txnCopy);
 
     expect(journal.transactions()).toEqual([txnCopy]);
-
-//    console.log(JSON.stringify(txnCopy));
-//    console.log(txn.posting[0].amount);
-
-//    expect(journal.balance()).toEqual({
-//      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(1403.472)},
-//      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-1403.472)}
-//    });
-
   });
-
 
   it("fails on a transaction with a single posting when bucket is not defined", function() {
     var txn = {

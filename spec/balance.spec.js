@@ -44,7 +44,7 @@ describe("Balance ", function() {
     });
   });
 
-  xit("can show balance for two transactions", function() {
+  it("can show balance for two transactions", function() {
     var txns = [{
       type: 'transaction',
       date: { year: 2016, month: 8, day: 23 },
@@ -66,13 +66,7 @@ describe("Balance ", function() {
       ]
     }];
 
-    console.log();
-    console.log("---------------");
-
     txns.forEach(t => journal.add(t));
-
-    console.log(JSON.stringify(balancer.balance(journal)));
-    console.log("---------------");
 
     expect(balancer.balance(journal)).toEqual({
       'Expenses:Purchases:Department': {account: ['Expenses', 'Purchases', 'Department' ], currency: '$', balance: Big(20.00)},
@@ -81,5 +75,6 @@ describe("Balance ", function() {
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-170.23)}
     });
   });
+
 
 });

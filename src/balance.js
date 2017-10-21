@@ -2,12 +2,9 @@ var Big = require('big.js');
 var eval = require('./journal.js');
 
 var Balance = {
-//  reset: function(){
-//    this.bucketAccount = {};
-//    this.accounts = {};
-//  },
 
   balance: function(journal){
+    this.reset();
     this.processBucketAccount(journal);
     var balancer = this;
     journal.transactionList.forEach(t => balancer.processTransaction(journal, t));
@@ -20,6 +17,10 @@ var Balance = {
   accounts: {},
 
   //----------- Internal methods
+
+  reset: function(){
+    this.accounts = {};
+  },
 
   processBucketAccount: function(journal){
     if(journal.bucketAccount.length == 0)
@@ -72,7 +73,7 @@ var Balance = {
       this.accounts[accountName].balance = accountBalance.add(amount);
 
     }
-    //console.log(accountName + ":" +  this.accounts[accountName].balance + "; amt: " + amount);
+//    console.log(accountName + ":" +  this.accounts[accountName].balance + "; amt: " + amount);
   },
 
 

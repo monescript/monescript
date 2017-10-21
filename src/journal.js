@@ -29,30 +29,15 @@ var Journal = {
     return this.transactionList;
   },
 
-  balance: function(){
-    return this.accounts;
-  },
-
   //----------- Internal state
 
   transactionList: [],
   bucketAccount: [],
 
-
-  accounts: {},
-
   //----------- Internal methods
 
   bucket: function(entry){
     this.bucketAccount = entry.account;
-  },
-
-  encodeAccountName: function(accountArray){
-    return accountArray.join(':');
-  },
-
-  copy : function(txn){
-    return JSON.parse(JSON.stringify(txn));
   },
 
   transaction: function(txnArgument){
@@ -69,22 +54,23 @@ var Journal = {
       if(postingCurrency != null){
         currency = postingCurrency;
       }
-      if(!p.emptyInitialAmount){
-        journal.balanceWithAccount(postingAmount, postingCurrency, p.account);
-      }
     });
 
     var totalSum = this.transactionBalance(txn);
 
     if(!totalSum.eq(Big(0))){
       if(this.hasOnePostingWithoutAmount(txn)){
-          this.assignBalancingAmount(txn, currency, totalSum);
+        this.assignBalancingAmount(txn, currency, totalSum);
       }else{
-        this.balanceWithBucketAccount(totalSum, currency);
+        this.createMissingPostingFromBucketAccount(txn, currency, totalSum);
       }
     }
 
     this.transactionList.push(txn)
+  },
+
+  copy : function(txn){
+    return JSON.parse(JSON.stringify(txn));
   },
 
   assignBalancingAmount: function(txn, currency, remainder){
@@ -93,23 +79,10 @@ var Journal = {
       emptyAmountPosting.amount = remainder.times(-1.0);
   },
 
-  balanceWithBucketAccount: function(totalSum, currency){
-      this.balanceWithAccount(totalSum.times(-1.0), currency, this.bucketAccount);
-  },
-
-  balanceWithAccount: function(amount, currency, account){
-      var accountName = this.encodeAccountName(account);
-
-      if(this.accounts[accountName] == null){
-        this.accounts[accountName] = {
-          account: account,
-          currency: currency,
-          balance: amount,
-        }
-      } else {
-        var accountBalance = this.accounts[accountName].balance;
-        this.accounts[accountName].balance = accountBalance.add(amount);
-      }
+  createMissingPostingFromBucketAccount: function(txn, currency, remainder){
+      txn.posting.push(
+        {account: _.clone(this.bucketAccount), currency: currency, amount: remainder.times(-1.0)},
+      );
   },
 
   transactionBalance: function(txn){
