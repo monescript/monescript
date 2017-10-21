@@ -1,5 +1,6 @@
 var Big = require('big.js');
 var eval = require('./journal.js');
+var _ = require('underscore');
 
 var Balance = {
 
@@ -31,29 +32,44 @@ var Balance = {
     if(journal.bucketAccount.length == 0)
       return;
 
-    var accountName = this.encodeAccountName(journal.bucketAccount);
-    if(this.accounts[accountName] == null)
-    {
-      this.accounts[accountName] = {
-        account: journal.bucketAccount,
-        currency: '$',
-        balance: Big(0),
+    var accountHierarchy = this.produceAccountHierarchy(journal.bucketAccount);
+
+    accountHierarchy.forEach(a => {
+      var accountName = this.encodeAccountName(a);
+      if(this.accounts[accountName] == null)
+      {
+        this.accounts[accountName] = {
+          account: a,
+          currency: '$',
+          balance: Big(0),
+        }
       }
-    }
+    });
   },
 
   encodeAccountName: function(accountArray){
     return accountArray.join(':');
   },
 
+  produceAccountHierarchy: function(accountArray){
+    var accountHierarchy = [];
+    var lastAccount = [];
+    accountArray.forEach(a => {
+      lastAccount.push(a);
+      accountHierarchy.push(_.clone(lastAccount));
+    })
+    return accountHierarchy;
+  },
+
   processTransaction: function(journal, txn){
     var balancer = this;
+
     this.postings(txn).forEach(function(p) {
       var postingAmount = p.amount;
       var postingCurrency = journal.currency(p);
       if(p.amount != null){
-        balancer.balanceWithAccount(postingAmount, postingCurrency, p.account);
-        currency = postingCurrency;
+          var accountHierarchy = balancer.produceAccountHierarchy(p.account);
+          accountHierarchy.forEach(account => balancer.balanceWithAccount(postingAmount, postingCurrency, account));
       }
     });
   },
@@ -78,11 +94,7 @@ var Balance = {
       this.accounts[accountName].balance = accountBalance.add(amount);
 
     }
-//    console.log(accountName + ":" +  this.accounts[accountName].balance + "; amt: " + amount);
   },
-
-
-
 }
 
 module.exports = Balance;

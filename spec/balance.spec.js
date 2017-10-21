@@ -19,6 +19,7 @@ describe("Balance ", function() {
 
     var balance = balancer.balance(journal);
     expect(balance).toEqual({
+      'Assets': {account: ["Assets"], currency: '$', balance: Big(0.0)},
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(0.0)}
     });
   });
@@ -38,7 +39,10 @@ describe("Balance ", function() {
     journal.add(txn);
 
     expect(balancer.balance(journal)).toEqual({
+      'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(1234.56)},
+      'Expenses:Utilities': {account: ['Expenses', 'Utilities' ], currency: '$', balance: Big(1234.56)},
       'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(1234.56)},
+      'Assets': {account: ["Assets"], currency: '$', balance: Big(-1234.56)},
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-1234.56)}
     });
   });
@@ -68,9 +72,13 @@ describe("Balance ", function() {
     txns.forEach(t => journal.add(t));
 
     expect(balancer.balance(journal)).toEqual({
+      'Expenses': {account: ['Expenses',  ], currency: '$', balance: Big(170.23)},
+      'Expenses:Purchases': {account: ['Expenses', 'Purchases' ], currency: '$', balance: Big(70.12)},
       'Expenses:Purchases:Department': {account: ['Expenses', 'Purchases', 'Department' ], currency: '$', balance: Big(20.00)},
       'Expenses:Purchases:Grocery': {account: ['Expenses', 'Purchases', 'Grocery' ], currency: '$', balance: Big(50.12)},
+      'Expenses:Utilities': {account: ['Expenses', 'Utilities' ], currency: '$', balance: Big(100.11)},
       'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(100.11)},
+      'Assets': {account: ["Assets"], currency: '$', balance: Big(-170.23)},
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-170.23)}
     });
   });
@@ -102,7 +110,10 @@ describe("Balance ", function() {
     var clearedTxnFilter = txn => txn.status == '*';
 
     expect(balancer.balance(journal, clearedTxnFilter)).toEqual({
+      'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(100.11)},
+      'Expenses:Utilities': {account: ['Expenses', 'Utilities' ], currency: '$', balance: Big(100.11)},
       'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(100.11)},
+      'Assets': {account: ["Assets"], currency: '$', balance: Big(-100.11)},
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-100.11)}
     });
   });
