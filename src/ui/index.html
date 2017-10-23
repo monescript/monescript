@@ -1,39 +1,25 @@
-<html>
-
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+</head>
 
 <body>
 
-<form>
+    <form id="app">
+
+        <input type="file" id="input" v-on:change="handleFiles">
+
+        <textarea id="data">
+        </textarea>
+
+        <textarea id="balance">
+        </textarea>
+
+        {{ message }}
+
+    </form>
+
     <script src="_js/bundle.js"></script>
-    <script>
-        //var inputElement = document.getElementById("input");
-        function handleFiles(files) {
-
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                var text = reader.result
-                calculateBalance(text);
-            }
-            reader.onerror = function(err) {
-                console.log(err, err.loaded, err.loaded === 0);
-                button.removeAttribute("disabled");
-            }
-            reader.readAsText(files[0]);
-        }
-
-    </script>
-
-    <input type="file" id="input" onchange="handleFiles(this.files)">
-    <textarea id="data">
-    </textarea>
-
-    <textarea id="balance">
-    </textarea>
-</form>
-
 </body>
-
-
-
 </html>

@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build-grammar": "pegjs src/resources/ledger-cli.pegjs",
-    "build-ui-bundle": " browserify src/ui/main.js -o src/ui/_js/bundle.js",
+    "uib": " browserify src/ui/main.js -o src/ui/_js/bundle.js",
     "build-ui-bundle-min": "uglify -s src/ui/bundle.js -o src/ui/bundle-min.js",
     "pretest": "npm run build-grammar",
     "test": "jasmine"
@@ -23,6 +23,10 @@
     "big.js": "^4.0.2",
     "moo": "^0.4.3",
     "pegjs": "^0.10.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "vue": "^2.5.2"
+  },
+  "browser": {
+    "vue": "vue/dist/vue.common.js"
   }
 }
