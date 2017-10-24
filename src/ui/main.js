@@ -7,7 +7,8 @@ var Big = require('big.js');
 var app = new Vue({
   el: '#app',
   data: {
-    message: 'Hello Vue!'
+    filter: 'Expenses',
+    accounts: []
   },
   methods: {
     handleFiles : function(e) {
@@ -17,7 +18,8 @@ var app = new Vue({
 
         reader.onload = function(e) {
             var text = reader.result
-            self.calculateBalance(text);
+            self.createJournal(text);
+            self.calculateBalance();
         }
         reader.onerror = function(err) {
             console.log(err, err.loaded, err.loaded === 0);
@@ -25,27 +27,34 @@ var app = new Vue({
         }
         reader.readAsText(files[0]);
     },
-    calculateBalance: function(text){
 
-      document.getElementById('data').value = text;
+    createJournal: function(text){
+        journal.reset();
 
-      var balance = "";
+        document.getElementById('data').value = text;
 
-      parser.reset(text)
-      var chunk;
-      try{
-        while((chunk = parser.next()) != null){
-          journal.add(chunk);
+        parser.reset(text)
+        var chunk;
+        try{
+          while((chunk = parser.next()) != null){
+            journal.add(chunk);
+          }
+        }catch(e){
+          console.log(e);
+          console.log('Failing on line ' + JSON.stringify(chunk));
         }
-      }catch(e){
-        console.log(e);
-        console.log('Failing on line ' + JSON.stringify(chunk));
-      }
+    },
 
-        var b = balancer.balance(journal, t => t.date.month == 8);
+    calculateBalance: function(){
+        var balance = "";
+
+        let self = this;
+        self.accounts = [];
+
+        var b = balancer.balance(journal, t => t.date.month == 10);
 
         var b2 = Object.keys(b)
-        .filter(a => a.toLowerCase().indexOf('exp') >= 0)
+        .filter(a => a.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0)
         .sort((a, b) => a.localeCompare(b)).map(a => b[a]);
 
         var offset = 18;
@@ -61,11 +70,9 @@ var app = new Vue({
                 value = value + ' ';
               }
             }
-            balance += value + name + "\n";
+
+            self.accounts.push(value + name + "\n")
         });
-
-
-      document.getElementById('balance').value = balance;
     }
   }
 })

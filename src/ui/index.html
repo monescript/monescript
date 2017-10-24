@@ -16,7 +16,13 @@
         <textarea id="balance">
         </textarea>
 
-        {{ message }}
+        Account filter: <input type="text" v-on:change="calculateBalance" v-model="filter" />
+
+        <ul>
+            <li v-for="(item, index) in accounts" >
+                {{ item }}
+            </li>
+        </ul>
 
     </form>
 
