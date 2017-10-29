@@ -10,31 +10,15 @@ var app = new Vue({
   el: '#app',
   data: {
     filter: 'Expenses',
-    accounts: [],
-    accountTree: [
-      {
-        name: 'Expenses',
-        balance: 345.67,
-        accounts: [
-          {
-            name: 'Bills',
-            balance: 123.45
-          }
-        ]
-      },
-      {
-        name: 'Income',
-        balance: -567.89,
-        accounts: [
-          {
-            name: 'Salary',
-            balance: -123.45
-          }
-        ]
-      }
-    ]
+    accountTree: {}
+  },
+  computed: {
+
   },
   methods: {
+    accountTreeProp: function(){
+      return this.accountTree;
+    },
     handleFiles : function(e) {
         var files = e.currentTarget.files;
         var reader = new FileReader();
@@ -82,25 +66,41 @@ var app = new Vue({
         .sort((a, b) => a.localeCompare(b)).map(a => b[a]);
 
         var offset = 18;
-        b2.forEach(function(a) {
-            var account = a.account;
-            var name = account[account.length - 1];
-            for(var i = 0; i < account.length - 1; ++i)
-              name = '  ' + name;
-            var value = a.currency + a.balance.toFixed(2) + '';
 
-            if(value.length < offset){
-              for(var j = value.length; j < offset; ++j){
-                value = value + ' ';
-              }
+        this.accountTree = {};
+        let tree = {}
+        b2.forEach(a =>{
+          let branchLevel = tree;
+          a.account.forEach(n => {
+            var nextLevel = branchLevel.accounts == null ? null : branchLevel.accounts[n];
+            if(nextLevel == null)
+            {
+              var nextLevel = {name: n};
+              if(branchLevel.accounts == null)
+                branchLevel.accounts = {};
+              branchLevel.accounts[n] = nextLevel;
             }
-
-            self.accounts.push(value + name + "\n")
+            branchLevel = nextLevel;
+          });
+          branchLevel.balance = parseFloat(a.balance.toFixed(2));
+          branchLevel.currency = a.currency;
         });
+
+        this.accountTree = tree.accounts;
+        console.log(JSON.stringify(this.accountTree, null, 2));
+
     }
   },
   beforeMount(){
-      this.createJournal(document.getElementById('data').value);
+      var text = document.getElementById('data').value;
+      var lines = "";
+      text.split("\n").forEach(l =>{
+        var p = l.split('            ');
+        lines += p[1] == undefined ? '' : p[1] + "\n";
+      });
+      //console.log(text);
+      this.createJournal(text);
+      this.calculateBalance();
   },
 })
 

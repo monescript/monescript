@@ -10,7 +10,7 @@
 
         <input type="file" id="input" v-on:change="handleFiles">
 
-        <textarea id="data" >
+<textarea id="data" >
 
 2017/10/14 * Rexall
   Expenses:Bills:Electricity  $54.40
@@ -565,32 +565,27 @@
   Expenses:Grocery  $98.47
   Expenses:Clothing  $14.63
   Assets:Bank:Checking
-        </textarea>
+</textarea>
 
         <textarea id="balance">
         </textarea>
 
-        Account filter: <input type="text" v-on:change="calculateBalance" v-model="filter" />
-
-        <ul>
-            <li v-for="(item, index) in accounts" >
-                {{ item }}
-            </li>
-        </ul>
-        <hr/>
-        <accounts v-bind:accounts="accountTree"> </accounts>
-
-
-
-
+        <table>
+            <tr><td>
+                Account filter: <input type="text" v-on:change="calculateBalance" v-model="filter" />
+            </td></tr>
+            <tr><td>
+                <accounts v-bind:accounts="accountTreeProp()"> </accounts>
+            </td></tr>
+        </table>
     </form>
 
     <script id="accounts-template" type="text/template">
         <ul>
-            <li v-for="(item, index) in level" >
-                {{ item.balance }} &nbsp; {{ item.name }}
-                <div v-if="item.accounts != null && item.accounts.length > 0">
-                    <accounts v-bind:accounts="item.accounts"> </accounts>
+            <li v-for="(value, key) in levelFn()" >
+                {{ accountDisplay(value) }}
+                <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
+                    <accounts v-bind:accounts="value.accounts"> </accounts>
                 </div>
             </li>
         </ul>
