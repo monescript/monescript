@@ -1,7 +1,8 @@
-var parser = require('../../src/parser/journal-parser.js');
-var journal = require('../../src/journal.js');
+var parser = require('../../src/parser/journal-parser');
+var journal = require('../../src/journal');
 var balancer = require('../../src/balance');
 var Big = require('big.js');
+var accountNameHelper = require('./util/account-name-helper');
 
 var Vue = require('vue');
 require('./components/accounts.js');
@@ -59,9 +60,12 @@ var app = new Vue({
 
         var b = balancer.balance(journal, t => t.date.month == 10);
 
-        var b2 = Object.keys(b)
-        .filter(a => a.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0)
-        .sort((a, b) => a.localeCompare(b)).map(a => b[a]);
+        var b2 = accountNameHelper.filter(this.filter, b).sort((a, b) =>
+          accountNameHelper.encodeAccountName(a.account)
+            .localeCompare(accountNameHelper.encodeAccountName(b.account))
+        );
+
+        console.log(JSON.stringify(b2, null, 2));
 
         var offset = 18;
 
@@ -86,7 +90,6 @@ var app = new Vue({
 
         this.accountTree = tree.accounts;
         //console.log(JSON.stringify(this.accountTree, null, 2));
-
     }
   },
   beforeMount(){
