@@ -9,11 +9,11 @@ module.exports = Vue.component('accounts', {
     };
   },
   methods: {
-    levelFn: function(){
+    level: function(){
       return this.accounts;
     },
     accountDisplay: function(value){
-      return `${value.balance.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })} ${value.name }`;
+      return `${value.balance == null ? '' : value.balance.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })} ${value.name }`;
     }
   }
 });

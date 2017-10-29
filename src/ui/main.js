@@ -5,15 +5,13 @@ var Big = require('big.js');
 
 var Vue = require('vue');
 require('./components/accounts.js');
+require('./components/account-filter.js');
 
 var app = new Vue({
   el: '#app',
   data: {
     filter: 'Expenses',
     accountTree: {}
-  },
-  computed: {
-
   },
   methods: {
     accountTreeProp: function(){
@@ -87,7 +85,7 @@ var app = new Vue({
         });
 
         this.accountTree = tree.accounts;
-        console.log(JSON.stringify(this.accountTree, null, 2));
+        //console.log(JSON.stringify(this.accountTree, null, 2));
 
     }
   },

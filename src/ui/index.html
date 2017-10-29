@@ -1,4 +1,4 @@
-<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
@@ -572,7 +572,7 @@
 
         <table>
             <tr><td>
-                Account filter: <input type="text" v-on:change="calculateBalance" v-model="filter" />
+                <account-filter v-model="filter" @input="calculateBalance"></account-filter>
             </td></tr>
             <tr><td>
                 <accounts v-bind:accounts="accountTreeProp()"> </accounts>
@@ -580,9 +580,16 @@
         </table>
     </form>
 
+
+    <script id="account-filter-template" type="text/template">
+      <div>
+        <label>Account filter: </label>
+        <input type="text" @change="updateValue" v-model="value"/>
+      </div>
+    </script>
     <script id="accounts-template" type="text/template">
         <ul>
-            <li v-for="(value, key) in levelFn()" >
+            <li v-for="(value, key) in level()" >
                 {{ accountDisplay(value) }}
                 <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
                     <accounts v-bind:accounts="value.accounts"> </accounts>
