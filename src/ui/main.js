@@ -1,14 +1,38 @@
-var Vue = require('vue');
 var parser = require('../../src/parser/journal-parser.js');
 var journal = require('../../src/journal.js');
 var balancer = require('../../src/balance');
 var Big = require('big.js');
 
+var Vue = require('vue');
+require('./components/accounts.js');
+
 var app = new Vue({
   el: '#app',
   data: {
     filter: 'Expenses',
-    accounts: []
+    accounts: [],
+    accountTree: [
+      {
+        name: 'Expenses',
+        balance: 345.67,
+        accounts: [
+          {
+            name: 'Bills',
+            balance: 123.45
+          }
+        ]
+      },
+      {
+        name: 'Income',
+        balance: -567.89,
+        accounts: [
+          {
+            name: 'Salary',
+            balance: -123.45
+          }
+        ]
+      }
+    ]
   },
   methods: {
     handleFiles : function(e) {
@@ -31,7 +55,7 @@ var app = new Vue({
     createJournal: function(text){
         journal.reset();
 
-        document.getElementById('data').value = text;
+        //document.getElementById('data').value = text;
 
         parser.reset(text)
         var chunk;
@@ -41,7 +65,7 @@ var app = new Vue({
           }
         }catch(e){
           console.log(e);
-          console.log('Failing on line ' + JSON.stringify(chunk));
+          console.log('Failing on line ' + JSON.stringify(e.chunk));
         }
     },
 
@@ -74,6 +98,9 @@ var app = new Vue({
             self.accounts.push(value + name + "\n")
         });
     }
-  }
+  },
+  beforeMount(){
+      this.createJournal(document.getElementById('data').value);
+  },
 })
 
