@@ -52,6 +52,14 @@ var app = new Vue({
         }
     },
 
+    transactions: function(){
+      return journal.transactions(t =>
+        t.type == 'transaction' && t.date.month == 10
+        && t.posting[0].amount != null
+        && accountNameHelper.encodeAccountName(t.posting[0].account).toLowerCase().indexOf(this.filter.toLowerCase()) >= 0
+      )
+    },
+
     calculateBalance: function(){
         var balance = "";
 
@@ -65,7 +73,7 @@ var app = new Vue({
             .localeCompare(accountNameHelper.encodeAccountName(b.account))
         );
 
-        console.log(JSON.stringify(b2, null, 2));
+        //console.log(JSON.stringify(b2, null, 2));
 
         var offset = 18;
 

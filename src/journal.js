@@ -26,7 +26,9 @@ var Journal = {
   },
 
   transactions: function(filter){
-    return this.transactionList;
+    if(filter == null)
+      filter = a => true;
+    return this.transactionList.filter(filter);
   },
 
   //----------- Internal state

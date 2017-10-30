@@ -10,7 +10,7 @@
 
         <input type="file" id="input" v-on:change="handleFiles">
 
-<textarea id="data" >
+<textarea id="data" style="display:none;">
 
 2017/10/14 * Rexall
   Expenses:Bills:Electricity  $54.40
@@ -567,9 +567,6 @@
   Assets:Bank:Checking
 </textarea>
 
-        <textarea id="balance">
-        </textarea>
-
         <table>
             <tr><td>
                 <account-filter v-model="filter" @input="calculateBalance"></account-filter>
@@ -578,6 +575,24 @@
                 <accounts v-bind:accounts="accountTreeProp()"> </accounts>
             </td></tr>
         </table>
+
+        <table>
+          <tr v-for="t in transactions()">
+            <td>
+              {{t.date.year + '/' + t.date.month + '/' + t.date.day}}
+            </td>
+            <td>
+              {{parseFloat(t.posting[0].amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
+            </td>
+            <td>
+              {{t.payee}}
+            </td>
+            <td>
+              {{t.posting[0].account}}
+            </td>
+          </tr>
+        </table>
+
     </form>
 
 
@@ -590,7 +605,7 @@
     <script id="accounts-template" type="text/template">
         <ul>
             <li v-for="(value, key) in level()" >
-                {{ accountDisplay(value) }}
+                <a href="#" >{{ accountDisplay(value) }}</a>
                 <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
                     <accounts v-bind:accounts="value.accounts"> </accounts>
                 </div>
