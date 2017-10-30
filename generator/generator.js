@@ -1,9 +1,6 @@
 let g = require('./generator.util')
 
-for(let i = 0; i < 100; i++){
-  let t = `2017/10/14 * ${g.payee()}\n`;
-  for(let p = 0; p < g.count(5); ++p)
-    t += `  ${g.expenseAccount()}  $${g.amount(10, 100)}\n`
-  t += `  Assets:Bank:Checking\n`
+for(let i = 1; i <= 30; i++){
+  let t = g.transactionsDay(2017, 10, i);
   console.log(t);
 }
