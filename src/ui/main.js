@@ -2,6 +2,7 @@ var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
 var balancer = require('../../src/balance');
 var Big = require('big.js');
+var sampleGenerator = require('../../generator/generator.util');
 var accountNameHelper = require('./util/account-name-helper');
 
 var Vue = require('vue');
@@ -38,8 +39,6 @@ var app = new Vue({
     createJournal: function(text){
         journal.reset();
 
-        //document.getElementById('data').value = text;
-
         parser.reset(text)
         var chunk;
         try{
@@ -73,8 +72,6 @@ var app = new Vue({
             .localeCompare(accountNameHelper.encodeAccountName(b.account))
         );
 
-        //console.log(JSON.stringify(b2, null, 2));
-
         var offset = 18;
 
         this.accountTree = {};
@@ -97,17 +94,18 @@ var app = new Vue({
         });
 
         this.accountTree = tree.accounts;
-        //console.log(JSON.stringify(this.accountTree, null, 2));
-    }
+    },
+    generateJournal: function(){
+      var text = '';
+      for(let i = 1; i <= 30; i++){
+        text += sampleGenerator.transactionsDay(2017, 10, i);
+      }
+      return text;
+    },
   },
-  beforeMount(){
-      var text = document.getElementById('data').value;
-      var lines = "";
-      text.split("\n").forEach(l =>{
-        var p = l.split('            ');
-        lines += p[1] == undefined ? '' : p[1] + "\n";
-      });
-      //console.log(text);
+
+  beforeMount: function(){
+      var text = this.generateJournal();
       this.createJournal(text);
       this.calculateBalance();
   },
