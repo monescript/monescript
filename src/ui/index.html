@@ -17,6 +17,7 @@
         <table>
             <tr><td>
                 <account-filter v-model="filter" @input="calculateBalance"></account-filter>
+                <label>Month: </label><input type="number" @change="calculateBalance" v-model="month"/>
             </td></tr>
             <tr><td>
                 <accounts v-bind:accounts="accountTreeProp()"> </accounts>
@@ -29,13 +30,13 @@
               {{t.date.year + '/' + t.date.month + '/' + t.date.day}}
             </td>
             <td>
-              {{parseFloat(t.posting[0].amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
+              {{parseFloat(matchingPosting(t).amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
             </td>
             <td>
               {{t.payee}}
             </td>
             <td>
-              {{t.posting[0].account}}
+              {{matchingPosting(t).account}}
             </td>
           </tr>
         </table>

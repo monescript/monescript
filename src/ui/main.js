@@ -13,6 +13,7 @@ require('./components/account-filter.js');
 var app = new Vue({
   el: '#app',
   data: {
+    month: 10,
     filter: 'Expenses',
     accountTree: {}
   },
@@ -54,11 +55,23 @@ var app = new Vue({
     },
 
     transactions: function(){
-      return journal.transactions(t =>
-        t.type == 'transaction' && t.date.month == 10
-        && t.posting[0].amount != null
-        && accountNameHelper.encodeAccountName(t.posting[0].account).toLowerCase().indexOf(this.filter.toLowerCase()) >= 0
-      )
+      return journal.transactions(t => {
+        if(t.type == 'transaction' && t.date.month == this.month){
+          if(this.matchingPosting(t) != null)
+            return true;
+        }
+        return false;
+      })
+    },
+
+    matchingPosting: function(t){
+      for(let i = 0; i < t.posting.length; ++i){
+        if(t.posting[i].account != null && accountNameHelper.encodeAccountName(t.posting[i].account).toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 &&
+          t.posting[i].amount != null){
+            return t.posting[i];
+        }
+      }
+      return null;
     },
 
     calculateBalance: function(){
@@ -67,7 +80,7 @@ var app = new Vue({
         let self = this;
         self.accounts = [];
 
-        var b = balancer.balance(journal, t => t.date.month == 10);
+        var b = balancer.balance(journal, t => t.date.month == self.month);
 
         var b2 = accountNameHelper.filter(this.filter, b).sort((a, b) =>
           accountNameHelper.encodeAccountName(a.account)
@@ -140,6 +153,12 @@ var app = new Vue({
           bar: {
               width: {
                   ratio: 0.9
+              }
+          },
+          axis: {
+              x: {
+                  type: 'category',
+                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
               }
           }
       });
