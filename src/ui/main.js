@@ -1,6 +1,7 @@
 var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
 var balancer = require('../../src/balance');
+var c3 = require('c3');
 var Big = require('big.js');
 var sampleGenerator = require('../../generator/generator.util');
 var accountNameHelper = require('./util/account-name-helper');
@@ -28,6 +29,7 @@ var app = new Vue({
             var text = reader.result
             self.createJournal(text);
             self.calculateBalance();
+            self.createChart();
         }
         reader.onerror = function(err) {
             console.log(err, err.loaded, err.loaded === 0);
@@ -102,6 +104,46 @@ var app = new Vue({
       }
       return text;
     },
+
+    getMonthlyBalance: function(filter, month){
+        var b = balancer.balance(journal, t => t.date.month == month);
+        var b2 = accountNameHelper.filter(filter, b);
+        if(b2.length > 0)
+        {
+          var a = b2[0];
+          return Math.abs(parseFloat(a.balance.toFixed(2)));
+        }
+        else
+        {
+          return (0.00);
+        }
+    },
+
+    createChart: function(){
+      let dataExpense = ['Expense'];
+      let dataIncome = ['Income'];
+      for(let i = 1; i <= 12; ++i){
+        dataExpense.push(this.getMonthlyBalance('Expense', i));
+        dataIncome.push(this.getMonthlyBalance('Income', i));
+      }
+
+      var chart = c3.generate({
+          bindto: '#chart',
+          data: {
+              columns: [
+                  dataExpense,
+                  dataIncome
+              ],
+              labels: true,
+              type: 'bar'
+          },
+          bar: {
+              width: {
+                  ratio: 0.9
+              }
+          }
+      });
+    }
   },
 
   beforeMount: function(){
