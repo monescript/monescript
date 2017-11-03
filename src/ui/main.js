@@ -166,9 +166,13 @@ var app = new Vue({
   },
 
   beforeMount: function(){
+      var self = this;
       var text = this.generateJournal();
       this.createJournal(text);
       this.calculateBalance();
+      Vue.nextTick(function () {
+        self.createChart();
+      });
   },
 })
 
