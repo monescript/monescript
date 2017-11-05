@@ -111,9 +111,20 @@ var app = new Vue({
         this.accountTree = tree.accounts;
     },
     generateJournal: function(){
-      var text = '';
-      for(let i = 1; i <= 30; i++){
-        text += sampleGenerator.transactionsDay(2017, 10, i);
+      const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      let today = new Date();
+      let todayMonth = today.getMonth() + 1;
+      let todayDay = today.getDate();
+      let todayYear = today.getFullYear();
+
+      let text = '';
+      for(let month = 0; month < todayMonth; ++month){
+        for(let day = 1; day <= monthDays[month]; day++){
+          if(month == todayMonth && day > todayDay){
+            break;
+          }
+          text += sampleGenerator.transactionsDay(todayYear, month + 1, day);
+        }
       }
       return text;
     },

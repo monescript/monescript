@@ -8,13 +8,13 @@
       }
     },
     {
-      payee: 'Rexall',
+      payee: 'Pharmacy One',
       accounts: {
         'Expenses:Pharmacy' : 30.0,
       }
     },
     {
-      payee: 'Putting Edge',
+      payee: 'Golf Town',
       accounts: {
         'Expenses:Entertainment' : 100.0,
       }
@@ -32,20 +32,20 @@
       }
     },
     {
-      payee: 'Loblaws',
+      payee: 'Giant Moose',
       accounts: {
         'Expenses:Food:Grocery' : 100.0,
         'Expenses:Department' : 20.0,
       }
     },
     {
-      payee: 'Costco',
+      payee: 'Price Club',
       accounts: {
         'Expenses:Food:Grocery' : 200.0,
       }
     },
     {
-      payee: 'Tim Hortons',
+      payee: 'The Doughnut',
       accounts: {
         'Expenses:Food:Takeout' : 20.0,
       }
@@ -69,13 +69,13 @@
       }
     },
     {
-      payee: 'Hydro One',
+      payee: 'Northern Hydro',
       accounts: {
         'Expenses:Bills:Electricity' : 100.0,
       }
     },
     {
-      payee: 'Toronto',
+      payee: 'City Services',
       accounts: {
         'Expenses:Bills:Water' : 50.0,
       }
