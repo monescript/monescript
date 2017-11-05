@@ -1,0 +1,14 @@
+{
+  "Expenses": {
+    "name": "Expenses",
+    "balance": 97.93,
+    "currency": "$",
+    "accounts": {
+      "Food": {
+        "name": "Food",
+        "balance": 97.02,
+        "currency": "$"
+      }
+    }
+  }
+}

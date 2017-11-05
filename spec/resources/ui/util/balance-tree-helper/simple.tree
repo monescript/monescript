@@ -1,0 +1,26 @@
+{
+  "Assets": {
+    "name": "Assets",
+    "balance": -100,
+    "currency": "$",
+    "accounts": {
+      "Checking": {
+        "name": "Checking",
+        "balance": -100,
+        "currency": "$"
+      }
+    }
+  },
+  "Expenses": {
+    "name": "Expenses",
+    "balance": 100,
+    "currency": "$",
+    "accounts": {
+      "Dining": {
+        "name": "Dining",
+        "balance": 100,
+        "currency": "$"
+      }
+    }
+  }
+}

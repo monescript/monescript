@@ -5,6 +5,7 @@ var c3 = require('c3');
 var Big = require('big.js');
 var sampleGenerator = require('../../generator/generator.util');
 var accountNameHelper = require('./util/account-name-helper');
+var balanceTreeHelper = require('./util/balance-tree-helper');
 
 var Vue = require('vue');
 require('./components/accounts.js');
@@ -75,40 +76,11 @@ var app = new Vue({
     },
 
     calculateBalance: function(){
-        var balance = "";
-
         let self = this;
-        self.accounts = [];
-
-        var b = balancer.balance(journal, t => t.date.month == self.month);
-
-        var b2 = accountNameHelper.filter(this.filter, b).sort((a, b) =>
-          accountNameHelper.encodeAccountName(a.account)
-            .localeCompare(accountNameHelper.encodeAccountName(b.account))
-        );
-
-        var offset = 18;
-
-        this.accountTree = {};
-        let tree = {}
-        b2.forEach(a =>{
-          let branchLevel = tree;
-          a.account.forEach(n => {
-            var nextLevel = branchLevel.accounts == null ? null : branchLevel.accounts[n];
-            if(nextLevel == null)
-            {
-              var nextLevel = {name: n};
-              if(branchLevel.accounts == null)
-                branchLevel.accounts = {};
-              branchLevel.accounts[n] = nextLevel;
-            }
-            branchLevel = nextLevel;
-          });
-          branchLevel.balance = parseFloat(a.balance.toFixed(2));
-          branchLevel.currency = a.currency;
-        });
-
-        this.accountTree = tree.accounts;
+        this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, {
+                             month: self.month,
+                             accountRegex: self.filter
+                           });
     },
     generateJournal: function(){
       const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];

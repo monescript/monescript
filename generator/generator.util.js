@@ -1,7 +1,7 @@
   let Generator = {
   payees : [
     {
-      payee: 'PartyCity',
+      payee: 'PartyShack',
       accounts: {
         'Expenses:Entertainment': 50.0,
         'Expenses:Clothing': 50.0
@@ -14,19 +14,19 @@
       }
     },
     {
-      payee: 'Golf Town',
+      payee: 'Golf Equip',
       accounts: {
         'Expenses:Entertainment' : 100.0,
       }
     },
     {
-      payee: 'Laser Quest',
+      payee: 'Laser Play',
       accounts: {
         'Expenses:Entertainment' : 100.0,
       }
     },
     {
-      payee: 'Sobeys',
+      payee: 'Groceries and More',
       accounts: {
         'Expenses:Food:Grocery' : 100.0,
       }
@@ -39,7 +39,7 @@
       }
     },
     {
-      payee: 'Price Club',
+      payee: 'Lower Pricer',
       accounts: {
         'Expenses:Food:Grocery' : 200.0,
       }
@@ -51,19 +51,19 @@
       }
     },
     {
-      payee: 'Starbucks',
+      payee: 'Coffee Stop',
       accounts: {
         'Expenses:Food:Takeout' : 20.0,
       }
     },
     {
-      payee: 'Ikea',
+      payee: 'Furnitura',
       accounts: {
         'Expenses:Furniture' : 300.0,
       }
     },
     {
-      payee: 'Enbridge',
+      payee: 'Eastern Gas',
       accounts: {
         'Expenses:Bills:Gas' : 150.0,
       }

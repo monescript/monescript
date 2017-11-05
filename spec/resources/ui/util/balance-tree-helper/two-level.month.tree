@@ -1,0 +1,21 @@
+{
+  "Expenses": {
+    "name": "Expenses",
+    "balance": 208.93,
+    "currency": "$",
+    "accounts": {
+      "Food": {
+        "name": "Food",
+        "balance": 97.02,
+        "currency": "$",
+        "accounts": {
+          "Grocery": {
+            "name": "Grocery",
+            "balance": 97.02,
+            "currency": "$"
+          }
+        }
+      }
+    }
+  }
+}
