@@ -117,4 +117,40 @@ describe("Balance ", function() {
       'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(-100.11)}
     });
   });
+
+
+  it("can balance with posting filter", function() {
+    var txns = [{
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 23 },
+      status: '*',
+      payee: 'Payee Name 1234',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1' ], currency: '$', amount: 100.11 },
+        {account: [ 'Assets', 'Checking'], currency: '$', amount: -100.11 }
+      ]
+    },{
+      type: 'transaction',
+      date: { year: 2016, month: 8, day: 24 },
+      status: '!',
+      payee: 'Payee Name 1234',
+      posting: [
+        {account: [ 'Expenses', 'Purchases', 'Department' ], currency: '$', amount: 20.00 },
+        {account: [ 'Expenses', 'Purchases', 'Grocery' ], currency: '$', amount: 50.12 },
+        {account: [ 'Assets', 'Checking'], currency: '$', amount: -70.12 }
+      ]
+    }];
+
+    txns.forEach(t => journal.add(t));
+
+    var clearedTxnFilter = txn => txn.status == '*';
+    var expensesPostingFilter = p => p.account.some(a => a.toLowerCase().indexOf("Expenses".toLowerCase()) >= 0);
+
+
+    expect(balancer.balance(journal, clearedTxnFilter, expensesPostingFilter)).toEqual({
+      'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(100.11)},
+      'Expenses:Utilities': {account: ['Expenses', 'Utilities' ], currency: '$', balance: Big(100.11)},
+      'Expenses:Utilities:Phone 1': {account: ['Expenses', 'Utilities', 'Phone 1' ], currency: '$', balance: Big(100.11)}
+    });
+  });
 });

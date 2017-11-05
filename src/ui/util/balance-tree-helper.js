@@ -6,12 +6,24 @@ module.exports = {
 
   filteredBalanceTree: function(journal, filter){
 
-    let filteredAccounts = balancer.balance(journal, t => {
-      return t.date.month == filter.month &&
-        t.posting.some(p =>
-          p.account != null && p.account.some(a => a.toLowerCase().indexOf(filter.accountRegex.toLowerCase()) >= 0)
-        );
-    });
+
+    let postingAccountFilter =
+        filter != null && filter.accountRegex != null ?
+          p => p.account != null &&
+          p.account.some(a => a.toLowerCase().indexOf(filter.accountRegex.toLowerCase()) >= 0)
+          :
+          p => true;
+
+    let txnMonthFilter =
+        filter != null && filter.month != null  ?
+        t => t.date.month == filter.month
+        :
+        t => true;
+
+
+    let filteredAccounts = balancer.balance(journal,
+                                            t => txnMonthFilter(t) && t.posting.some(postingAccountFilter),
+                                            postingAccountFilter)
 
     let accountArray = Object.keys(filteredAccounts)
       .map(a => filteredAccounts[a]);

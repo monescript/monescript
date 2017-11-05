@@ -12,26 +12,39 @@ describe("Account name helper", function() {
   it("can build simple tree", function() {
      createJournal('simple.journal');
 
-     let tree = balanceTreeHelper.filteredBalanceTree(journal, {
-        accountRegex: '',
-        month: 5
-     });
+     let tree = balanceTreeHelper.filteredBalanceTree(journal);
 
      expect(tree).toEqual(readFromJsonFile('simple.tree'));
   });
 
+  it("can filter by account regex", function() {
+     createJournal('two-level.journal');
 
-  xit("adjusts balance by filtered accounts", function() {
+     let tree = balanceTreeHelper.filteredBalanceTree(journal, {
+        accountRegex: 'Food'
+     });
+     expect(tree).toEqual(readFromJsonFile('two-level.name.tree'));
+  });
+
+  it("can filter by month", function() {
+     createJournal('two-level.journal');
+
+     let tree = balanceTreeHelper.filteredBalanceTree(journal, {
+        month: 8
+     });
+     expect(tree).toEqual(readFromJsonFile('two-level.month.tree'));
+  });
+
+
+  it("can filter by both", function() {
      createJournal('two-level.journal');
 
      let tree = balanceTreeHelper.filteredBalanceTree(journal, {
         accountRegex: 'Food',
-        month: 10
+        month: 8
      });
-     console.log(JSON.stringify(tree, null, 2));
-     expect(tree).toEqual(readFromJsonFile('two-level.name.tree'));
+     expect(tree).toEqual(readFromJsonFile('two-level.both.tree'));
   });
-
 
   let readFromJsonFile = function(filename){
     var text = fs.readFileSync('spec/resources/ui/util/balance-tree-helper/' + filename, 'utf8');

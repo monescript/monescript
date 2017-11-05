@@ -1,12 +1,12 @@
 {
   "Expenses": {
     "name": "Expenses",
-    "balance": 122.04,
+    "balance": 25.02,
     "currency": "$",
     "accounts": {
       "Food": {
         "name": "Food",
-        "balance": 122.04,
+        "balance": 25.02,
         "currency": "$"
       }
     }

@@ -1,20 +1,32 @@
 {
+  "Assets": {
+    "name": "Assets",
+    "balance": -25.02,
+    "currency": "$",
+    "accounts": {
+      "Bank": {
+        "name": "Bank",
+        "balance": -25.02,
+        "currency": "$",
+        "accounts": {
+          "Checking": {
+            "name": "Checking",
+            "balance": -25.02,
+            "currency": "$"
+          }
+        }
+      }
+    }
+  },
   "Expenses": {
     "name": "Expenses",
-    "balance": 208.93,
+    "balance": 25.02,
     "currency": "$",
     "accounts": {
       "Food": {
         "name": "Food",
-        "balance": 97.02,
-        "currency": "$",
-        "accounts": {
-          "Grocery": {
-            "name": "Grocery",
-            "balance": 97.02,
-            "currency": "$"
-          }
-        }
+        "balance": 25.02,
+        "currency": "$"
       }
     }
   }

@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 var Balance = {
 
-  balance: function(journal, txnFilter){
+  balance: function(journal, txnFilter, postingFilter){
     this.reset();
     this.processBucketAccount(journal);
     var balancer = this;
@@ -13,7 +13,11 @@ var Balance = {
       txnFilter = t => true;
     }
 
-    journal.transactionList.filter(txnFilter).forEach(t => balancer.processTransaction(journal, t));
+    if(postingFilter == null){
+      postingFilter = p => true;
+    }
+
+    journal.transactionList.filter(txnFilter).forEach(t => balancer.processTransaction(journal, t, postingFilter));
 
     return this.accounts;
   },
@@ -61,10 +65,10 @@ var Balance = {
     return accountHierarchy;
   },
 
-  processTransaction: function(journal, txn){
+  processTransaction: function(journal, txn, postingFilter){
     var balancer = this;
 
-    this.postings(txn).forEach(function(p) {
+    this.postings(txn, postingFilter).forEach(function(p) {
       var postingAmount = p.amount;
       var postingCurrency = journal.currency(p);
       if(p.amount != null){
@@ -74,9 +78,9 @@ var Balance = {
     });
   },
 
-  postings: function(txn){
+  postings: function(txn, postingFilter){
     return txn.posting.filter(function(p){
-      return p.account != null;
+      return p.account != null && postingFilter(p);
     });
   },
 
