@@ -18,10 +18,7 @@ describe("Balance ", function() {
     journal.add({"type":"bucket","account":["Assets","Checking"]});
 
     var balance = balancer.balance(journal);
-    expect(balance).toEqual({
-      'Assets': {account: ["Assets"], currency: '$', balance: Big(0.0)},
-      'Assets:Checking': {account: ["Assets","Checking"], currency: '$', balance: Big(0.0)}
-    });
+    expect(balance).toEqual({});
   });
 
   it("can show balance on a single transaction", function() {

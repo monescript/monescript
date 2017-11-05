@@ -6,7 +6,6 @@ var Balance = {
 
   balance: function(journal, txnFilter, postingFilter){
     this.reset();
-    this.processBucketAccount(journal);
     var balancer = this;
 
     if(txnFilter == null){
@@ -30,25 +29,6 @@ var Balance = {
 
   reset: function(){
     this.accounts = {};
-  },
-
-  processBucketAccount: function(journal){
-    if(journal.bucketAccount.length == 0)
-      return;
-
-    var accountHierarchy = this.produceAccountHierarchy(journal.bucketAccount);
-
-    accountHierarchy.forEach(a => {
-      var accountName = this.encodeAccountName(a);
-      if(this.accounts[accountName] == null)
-      {
-        this.accounts[accountName] = {
-          account: a,
-          currency: '$',
-          balance: Big(0),
-        }
-      }
-    });
   },
 
   encodeAccountName: function(accountArray){
@@ -96,7 +76,6 @@ var Balance = {
     } else {
       var accountBalance = this.accounts[accountName].balance;
       this.accounts[accountName].balance = accountBalance.add(amount);
-
     }
   },
 }
