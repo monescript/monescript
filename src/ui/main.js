@@ -5,7 +5,7 @@ var c3 = require('c3');
 var Big = require('big.js');
 var sampleGenerator = require('../../generator/generator.util');
 var accountNameHelper = require('./util/account-name-helper');
-var balanceTreeHelper = require('./util/balance-tree-helper');
+var balanceTreeHelper = require('./util/balance-filter-helper');
 
 var Vue = require('vue');
 require('./components/accounts.js');
@@ -81,6 +81,12 @@ var app = new Vue({
                              month: self.month,
                              accountRegex: self.filter
                            });
+
+       //TODO: Move this to proper onchange
+       Vue.nextTick(function () {
+         self.createChart();
+         self.createChartFiltered();
+       });
     },
     generateJournal: function(){
       const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -101,18 +107,40 @@ var app = new Vue({
       return text;
     },
 
-    getMonthlyBalance: function(filter, month){
-        var b = balancer.balance(journal, t => t.date.month == month);
-        var b2 = accountNameHelper.filter(filter, b);
-        if(b2.length > 0)
-        {
-          var a = b2[0];
-          return Math.abs(parseFloat(a.balance.toFixed(2)));
-        }
-        else
-        {
-          return (0.00);
-        }
+    getMonthlyBalance: function(account, month){
+      return balanceTreeHelper.filteredBalance(journal, {
+        accountRegex: account,
+        month: month
+      });
+    },
+
+    createChartFiltered: function(){
+      let data = [this.filter];
+      for(let i = 1; i <= 12; ++i){
+        data.push(this.getMonthlyBalance(this.filter, i));
+      }
+
+      var chart = c3.generate({
+          bindto: '#chart-filtered',
+          data: {
+              columns: [
+                  data
+              ],
+              labels: true,
+              type: 'bar'
+          },
+          bar: {
+              width: {
+                  ratio: 0.9
+              }
+          },
+          axis: {
+              x: {
+                  type: 'category',
+                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+              }
+          }
+      });
     },
 
     createChart: function(){
@@ -155,6 +183,7 @@ var app = new Vue({
       this.calculateBalance();
       Vue.nextTick(function () {
         self.createChart();
+        self.createChartFiltered();
       });
   },
 })
