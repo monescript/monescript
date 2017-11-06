@@ -65,9 +65,9 @@ module.exports = {
 
   createPostingAccountFilter: function(filter){
       var a =
-          filter != null && filter.accountRegex != null ?
+          filter != null && filter.account != null ?
             p => p.account != null &&
-            p.account.some(a => a.toLowerCase().indexOf(filter.accountRegex.toLowerCase()) >= 0)
+            p.account.some(a => a.toLowerCase().indexOf(filter.account.toLowerCase()) >= 0)
             :
             p => true;
       return a;

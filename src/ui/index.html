@@ -19,7 +19,6 @@
         <table>
             <tr><td>
                 <account-filter v-model="filter" @input="calculateBalance"></account-filter>
-                <label>Month: </label><input type="number" @change="calculateBalance" v-model="month"/>
             </td></tr>
             <tr><td>
                 <accounts v-bind:accounts="accountTreeProp()"> </accounts>
@@ -42,14 +41,14 @@
             </td>
           </tr>
         </table>
-
     </form>
-
 
     <script id="account-filter-template" type="text/template">
       <div>
         <label>Account filter: </label>
-        <input type="text" @change="updateValue" v-model="value"/>
+        <input type="text" @change="updateFilter" v-model="filter.account"/>
+        <label>Month: </label>
+        <input type="number" @change="updateFilter" v-model="filter.month"/>
       </div>
     </script>
     <script id="accounts-template" type="text/template">

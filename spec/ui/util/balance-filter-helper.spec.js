@@ -22,7 +22,7 @@ describe("Account name helper", function() {
        createJournal('two-level.journal');
 
        let tree = balanceTreeHelper.filteredBalanceTree(journal, {
-          accountRegex: 'Food'
+          account: 'Food'
        });
        expect(tree).toEqual(readFromJsonFile('two-level.name.tree'));
     });
@@ -41,7 +41,7 @@ describe("Account name helper", function() {
        createJournal('two-level.journal');
 
        let tree = balanceTreeHelper.filteredBalanceTree(journal, {
-          accountRegex: 'Food',
+          account: 'Food',
           month: 8
        });
        expect(tree).toEqual(readFromJsonFile('two-level.both.tree'));
@@ -53,7 +53,7 @@ describe("Account name helper", function() {
        createJournal('two-level.journal');
 
        var bal = balanceTreeHelper.filteredBalance(journal, {
-          accountRegex: 'Food'
+          account: 'Food'
        });
        expect(bal).toEqual(122.04);
     });

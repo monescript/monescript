@@ -3,13 +3,19 @@ var Vue = require('vue');
 module.exports = Vue.component('account-filter', {
   template: '#account-filter-template',
   data: function(){
+    let today = new Date();
+    let todayMonth = today.getMonth() + 1;
+
     return {
-      value: 'Expenses'
+      filter: {
+        account: 'Expenses',
+        month: todayMonth
+      }
     };
   },
   methods: {
-    updateValue: function(){
-      this.$emit('input', this.value);
+    updateFilter: function(){
+      this.$emit('input', this.filter);
     }
   }
 });

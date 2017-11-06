@@ -14,8 +14,7 @@ require('./components/account-filter.js');
 var app = new Vue({
   el: '#app',
   data: {
-    month: 10,
-    filter: 'Expenses',
+    filter:  {},
     accountTree: {}
   },
   methods: {
@@ -57,7 +56,7 @@ var app = new Vue({
 
     transactions: function(){
       return journal.transactions(t => {
-        if(t.type == 'transaction' && t.date.month == this.month){
+        if(t.type == 'transaction' && t.date.month == this.filter.month){
           if(this.matchingPosting(t) != null)
             return true;
         }
@@ -67,7 +66,7 @@ var app = new Vue({
 
     matchingPosting: function(t){
       for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.encodeAccountName(t.posting[i].account).toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 &&
+        if(t.posting[i].account != null && accountNameHelper.encodeAccountName(t.posting[i].account).toLowerCase().indexOf(this.filter.account.toLowerCase()) >= 0 &&
           t.posting[i].amount != null){
             return t.posting[i];
         }
@@ -77,10 +76,7 @@ var app = new Vue({
 
     calculateBalance: function(){
         let self = this;
-        this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, {
-                             month: self.month,
-                             accountRegex: self.filter
-                           });
+        this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, self.filter);
 
        //TODO: Move this to proper onchange
        Vue.nextTick(function () {
@@ -109,15 +105,15 @@ var app = new Vue({
 
     getMonthlyBalance: function(account, month){
       return balanceTreeHelper.filteredBalance(journal, {
-        accountRegex: account,
+        account: account,
         month: month
       });
     },
 
     createChartFiltered: function(){
-      let data = [this.filter];
+      let data = [this.filter.account];
       for(let i = 1; i <= 12; ++i){
-        data.push(this.getMonthlyBalance(this.filter, i));
+        data.push(this.getMonthlyBalance(this.filter.account, i));
       }
 
       var chart = c3.generate({
