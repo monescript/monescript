@@ -80,8 +80,16 @@
         'Expenses:Bills:Water' : 50.0,
       }
     },
+    {
+      payee: 'Client',
+      accounts: {
+        'Assets:Bank:Checking' : 2345.67,
+      },
+      counterAccounts: {
+        'Income:Contract': 0.0
+      }
+    },
   ],
-
 
   transactionsDay: function(year, month, day){
     let t = '';
@@ -91,7 +99,9 @@
       txn.posting.forEach(p => {
         t += `  ${p.account}  $${p.amount}\n`
       });
-      t += `  Assets:Bank:Checking\n`
+      txn.counterPosting.forEach(p => {
+        t += `  ${p.account} \n`
+      });
     }
     return t;
   },
@@ -101,6 +111,7 @@
 
     var pt = this.payee();
     txn.payee = pt.payee;
+
     txn.posting = [];
     let aKeys = Object.keys(pt.accounts);
     let count = aKeys.length;
@@ -112,6 +123,21 @@
         amount: this.amount(5.0, pt.accounts[account])
       });
     }
+
+    txn.counterPosting = [];
+    let caKeys = pt.counterAccounts == null ? [] : Object.keys(pt.counterAccounts);
+    if(caKeys.length == 0)
+      caKeys = ['Assets:Bank:Checking'];
+
+    let caCount = caKeys.length;
+    for(let p = 0; p < caCount; ++p)
+    {
+      let account = caKeys[p];
+      txn.counterPosting.push({
+        account: account
+      });
+    }
+
     return txn;
   },
 

@@ -14,7 +14,10 @@ require('./components/account-filter.js');
 var app = new Vue({
   el: '#app',
   data: {
-    filter:  {},
+    filter:  {
+      account: 'Expenses',
+      month: new Date().getMonth() + 1
+    },
     accountTree: {}
   },
   methods: {
