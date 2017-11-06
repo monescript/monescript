@@ -10,6 +10,7 @@ var balanceTreeHelper = require('./util/balance-filter-helper');
 var Vue = require('vue');
 require('./components/accounts.js');
 require('./components/account-filter.js');
+require('./components/monthly-chart.js');
 
 var app = new Vue({
   el: '#app',
@@ -21,6 +22,9 @@ var app = new Vue({
     accountTree: {}
   },
   methods: {
+    totalInOutProp: function(){
+      return this.totalInOutData;
+    },
     accountTreeProp: function(){
       return this.accountTree;
     },
@@ -149,29 +153,7 @@ var app = new Vue({
         dataExpense.push(this.getMonthlyBalance('Expense', i));
         dataIncome.push(this.getMonthlyBalance('Income', i));
       }
-
-      var chart = c3.generate({
-          bindto: '#chart',
-          data: {
-              columns: [
-                  dataExpense,
-                  dataIncome
-              ],
-              labels: true,
-              type: 'bar'
-          },
-          bar: {
-              width: {
-                  ratio: 0.9
-              }
-          },
-          axis: {
-              x: {
-                  type: 'category',
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-              }
-          }
-      });
+      this.totalInOutData = [dataExpense, dataIncome];
     }
   },
 
@@ -180,8 +162,8 @@ var app = new Vue({
       var text = this.generateJournal();
       this.createJournal(text);
       this.calculateBalance();
+      self.createChart();
       Vue.nextTick(function () {
-        self.createChart();
         self.createChartFiltered();
       });
   },

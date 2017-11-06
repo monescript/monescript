@@ -10,7 +10,7 @@
 
     <form id="app">
 
-        <div id="chart" style="width: 100%; height: 200px;"></div>
+        <monthly-chart v-bind:id="chart" style="width: 100%; height: 200px;" v-bind:column-data="totalInOutProp()"></monthly-chart>
         <br/>
         <div id="chart-filtered" style="width: 100%; height: 200px;"></div>
 
@@ -60,6 +60,9 @@
                 </div>
             </li>
         </ul>
+    </script>
+    <script id="monthly-chart-template" type="text/template">
+        <div id="ids" style="style"></div>
     </script>
 
     <script src="_js/bundle.js"></script>
