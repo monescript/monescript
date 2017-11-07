@@ -1,7 +1,6 @@
 var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
 var balancer = require('../../src/balance');
-var c3 = require('c3');
 var Big = require('big.js');
 var sampleGenerator = require('../../generator/generator.util');
 var accountNameHelper = require('./util/account-name-helper');
