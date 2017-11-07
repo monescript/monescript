@@ -19,15 +19,13 @@ var app = new Vue({
       account: 'Expenses',
       month: new Date().getMonth() + 1
     },
-    accountTree: {}
+    accountTree: {},
+    transactions: [],
+    totalInOutData: [],
+    filteredData: []
   },
   methods: {
-    totalInOutProp: function(){
-      return this.totalInOutData;
-    },
-    accountTreeProp: function(){
-      return this.accountTree;
-    },
+
     handleFiles : function(e) {
         var files = e.currentTarget.files;
         var reader = new FileReader();
@@ -37,7 +35,6 @@ var app = new Vue({
             var text = reader.result
             self.createJournal(text);
             self.calculateBalance();
-            self.createChart();
         }
         reader.onerror = function(err) {
             console.log(err, err.loaded, err.loaded === 0);
@@ -61,14 +58,17 @@ var app = new Vue({
         }
     },
 
-    transactions: function(){
-      return journal.transactions(t => {
+    updateTransactions: function(){
+      this.transactions = journal.transactions(t => {
         if(t.type == 'transaction' && t.date.month == this.filter.month){
           if(this.matchingPosting(t) != null)
             return true;
         }
         return false;
-      })
+      });
+      if(this.transactions == null){
+        this.transactions = [];
+      }
     },
 
     matchingPosting: function(t){
@@ -81,16 +81,25 @@ var app = new Vue({
       return null;
     },
 
-    calculateBalance: function(){
-        let self = this;
-        this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, self.filter);
-
-       //TODO: Move this to proper onchange
-       Vue.nextTick(function () {
-         self.createChart();
-         self.createChartFiltered();
-       });
+    matchingTxnPosting: function(t){
+      let mp = this.matchingPosting(t);
+      return mp == null ? {amount: 0.0, account: []} : mp;
     },
+
+    updateAccounts: function(){
+      this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, this.filter);
+      if(this.accountTree == null){
+        this.accountTree = {};
+      }
+    },
+
+    calculateBalance: function(){
+      this.updateTransactions();
+      this.updateAccounts();
+      this.createChart();
+      this.createChartFiltered();
+    },
+
     generateJournal: function(){
       const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
       let today = new Date();
@@ -122,28 +131,7 @@ var app = new Vue({
       for(let i = 1; i <= 12; ++i){
         data.push(this.getMonthlyBalance(this.filter.account, i));
       }
-
-      var chart = c3.generate({
-          bindto: '#chart-filtered',
-          data: {
-              columns: [
-                  data
-              ],
-              labels: true,
-              type: 'bar'
-          },
-          bar: {
-              width: {
-                  ratio: 0.9
-              }
-          },
-          axis: {
-              x: {
-                  type: 'category',
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-              }
-          }
-      });
+      this.filteredData = [data];
     },
 
     createChart: function(){
@@ -162,10 +150,6 @@ var app = new Vue({
       var text = this.generateJournal();
       this.createJournal(text);
       this.calculateBalance();
-      self.createChart();
-      Vue.nextTick(function () {
-        self.createChartFiltered();
-      });
   },
 })
 

@@ -5,16 +5,11 @@ module.exports = Vue.component('monthly-chart', {
   template: '#monthly-chart-template',
   props: ['columnData'],
   data: function(){
-    let today = new Date();
-    let todayMonth = today.getMonth() + 1;
-
-    return {
-      id: '',
-      style: ''
-    };
+    return {};
   },
+
   watch: {
-    columnData: function (newQuestion) {
+    columnData: function () {
       var self = this;
       Vue.nextTick(function () {
         self.createChart()
@@ -22,12 +17,12 @@ module.exports = Vue.component('monthly-chart', {
     }
   },
   methods: {
-
+    uniqId: function(){
+      return 'monthly-chart-' + this._uid;
+    },
     createChart: function(){
-      console.log(this.id);
-      console.log(JSON.stringify(this.columnData, null, 2));
       var chart = c3.generate({
-          bindto: this.id,
+          bindto: '#' + this.uniqId(),
           data: {
               columns: this.columnData,
               labels: true,
@@ -46,5 +41,11 @@ module.exports = Vue.component('monthly-chart', {
           }
       });
     }
-  }
+  },
+  beforeMount: function(){
+      var self = this;
+      Vue.nextTick(function () {
+        self.createChart();
+      });
+  },
 });

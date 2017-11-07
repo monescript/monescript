@@ -10,9 +10,9 @@
 
     <form id="app">
 
-        <monthly-chart v-bind:id="chart" style="width: 100%; height: 200px;" v-bind:column-data="totalInOutProp()"></monthly-chart>
+        <monthly-chart style="width: 100%; height: 200px;" v-bind:column-data="totalInOutData"></monthly-chart>
         <br/>
-        <div id="chart-filtered" style="width: 100%; height: 200px;"></div>
+        <monthly-chart style="width: 100%; height: 200px;" v-bind:column-data="filteredData"></monthly-chart>
 
         <input type="file" id="input" v-on:change="handleFiles">
 
@@ -21,37 +21,37 @@
                 <account-filter v-model="filter" @input="calculateBalance"></account-filter>
             </td></tr>
             <tr><td>
-                <accounts v-bind:accounts="accountTreeProp()"> </accounts>
+                <accounts v-bind:accounts="accountTree"> </accounts>
             </td></tr>
         </table>
 
         <table>
-          <tr v-for="t in transactions()">
+          <tr v-for="t in transactions">
             <td>
               {{t.date.year + '/' + t.date.month + '/' + t.date.day}}
             </td>
             <td>
-              {{parseFloat(matchingPosting(t).amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
+              {{parseFloat(matchingTxnPosting(t).amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
             </td>
             <td>
               {{t.payee}}
             </td>
             <td>
-              {{matchingPosting(t).account}}
+              {{matchingTxnPosting(t).account}}
             </td>
           </tr>
         </table>
     </form>
 
-    <script id="account-filter-template" type="text/template">
+    <script id="account-filter-template" type="text/x-template">
       <div>
         <label>Account filter: </label>
-        <input type="text" @change="updateFilter" v-model="filter.account"/>
+        <input type="text" @change="updateFilter" v-model.lazy="filter.account"/>
         <label>Month: </label>
-        <input type="number" @change="updateFilter" v-model="filter.month"/>
+        <input type="number" @change="updateFilter" v-model.lazy="filter.month"/>
       </div>
     </script>
-    <script id="accounts-template" type="text/template">
+    <script id="accounts-template" type="text/x-template">
         <ul>
             <li v-for="(value, key) in level()" >
                 <a href="#" >{{ accountDisplay(value) }}</a>
@@ -61,8 +61,8 @@
             </li>
         </ul>
     </script>
-    <script id="monthly-chart-template" type="text/template">
-        <div id="ids" style="style"></div>
+    <script id="monthly-chart-template" type="text/x-template">
+        <div :id="uniqId()"></div>
     </script>
 
     <script src="_js/bundle.js"></script>
