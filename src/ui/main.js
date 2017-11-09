@@ -10,6 +10,7 @@ var Vue = require('vue');
 require('./components/accounts.js');
 require('./components/account-filter.js');
 require('./components/monthly-chart.js');
+require('./components/weekly-chart.js');
 
 var app = new Vue({
   el: '#app',
@@ -21,7 +22,8 @@ var app = new Vue({
     accountTree: {},
     transactions: [],
     totalInOutData: [],
-    filteredData: []
+    filteredData: [],
+    filteredWeeklyData: []
   },
   methods: {
 
@@ -95,8 +97,7 @@ var app = new Vue({
     calculateBalance: function(){
       this.updateTransactions();
       this.updateAccounts();
-      this.createChart();
-      this.createChartFiltered();
+      this.createCharts();
     },
 
     generateJournal: function(){
@@ -123,6 +124,29 @@ var app = new Vue({
         account: account,
         month: month
       });
+    },
+
+    txnWeekNumber: function(t){
+      let txnDate = new Date(t.date.year, t.date.month - 1, t.date.day)
+      return balanceTreeHelper.getWeekNumber(txnDate);
+    },
+
+    createCharts : function(){
+        this.createChart();
+        this.createChartFiltered();
+        this.createChartWeeklyFiltered();
+    },
+
+    createChartWeeklyFiltered: function(){
+      let data = [this.filter.account];
+      for(let i = 1; i <= 52; ++i){
+        var b = balanceTreeHelper.filteredWeeklyBalance(journal, {
+                      account: this.filter.account,
+                      week: i
+                    });
+        data.push(b);
+      }
+      this.filteredWeeklyData = [data];
     },
 
     createChartFiltered: function(){

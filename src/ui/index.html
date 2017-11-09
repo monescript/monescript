@@ -13,6 +13,8 @@
         <monthly-chart style="width: 100%; height: 200px;" v-bind:column-data="totalInOutData"></monthly-chart>
         <br/>
         <monthly-chart style="width: 100%; height: 200px;" v-bind:column-data="filteredData"></monthly-chart>
+        <br/>
+        <weekly-chart style="width: 100%; height: 200px;" v-bind:column-data="filteredWeeklyData"></weekly-chart>
 
         <input type="file" id="input" v-on:change="handleFiles">
 
@@ -28,7 +30,7 @@
         <table>
           <tr v-for="t in transactions">
             <td>
-              {{t.date.year + '/' + t.date.month + '/' + t.date.day}}
+              {{t.date.year + '/' + t.date.month + '/' + t.date.day}} [{{txnWeekNumber(t)}}]
             </td>
             <td>
               {{parseFloat(matchingTxnPosting(t).amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
@@ -61,7 +63,7 @@
             </li>
         </ul>
     </script>
-    <script id="monthly-chart-template" type="text/x-template">
+    <script id="chart-template" type="text/x-template">
         <div :id="uniqId()"></div>
     </script>
 

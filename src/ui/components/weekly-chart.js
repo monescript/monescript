@@ -1,7 +1,7 @@
 var Vue = require('vue');
 var c3 = require('c3');
 
-module.exports = Vue.component('monthly-chart', {
+module.exports = Vue.component('weekly-chart', {
   template: '#chart-template',
   props: ['columnData'],
   data: function(){
@@ -21,6 +21,9 @@ module.exports = Vue.component('monthly-chart', {
       return 'monthly-chart-' + this._uid;
     },
     createChart: function(){
+      var catIds = [];
+      for(var i = 1; i<=52; ++i)
+        catIds.push(i);
       var chart = c3.generate({
           bindto: '#' + this.uniqId(),
           data: {
@@ -36,7 +39,7 @@ module.exports = Vue.component('monthly-chart', {
           axis: {
               x: {
                   type: 'category',
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                  categories: catIds
               }
           }
       });
