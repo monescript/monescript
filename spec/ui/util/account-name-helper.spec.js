@@ -55,5 +55,4 @@ describe("Account name helper", function() {
       expect(nameHelper.nameMatches('account', 'abc')).toBeFalsy();
     });
   })
-
 });

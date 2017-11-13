@@ -41,7 +41,7 @@ module.exports = {
     return tree.accounts;
   },
 
-   filteredBalance: function(journal, filter){
+   filteredMonthlyBalance: function(journal, filter){
       let postingAccountFilter = this.createPostingAccountFilter(filter);
       let txnMonthFilter = this.createMonthFilter(filter);
 
@@ -52,15 +52,20 @@ module.exports = {
       let accountArray = Object.keys(filteredAccounts)
         .map(a => filteredAccounts[a]);
 
-      if(accountArray.length > 0)
-      {
-        var a = accountArray[0];
-        return Math.abs(parseFloat(a.balance.toFixed(2)));
-      }
-      else
-      {
-        return (0.00);
-      }
+      let topAccounts = this.findTopAccounts(accountArray);
+      return this.accountsTotal(topAccounts);
+  },
+
+  findTopAccounts: function(accounts){
+    return accounts.filter(a => a.account.length == 1);
+  },
+
+  accountsTotal: function(accounts){
+    let sum = accounts.reduce((a, b) => {
+      return {balance: a.balance.plus(b.balance)};
+    }, {balance: Big(0)});
+
+    return parseFloat(sum.balance.toFixed(2));
   },
 
   filteredWeeklyBalance: function(journal, filter){
@@ -111,7 +116,6 @@ module.exports = {
           filter != null && filter.week != null  ?
           t => {
             let txnDate = new Date(t.date.year, t.date.month - 1, t.date.day)
-//            console.log(txnDate + ":" + self.getWeekNumber(txnDate) + "; " + filter.week);
             return self.getWeekNumber(txnDate) == filter.week
           }
           :

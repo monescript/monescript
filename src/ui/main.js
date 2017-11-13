@@ -145,7 +145,7 @@ var app = new Vue({
     },
 
     getMonthlyBalance: function(account, month){
-      return balanceTreeHelper.filteredBalance(journal, {
+      return balanceTreeHelper.filteredMonthlyBalance(journal, {
         account: account,
         month: month
       });
@@ -177,7 +177,7 @@ var app = new Vue({
     createChartFiltered: function(){
       let data = [this.filter.account];
       for(let i = 1; i <= 12; ++i){
-        data.push(this.getMonthlyBalance(this.filter.account, i));
+        data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
       }
       this.filteredData = [data];
     },
@@ -186,8 +186,8 @@ var app = new Vue({
       let dataExpense = ['Expense'];
       let dataIncome = ['Income'];
       for(let i = 1; i <= 12; ++i){
-        dataExpense.push(this.getMonthlyBalance('Expense', i));
-        dataIncome.push(this.getMonthlyBalance('Income', i));
+        dataExpense.push(Math.abs(this.getMonthlyBalance('Expense', i)));
+        dataIncome.push(Math.abs(this.getMonthlyBalance('Income', i)));
       }
       this.totalInOutData = [dataExpense, dataIncome];
     }
