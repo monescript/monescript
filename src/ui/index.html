@@ -10,11 +10,11 @@
 
     <form id="app">
 
-        <monthly-chart style="width: 100%; height: 200px;" v-bind:column-data="totalInOutData"></monthly-chart>
+        <total-monthly-chart style="width: 100%; height: 200px;" v-bind:journal="journal"></total-monthly-chart>
         <br/>
-        <monthly-chart style="width: 100%; height: 200px;" v-bind:column-data="filteredData"></monthly-chart>
+        <monthly-chart style="width: 100%; height: 200px;" v-bind:filter="filter" v-bind:journal="journal"></monthly-chart>
         <br/>
-        <weekly-chart style="width: 100%; height: 200px;" v-bind:column-data="filteredWeeklyData"></weekly-chart>
+        <weekly-chart style="width: 100%; height: 200px;" v-bind:filter="filter" v-bind:journal="journal"></weekly-chart>
 
         <input type="file" id="input" v-on:change="handleFiles">
 
@@ -27,7 +27,7 @@
             </td></tr>
         </table>
 
-        <transaction-table v-bind:filter="filter" v-bind:journal="journal"  v-bind:other="other"></transaction-table>
+        <transaction-table v-bind:filter="filter" v-bind:journal="journal"></transaction-table>
     </form>
 
     <script id="account-filter-template" type="text/x-template">

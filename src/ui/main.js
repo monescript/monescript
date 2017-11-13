@@ -7,6 +7,7 @@ var balanceTreeHelper = require('./util/balance-filter-helper');
 var Vue = require('vue');
 require('./components/accounts.js');
 require('./components/account-filter.js');
+require('./components/total-monthly-chart.js');
 require('./components/monthly-chart.js');
 require('./components/weekly-chart.js');
 require('./components/transaction-table.js');
@@ -21,7 +22,6 @@ var app = new Vue({
     journal: journal,
     accountTree: {},
     totalInOutData: [],
-    filteredMonthlyData: [],
     filteredWeeklyData: []
   },
   methods: {
@@ -60,7 +60,6 @@ var app = new Vue({
 
     calculateBalance: function(){
       this.updateAccounts();
-      this.createCharts();
     },
 
     updateAccounts: function(){
@@ -69,57 +68,6 @@ var app = new Vue({
         this.accountTree = {};
       }
     },
-
-    //Charts START
-    // TODO: push to components?
-
-
-
-    getMonthlyBalance: function(account, month){
-      return balanceTreeHelper.filteredMonthlyBalance(journal, {
-        account: account,
-        month: month
-      });
-    },
-
-    createCharts : function(){
-        this.createTotalsChart();
-        this.createMonthlyFilteredChart();
-        this.createWeeklyFilteredChart();
-    },
-
-    createWeeklyFilteredChart: function(){
-      let data = [this.filter.account];
-      for(let i = 1; i <= 52; ++i){
-        var b = balanceTreeHelper.filteredWeeklyBalance(journal, {
-                      account: this.filter.account,
-                      week: i
-                    });
-        data.push(b);
-      }
-      this.filteredWeeklyData = [data];
-    },
-
-    createMonthlyFilteredChart: function(){
-      let data = [this.filter.account];
-      for(let i = 1; i <= 12; ++i){
-        data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
-      }
-      this.filteredData = [data];
-    },
-
-    createTotalsChart: function(){
-      let dataExpense = ['Expense'];
-      let dataIncome = ['Income'];
-      for(let i = 1; i <= 12; ++i){
-        dataExpense.push(Math.abs(this.getMonthlyBalance('Expense', i)));
-        dataIncome.push(Math.abs(this.getMonthlyBalance('Income', i)));
-      }
-      this.totalInOutData = [dataExpense, dataIncome];
-    }
-
-    //Charts END
-
   },
 
   beforeMount: function(){

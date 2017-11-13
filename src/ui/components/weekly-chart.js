@@ -1,25 +1,53 @@
 var Vue = require('vue');
 var c3 = require('c3');
+var balanceTreeHelper = require('../util/balance-filter-helper');
 
 module.exports = Vue.component('weekly-chart', {
   template: '#chart-template',
-  props: ['columnData'],
+  props: ['filter', 'journal'],
   data: function(){
-    return {};
+    return {
+      columnData: []
+    };
   },
-
+  beforeMount: function(){
+      this.updateChart();
+  },
   watch: {
-    columnData: function () {
-      var self = this;
-      Vue.nextTick(function () {
-        self.createChart()
-      });
-    }
+    filter: {
+      handler:function (){
+        this.updateChart();
+      },
+      deep: true
+    },
+    journal: {
+      handler:function (){
+        this.updateChart();
+      },
+      deep: true
+    },
   },
   methods: {
     uniqId: function(){
-      return 'monthly-chart-' + this._uid;
+      return 'weekly-chart-' + this._uid;
     },
+
+    updateChart: function(){
+      let data = [this.filter.account];
+      for(let i = 1; i <= 52; ++i){
+        var b = balanceTreeHelper.filteredWeeklyBalance(this.journal, {
+                      account: this.filter.account,
+                      week: i
+                    });
+        data.push(b);
+      }
+      this.columnData = [data];
+      let self = this;
+      Vue.nextTick(function () {
+        self.createChart();
+      });
+    },
+
     createChart: function(){
       var catIds = [];
       for(var i = 1; i<=52; ++i)
@@ -44,11 +72,5 @@ module.exports = Vue.component('weekly-chart', {
           }
       });
     }
-  },
-  beforeMount: function(){
-      var self = this;
-      Vue.nextTick(function () {
-        self.createChart();
-      });
   },
 });
