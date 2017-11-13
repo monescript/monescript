@@ -153,7 +153,7 @@ var app = new Vue({
 
     txnWeekNumber: function(t){
       let txnDate = new Date(t.date.year, t.date.month - 1, t.date.day)
-      return balanceTreeHelper.getWeekNumber(txnDate);
+      return balanceTreeHelper.getWeekNumber(txnDate).week;
     },
 
     createCharts : function(){

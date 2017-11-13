@@ -77,46 +77,47 @@ describe("Account name helper", function() {
        createJournal('two-level.journal');
 
        var bal = balanceTreeHelper.filteredMonthlyBalance(journal, {
-          account: 'Bills'
+          account: 'Bills',
+          month: 10
        });
        expect(bal).toEqual(111.91);
     });
   })
 
-
   describe("filteredWeeklyBalance", function() {
-    xit("returns zero balance without filter", function() {
+    it("returns zero balance without filter", function() {
        createJournal('simple-two-entry.journal');
        var bal = balanceTreeHelper.filteredWeeklyBalance(journal, {});
        expect(bal).toEqual(0.0);
     });
 
-//    it("returns balance filtered by account name", function() {
-//       createJournal('simple-two-entry.journal');
-//
-//       var bal = balanceTreeHelper.filteredMonthlyBalance(journal, {
-//          account: 'Food'
-//       });
-//       expect(bal).toEqual(50.02);
-//    });
-//
-//    it("returns zero balance when filtered by month", function() {
-//       createJournal('simple-two-entry.journal');
-//
-//       var bal = balanceTreeHelper.filteredMonthlyBalance(journal, {
-//          month: 5
-//       });
-//       expect(bal).toEqual(0.0);
-//    });
-//
-//    it("returns balance filtered by account name and month", function() {
-//       createJournal('two-level.journal');
-//
-//       var bal = balanceTreeHelper.filteredMonthlyBalance(journal, {
-//          account: 'Bills'
-//       });
-//       expect(bal).toEqual(111.91);
-//    });
+    it("returns balance filtered by account name", function() {
+       createJournal('simple-two-entry.journal');
+
+       var bal = balanceTreeHelper.filteredWeeklyBalance(journal, {
+          account: 'Food'
+       });
+       expect(bal).toEqual(50.02);
+    });
+
+    it("returns zero balance when filtered by week", function() {
+       createJournal('simple-two-entry.journal');
+
+       var bal = balanceTreeHelper.filteredWeeklyBalance(journal, {
+          week: 5
+       });
+       expect(bal).toEqual(0.0);
+    });
+
+    it("returns balance filtered by account name and week", function() {
+       createJournal('two-level.journal');
+
+       var bal = balanceTreeHelper.filteredWeeklyBalance(journal, {
+          account: 'Bills',
+          week: 41
+       });
+       expect(bal).toEqual(111.91);
+    });
   })
 
   let readFromJsonFile = function(filename){
