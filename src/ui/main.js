@@ -74,7 +74,7 @@ var app = new Vue({
 
     matchingPosting: function(t){
       for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.encodeAccountName(t.posting[i].account).toLowerCase().indexOf(this.filter.account.toLowerCase()) >= 0 &&
+        if(t.posting[i].account != null && accountNameHelper.matches(t.posting[i].account, this.filter.account.toLowerCase())  &&
           t.posting[i].amount != null){
             return t.posting[i];
         }
@@ -82,9 +82,34 @@ var app = new Vue({
       return null;
     },
 
-    matchingTxnPosting: function(t){
-      let mp = this.matchingPosting(t);
-      return mp == null ? {amount: 0.0, account: []} : mp;
+    matchingPostings: function(t){
+      let matches = [];
+      for(let i = 0; i < t.posting.length; ++i){
+        if(t.posting[i].account != null && accountNameHelper.matches(t.posting[i].account, this.filter.account.toLowerCase())  &&
+          t.posting[i].amount != null){
+            matches.push(t.posting[i]);
+        }
+      }
+
+      return matches;
+    },
+
+    matchingPostingsValue: function(t){
+      let total = new Big(0.0);
+      let matches = this.matchingPostings(t);
+      for(let i = 0; i < matches.length; ++i){
+        total = total.add(matches[i].amount);
+      }
+      return this.formattedAmount(total);
+    },
+
+    formattedAmount: function(v){
+      let value = v == null || v.toFixed == null ? 0.00 : v.toFixed(2);
+      return parseFloat(value).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })
+    },
+
+    formattedAccount: function(account){
+      return accountNameHelper.encodeAccountName(account);
     },
 
     updateAccounts: function(){

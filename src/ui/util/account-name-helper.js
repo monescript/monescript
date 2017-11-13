@@ -24,4 +24,8 @@ module.exports = {
   encodeAccountName: function(accountArray){
     return accountArray.join(':');
   },
+
+  matches: function(account, expression){
+    return this.encodeAccountName(account).toLowerCase().indexOf(expression.toLowerCase()) >= 0;
+  }
 };

@@ -27,21 +27,43 @@
             </td></tr>
         </table>
 
-        <table>
-          <tr v-for="t in transactions">
-            <td>
-              {{t.date.year + '/' + t.date.month + '/' + t.date.day}} [{{txnWeekNumber(t)}}]
-            </td>
-            <td>
-              {{parseFloat(matchingTxnPosting(t).amount.toFixed(2)).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}}
-            </td>
-            <td>
-              {{t.payee}}
-            </td>
-            <td>
-              {{matchingTxnPosting(t).account}}
-            </td>
-          </tr>
+        <table cellpadding="0" cellspacing="10">
+            <template v-for="t in transactions">
+                <template v-for="mp in [matchingPostings(t)]">
+                    <tr>
+                        <td>
+                            {{t.date.year + '/' + t.date.month + '/' + t.date.day}} [{{txnWeekNumber(t)}}]
+                        </td>
+                        <td>
+                            {{matchingPostingsValue(t)}}
+                        </td>
+                        <td>
+                            <i>{{t.payee}}</i>
+                        </td>
+                        <td>
+                            <template v-if="mp.length == 1">
+                                {{formattedAccount(mp[0].account)}}
+                            </template>
+                        </td>
+                    </tr>
+                  <template v-for="(p, index) in mp" v-if="mp.length > 1">
+                      <tr>
+                        <td>
+
+                        </td>
+                        <td style="font-size: smaller">
+                          {{formattedAmount(p.amount)}}
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+                          {{formattedAccount(p.account)}}
+                        </td>
+                    </tr>
+                  </template>
+                </template>
+            </template>
         </table>
     </form>
 
