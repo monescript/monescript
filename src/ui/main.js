@@ -22,7 +22,7 @@ var app = new Vue({
     accountTree: {},
     transactions: [],
     totalInOutData: [],
-    filteredData: [],
+    filteredMonthlyData: [],
     filteredWeeklyData: []
   },
   methods: {
@@ -44,6 +44,8 @@ var app = new Vue({
         reader.readAsText(files[0]);
     },
 
+
+
     createJournal: function(text){
         journal.reset();
 
@@ -59,10 +61,16 @@ var app = new Vue({
         }
     },
 
+    calculateBalance: function(){
+      this.updateTransactions();
+      this.updateAccounts();
+      this.createCharts();
+    },
+
     updateTransactions: function(){
       this.transactions = journal.transactions(t => {
         if(t.type == 'transaction' && t.date.month == this.filter.month){
-          if(this.matchingPosting(t) != null)
+          if(this.hasMatchingPosting(t) != null)
             return true;
         }
         return false;
@@ -72,7 +80,7 @@ var app = new Vue({
       }
     },
 
-    matchingPosting: function(t){
+    hasMatchingPosting: function(t){
       for(let i = 0; i < t.posting.length; ++i){
         if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
           t.posting[i].amount != null){
@@ -94,7 +102,7 @@ var app = new Vue({
       return matches;
     },
 
-    matchingPostingsValue: function(t){
+    matchingPostingsTotal: function(t){
       let total = new Big(0.0);
       let matches = this.matchingPostings(t);
       for(let i = 0; i < matches.length; ++i){
@@ -119,30 +127,10 @@ var app = new Vue({
       }
     },
 
-    calculateBalance: function(){
-      this.updateTransactions();
-      this.updateAccounts();
-      this.createCharts();
-    },
+    //Charts START
+    // TODO: push to components?
 
-    generateJournal: function(){
-      const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      let today = new Date();
-      let todayMonth = today.getMonth() + 1;
-      let todayDay = today.getDate();
-      let todayYear = today.getFullYear();
 
-      let text = '';
-      for(let month = 0; month < todayMonth; ++month){
-        for(let day = 1; day <= monthDays[month]; day++){
-          if(month == todayMonth && day > todayDay){
-            break;
-          }
-          text += sampleGenerator.transactionsDay(todayYear, month + 1, day);
-        }
-      }
-      return text;
-    },
 
     getMonthlyBalance: function(account, month){
       return balanceTreeHelper.filteredMonthlyBalance(journal, {
@@ -157,12 +145,12 @@ var app = new Vue({
     },
 
     createCharts : function(){
-        this.createChart();
-        this.createChartFiltered();
-        this.createChartWeeklyFiltered();
+        this.createTotalsChart();
+        this.createMonthlyFilteredChart();
+        this.createWeeklyFilteredChart();
     },
 
-    createChartWeeklyFiltered: function(){
+    createWeeklyFilteredChart: function(){
       let data = [this.filter.account];
       for(let i = 1; i <= 52; ++i){
         var b = balanceTreeHelper.filteredWeeklyBalance(journal, {
@@ -174,7 +162,7 @@ var app = new Vue({
       this.filteredWeeklyData = [data];
     },
 
-    createChartFiltered: function(){
+    createMonthlyFilteredChart: function(){
       let data = [this.filter.account];
       for(let i = 1; i <= 12; ++i){
         data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
@@ -182,7 +170,7 @@ var app = new Vue({
       this.filteredData = [data];
     },
 
-    createChart: function(){
+    createTotalsChart: function(){
       let dataExpense = ['Expense'];
       let dataIncome = ['Income'];
       for(let i = 1; i <= 12; ++i){
@@ -191,11 +179,14 @@ var app = new Vue({
       }
       this.totalInOutData = [dataExpense, dataIncome];
     }
+
+    //Charts END
+
   },
 
   beforeMount: function(){
       var self = this;
-      var text = this.generateJournal();
+      var text = sampleGenerator.generateYearJournal();
       this.createJournal(text);
       this.calculateBalance();
   },

@@ -20,6 +20,7 @@ module.exports = Vue.component('monthly-chart', {
     uniqId: function(){
       return 'monthly-chart-' + this._uid;
     },
+
     createChart: function(){
       var chart = c3.generate({
           bindto: '#' + this.uniqId(),
