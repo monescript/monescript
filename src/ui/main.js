@@ -1,8 +1,6 @@
 var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
-var balancer = require('../../src/balance');
 var sampleGenerator = require('../../generator/generator.util');
-var balanceTreeHelper = require('./util/balance-filter-helper');
 
 var Vue = require('vue');
 require('./components/accounts.js');
@@ -19,10 +17,7 @@ var app = new Vue({
       account: 'Expenses',
       month: new Date().getMonth() + 1
     },
-    journal: journal,
-    accountTree: {},
-    totalInOutData: [],
-    filteredWeeklyData: []
+    journal: journal
   },
   methods: {
 
@@ -34,7 +29,6 @@ var app = new Vue({
         reader.onload = function(e) {
             var text = reader.result
             self.createJournal(text);
-            self.calculateBalance();
         }
         reader.onerror = function(err) {
             console.log(err, err.loaded, err.loaded === 0);
@@ -57,24 +51,11 @@ var app = new Vue({
           console.log('Failing on line ' + JSON.stringify(e.chunk));
         }
     },
-
-    calculateBalance: function(){
-      this.updateAccounts();
-    },
-
-    updateAccounts: function(){
-      this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, this.filter);
-      if(this.accountTree == null){
-        this.accountTree = {};
-      }
-    },
   },
 
   beforeMount: function(){
       var self = this;
       var text = sampleGenerator.generateYearJournal();
       this.createJournal(text);
-      this.calculateBalance();
   },
 })
-

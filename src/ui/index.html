@@ -20,10 +20,10 @@
 
         <table>
             <tr><td>
-                <account-filter v-model="filter" @input="calculateBalance"></account-filter>
+                <account-filter v-model="filter"></account-filter>
             </td></tr>
             <tr><td>
-                <accounts v-bind:accounts="accountTree"> </accounts>
+                <accounts v-bind:filter="filter" v-bind:journal="journal"> </accounts>
             </td></tr>
         </table>
 

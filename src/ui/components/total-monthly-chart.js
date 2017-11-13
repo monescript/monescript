@@ -35,7 +35,6 @@ module.exports = Vue.component('total-monthly-chart', {
     },
 
     updateChart: function(){
-      console.log('Updateing Charto');
       let dataExpense = ['Expense'];
       let dataIncome = ['Income'];
       for(let i = 1; i <= 12; ++i){
