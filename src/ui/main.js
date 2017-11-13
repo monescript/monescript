@@ -74,7 +74,7 @@ var app = new Vue({
 
     matchingPosting: function(t){
       for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.matches(t.posting[i].account, this.filter.account.toLowerCase())  &&
+        if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
           t.posting[i].amount != null){
             return t.posting[i];
         }
@@ -85,7 +85,7 @@ var app = new Vue({
     matchingPostings: function(t){
       let matches = [];
       for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.matches(t.posting[i].account, this.filter.account.toLowerCase())  &&
+        if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
           t.posting[i].amount != null){
             matches.push(t.posting[i]);
         }

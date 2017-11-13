@@ -1,53 +1,59 @@
 describe("Account name helper", function() {
-  let nameFilter = require('../../../src/ui/util/account-name-helper');
-  let Big = require('big.js');
+  let nameHelper = require('../../../src/ui/util/account-name-helper');
 
-  describe("filter()", function() {
+  describe("encodeAccountName()", function() {
     it("returns nothing for empty", function() {
-      expect(nameFilter.filter('', {})).toEqual([]);
+      expect(nameHelper.encodeAccountName([])).toEqual('');
     });
 
-    it("returns all for empty filter", function() {
-        let expenses = {'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(1234.56)}};
-        let assets = {'Assets': {account: ['Assets' ], currency: '$', balance: Big(1234.56)}};
-        let accounts = Object.assign({}, expenses, assets);
-        let expectedValue = Array.of(expenses.Expenses, assets.Assets);
-
-        expect(nameFilter.filter('', accounts)).toEqual(expectedValue);
+    it("returns account name for single element", function() {
+      expect(nameHelper.encodeAccountName(['abc'])).toEqual('abc');
     });
 
-    it("returns only matching filter case insensitive", function() {
-        let expenses = {'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(1234.56)}};
-        let assets = {'Assets': {account: ['Assets' ], currency: '$', balance: Big(1234.56)}};
-        let accounts = Object.assign({}, expenses, assets);
-        let expectedValue = Array.of(expenses.Expenses);
-
-        expect(nameFilter.filter('Expenses', accounts)).toEqual(expectedValue);
-        expect(nameFilter.filter('exp', accounts)).toEqual(expectedValue);
-        expect(nameFilter.filter('xpens', accounts)).toEqual(expectedValue);
-    });
-
-    it("returns parent accounts as well", function() {
-        let expenses = {'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(1234.56)}};
-        let utils = {'Expenses:Utilities': {account: ['Expenses', 'Utilities' ], currency: '$', balance: Big(1234.56)}};
-        let assets = {'Assets': {account: ['Assets' ], currency: '$', balance: Big(1234.56)}};
-        let accounts = Object.assign({}, expenses, utils, assets);
-
-        let expectedValue = Array.of(expenses.Expenses, utils['Expenses:Utilities']);
-
-        expect(nameFilter.filter('util', accounts)).toEqual(expectedValue);
-    });
-
-    it("does not return sibling accounts", function() {
-        let expenses = {'Expenses': {account: ['Expenses' ], currency: '$', balance: Big(1234.56)}};
-        let clothing = {'Expenses:Clothing': {account: ['Expenses', 'Clothing' ], currency: '$', balance: Big(1234.56)}};
-        let grocery = {'Expenses:Grocery': {account: ['Expenses', 'Grocery' ], currency: '$', balance: Big(1234.56)}};
-        let assets = {'Assets': {account: ['Assets' ], currency: '$', balance: Big(1234.56)}};
-        let accounts = Object.assign({}, expenses, clothing, grocery, assets);
-
-        let expectedValue = Array.of(expenses.Expenses, clothing['Expenses:Clothing']);
-
-        expect(nameFilter.filter('clothing', accounts)).toEqual(expectedValue);
+    it("returns account joined with colon", function() {
+      expect(nameHelper.encodeAccountName(['abc', 'def', 'ghij'])).toEqual('abc:def:ghij');
     });
   })
+
+  describe("accountMatches()", function() {
+    it("calls underlying methods", function() {
+
+      let account = ['abc', 'def'];
+      let filter = 'ghi';
+      let encodeAccountName = 'encoded';
+      let matchValue = true;
+
+      spyOn(nameHelper, 'nameMatches').and.returnValue(matchValue);
+      spyOn(nameHelper, 'encodeAccountName').and.returnValue(encodeAccountName);
+
+      let retVal = nameHelper.accountMatches(account, filter);
+
+      expect(nameHelper.encodeAccountName).toHaveBeenCalledWith(account);
+      expect(nameHelper.nameMatches).toHaveBeenCalledWith(encodeAccountName, filter);
+      expect(retVal).toEqual(matchValue);
+    });
+  })
+
+  describe("nameMatches()", function() {
+    it("matches empty", function() {
+      expect(nameHelper.nameMatches('account', '')).toBeTruthy();
+    });
+
+    it("matches self", function() {
+      expect(nameHelper.nameMatches('account', 'account')).toBeTruthy();
+    });
+
+    it("matches sub string", function() {
+      expect(nameHelper.nameMatches('account', 'acc')).toBeTruthy();
+    });
+
+    it("matches case insensitive", function() {
+      expect(nameHelper.nameMatches('My:Bank:Account', 'BANK')).toBeTruthy();
+    });
+
+    it("does not match non-sub string", function() {
+      expect(nameHelper.nameMatches('account', 'abc')).toBeFalsy();
+    });
+  })
+
 });
