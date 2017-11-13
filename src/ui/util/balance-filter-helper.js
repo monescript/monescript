@@ -42,30 +42,30 @@ module.exports = {
   },
 
   filteredMonthlyBalance: function(journal, filter){
-    return this._filteredBalance(journal, filter, createMonthFilter(filter));
+    return filteredBalance(journal, filter, createMonthFilter(filter));
   },
 
   filteredWeeklyBalance: function(journal, filter){
-    return this._filteredBalance(journal, filter, createWeekFilter(filter));
-  },
-
-  _filteredBalance: function(journal, filter, txnFilter){
-    let postingAccountFilter = createPostingAccountFilter(filter);
-    let filteredAccounts = balancer.balance(journal,
-                              t => txnFilter(t) && t.posting.some(postingAccountFilter),
-                              postingAccountFilter)
-
-    let accountArray = Object.keys(filteredAccounts)
-      .map(a => filteredAccounts[a]);
-
-    let topAccounts = findTopAccounts(accountArray);
-    return accountsTotal(topAccounts);
+    return filteredBalance(journal, filter, createWeekFilter(filter));
   },
 
   getWeekNumber : function(date) {
     return weekNumberFromDate(date);
   }
 };
+
+function filteredBalance(journal, filter, txnFilter){
+  let postingAccountFilter = createPostingAccountFilter(filter);
+  let filteredAccounts = balancer.balance(journal,
+                            t => txnFilter(t) && t.posting.some(postingAccountFilter),
+                            postingAccountFilter)
+
+  let accountArray = Object.keys(filteredAccounts)
+    .map(a => filteredAccounts[a]);
+
+  let topAccounts = findTopAccounts(accountArray);
+  return accountsTotal(topAccounts);
+}
 
 function findTopAccounts(accounts){
   return accounts.filter(a => a.account.length == 1);
