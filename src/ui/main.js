@@ -1,9 +1,7 @@
 var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
 var balancer = require('../../src/balance');
-var Big = require('big.js');
 var sampleGenerator = require('../../generator/generator.util');
-var accountNameHelper = require('./util/account-name-helper');
 var balanceTreeHelper = require('./util/balance-filter-helper');
 
 var Vue = require('vue');
@@ -11,6 +9,7 @@ require('./components/accounts.js');
 require('./components/account-filter.js');
 require('./components/monthly-chart.js');
 require('./components/weekly-chart.js');
+require('./components/transaction-table.js');
 
 var app = new Vue({
   el: '#app',
@@ -19,8 +18,8 @@ var app = new Vue({
       account: 'Expenses',
       month: new Date().getMonth() + 1
     },
+    journal: journal,
     accountTree: {},
-    transactions: [],
     totalInOutData: [],
     filteredMonthlyData: [],
     filteredWeeklyData: []
@@ -44,8 +43,6 @@ var app = new Vue({
         reader.readAsText(files[0]);
     },
 
-
-
     createJournal: function(text){
         journal.reset();
 
@@ -62,62 +59,8 @@ var app = new Vue({
     },
 
     calculateBalance: function(){
-      this.updateTransactions();
       this.updateAccounts();
       this.createCharts();
-    },
-
-    updateTransactions: function(){
-      this.transactions = journal.transactions(t => {
-        if(t.type == 'transaction' && t.date.month == this.filter.month){
-          if(this.hasMatchingPosting(t) != null)
-            return true;
-        }
-        return false;
-      });
-      if(this.transactions == null){
-        this.transactions = [];
-      }
-    },
-
-    hasMatchingPosting: function(t){
-      for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
-          t.posting[i].amount != null){
-            return t.posting[i];
-        }
-      }
-      return null;
-    },
-
-    matchingPostings: function(t){
-      let matches = [];
-      for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
-          t.posting[i].amount != null){
-            matches.push(t.posting[i]);
-        }
-      }
-
-      return matches;
-    },
-
-    matchingPostingsTotal: function(t){
-      let total = new Big(0.0);
-      let matches = this.matchingPostings(t);
-      for(let i = 0; i < matches.length; ++i){
-        total = total.add(matches[i].amount);
-      }
-      return this.formattedAmount(total);
-    },
-
-    formattedAmount: function(v){
-      let value = v == null || v.toFixed == null ? 0.00 : v.toFixed(2);
-      return parseFloat(value).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })
-    },
-
-    formattedAccount: function(account){
-      return accountNameHelper.encodeAccountName(account);
     },
 
     updateAccounts: function(){
@@ -137,11 +80,6 @@ var app = new Vue({
         account: account,
         month: month
       });
-    },
-
-    txnWeekNumber: function(t){
-      let txnDate = new Date(t.date.year, t.date.month - 1, t.date.day)
-      return balanceTreeHelper.getWeekNumber(txnDate).week;
     },
 
     createCharts : function(){

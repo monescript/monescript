@@ -27,7 +27,35 @@
             </td></tr>
         </table>
 
-        <table cellpadding="0" cellspacing="10">
+        <transaction-table v-bind:filter="filter" v-bind:journal="journal"  v-bind:other="other"></transaction-table>
+    </form>
+
+    <script id="account-filter-template" type="text/x-template">
+      <div>
+        <label>Account filter: </label>
+        <input type="text" @change="updateFilter" v-model.lazy="filter.account"/>
+        <label>Month: </label>
+        <input type="number" @change="updateFilter" v-model.lazy="filter.month"/>
+      </div>
+    </script>
+
+    <script id="accounts-template" type="text/x-template">
+        <ul>
+            <li v-for="(value, key) in level()" >
+                <b>{{ accountDisplay(value) }}</b>
+                <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
+                    <accounts v-bind:accounts="value.accounts"> </accounts>
+                </div>
+            </li>
+        </ul>
+    </script>
+
+    <script id="chart-template" type="text/x-template">
+        <div :id="uniqId()"></div>
+    </script>
+
+    <script id="transaction-table-template" type="text/x-template">
+        <table cellpadding="0" cellspacing="5">
             <template v-for="t in transactions">
                 <template v-for="mp in [matchingPostings(t)]">
                     <tr>
@@ -46,47 +74,25 @@
                             </template>
                         </td>
                     </tr>
-                  <template v-for="(p, index) in mp" v-if="mp.length > 1">
-                      <tr>
-                        <td>
+                    <template v-for="(p, index) in mp" v-if="mp.length > 1">
+                        <tr>
+                            <td>
 
-                        </td>
-                        <td style="font-size: smaller">
-                          {{formattedAmount(p.amount)}}
-                        </td>
-                        <td>
+                            </td>
+                            <td style="font-size: smaller">
+                                {{formattedAmount(p.amount)}}
+                            </td>
+                            <td>
 
-                        </td>
-                        <td>
-                          {{formattedAccount(p.account)}}
-                        </td>
-                    </tr>
-                  </template>
+                            </td>
+                            <td>
+                                {{formattedAccount(p.account)}}
+                            </td>
+                        </tr>
+                    </template>
                 </template>
             </template>
         </table>
-    </form>
-
-    <script id="account-filter-template" type="text/x-template">
-      <div>
-        <label>Account filter: </label>
-        <input type="text" @change="updateFilter" v-model.lazy="filter.account"/>
-        <label>Month: </label>
-        <input type="number" @change="updateFilter" v-model.lazy="filter.month"/>
-      </div>
-    </script>
-    <script id="accounts-template" type="text/x-template">
-        <ul>
-            <li v-for="(value, key) in level()" >
-                <b>{{ accountDisplay(value) }}</b>
-                <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
-                    <accounts v-bind:accounts="value.accounts"> </accounts>
-                </div>
-            </li>
-        </ul>
-    </script>
-    <script id="chart-template" type="text/x-template">
-        <div :id="uniqId()"></div>
     </script>
 
     <script src="_js/bundle.js"></script>
