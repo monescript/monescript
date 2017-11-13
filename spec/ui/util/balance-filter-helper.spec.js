@@ -120,6 +120,12 @@ describe("Account name helper", function() {
     });
   })
 
+  describe("getWeekNumber", function() {
+      it("returns week number for date", function() {
+         expect(balanceTreeHelper.getWeekNumber(new Date(2017, 0, 5))).toEqual({year: 2017, week: 1});
+      });
+  })
+
   let readFromJsonFile = function(filename){
     var text = fs.readFileSync('spec/resources/ui/util/balance-tree-helper/' + filename, 'utf8');
     return JSON.parse(text);
