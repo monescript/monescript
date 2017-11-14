@@ -45,7 +45,7 @@ module.exports = {
   },
 
   transactionMatchesFilter: function(t, filter){
-      return isTransactionMatchingTheFilter(t, filter);
+      return isTransactionMatchingTheFilter(t, filter, createMonthFilter(filter));
   },
 
   matchingPostings: function(t, filter){
@@ -54,18 +54,17 @@ module.exports = {
   }
 };
 
-function isTransactionMatchingTheFilter(t, filter){
-    let txnMonthFilter = createMonthFilter(filter);
+function isTransactionMatchingTheFilter(t, filter, txnDateFilter){
     let txnPayeeFilter = createPayeeFilter(filter);
     let postingAccountFilter = createPostingAccountFilter(filter);
-    return txnMonthFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter);
+    return txnDateFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter);
 }
 
 function getFilteredAccountArray(journal, filter, txnFilter){
     let postingAccountFilter = createPostingAccountFilter(filter);
 
     let filteredAccounts = balancer.balance(journal,
-                                            t => isTransactionMatchingTheFilter(t, filter),
+                                            t => isTransactionMatchingTheFilter(t, filter, txnFilter),
                                             postingAccountFilter)
 
     return Object.keys(filteredAccounts)

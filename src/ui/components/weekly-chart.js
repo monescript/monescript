@@ -1,6 +1,6 @@
 var Vue = require('vue');
 var c3 = require('c3');
-var balanceTreeHelper = require('../util/balance-filter-helper');
+var balanceFilterHelper = require('../util/balance-filter-helper');
 
 module.exports = Vue.component('weekly-chart', {
   template: '#chart-template',
@@ -32,14 +32,17 @@ module.exports = Vue.component('weekly-chart', {
       return 'weekly-chart-' + this._uid;
     },
 
+    getWeeklyBalance: function(week){
+      var filterCopy = Object.assign({}, this.filter);
+      filterCopy.month = undefined;
+      filterCopy.week = week;
+      return balanceFilterHelper.filteredWeeklyBalance(this.journal, filterCopy);
+    },
+
     updateChart: function(){
       let data = [this.filter.account];
       for(let i = 1; i <= 52; ++i){
-        var b = balanceTreeHelper.filteredWeeklyBalance(this.journal, {
-                      account: this.filter.account,
-                      week: i
-                    });
-        data.push(b);
+        data.push(this.getWeeklyBalance(i));
       }
       this.columnData = [data];
       let self = this;
@@ -50,7 +53,7 @@ module.exports = Vue.component('weekly-chart', {
 
     createChart: function(){
       var catIds = [];
-      for(var i = 1; i<=52; ++i)
+      for(var i = 1; i <= 52; ++i)
         catIds.push(i);
       var chart = c3.generate({
           bindto: '#' + this.uniqId(),
