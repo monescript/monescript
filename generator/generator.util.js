@@ -1,4 +1,4 @@
-  let Generator = {
+ let Generator = {
   payees : [
     {
       payee: 'PartyShack',
@@ -90,6 +90,25 @@
       }
     },
   ],
+
+  generateYearJournal: function(){
+    const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let today = new Date();
+    let todayMonth = today.getMonth() + 1;
+    let todayDay = today.getDate();
+    let todayYear = today.getFullYear();
+
+    let text = '';
+    for(let month = 0; month < todayMonth; ++month){
+      for(let day = 1; day <= monthDays[month]; day++){
+        if(month == todayMonth && day > todayDay){
+          break;
+        }
+        text += this.transactionsDay(todayYear, month + 1, day);
+      }
+    }
+    return text;
+  },
 
   transactionsDay: function(year, month, day){
     let t = '';

@@ -1,25 +1,57 @@
 var Vue = require('vue');
 var c3 = require('c3');
 
-module.exports = Vue.component('monthly-chart', {
-  template: '#monthly-chart-template',
-  props: ['columnData'],
-  data: function(){
-    return {};
-  },
+var balanceTreeHelper = require('../util/balance-filter-helper');
 
+module.exports = Vue.component('monthly-chart', {
+  template: '#chart-template',
+  props: ['filter', 'journal'],
+  data: function(){
+    return {
+      columnData: []
+    };
+  },
+  beforeMount: function(){
+      this.updateChart();
+  },
   watch: {
-    columnData: function () {
-      var self = this;
-      Vue.nextTick(function () {
-        self.createChart()
-      });
-    }
+    filter: {
+      handler:function (){
+        this.updateChart();
+      },
+      deep: true
+    },
+    journal: {
+      handler:function (){
+        this.updateChart();
+      },
+      deep: true
+    },
   },
   methods: {
     uniqId: function(){
       return 'monthly-chart-' + this._uid;
     },
+
+    getMonthlyBalance: function(account, month){
+      return balanceTreeHelper.filteredMonthlyBalance(this.journal, {
+        account: account,
+        month: month
+      });
+    },
+
+    updateChart: function(){
+      let data = [this.filter.account];
+      for(let i = 1; i <= 12; ++i){
+        data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
+      }
+      this.columnData = [data];
+      let self = this;
+      Vue.nextTick(function () {
+        self.createChart();
+      });
+    },
+
     createChart: function(){
       var chart = c3.generate({
           bindto: '#' + this.uniqId(),
@@ -41,11 +73,5 @@ module.exports = Vue.component('monthly-chart', {
           }
       });
     }
-  },
-  beforeMount: function(){
-      var self = this;
-      Vue.nextTick(function () {
-        self.createChart();
-      });
-  },
+  }
 });
