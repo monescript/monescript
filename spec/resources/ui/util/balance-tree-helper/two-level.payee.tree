@@ -1,0 +1,33 @@
+{
+  "Assets": {
+    "name": "Assets",
+    "balance": -122.04,
+    "currency": "$",
+    "accounts": {
+      "Bank": {
+        "name": "Bank",
+        "balance": -122.04,
+        "currency": "$",
+        "accounts": {
+          "Checking": {
+            "name": "Checking",
+            "balance": -122.04,
+            "currency": "$"
+          }
+        }
+      }
+    }
+  },
+  "Expenses": {
+    "name": "Expenses",
+    "balance": 122.04,
+    "currency": "$",
+    "accounts": {
+      "Food": {
+        "name": "Food",
+        "balance": 122.04,
+        "currency": "$"
+      }
+    }
+  }
+}

@@ -36,6 +36,14 @@ describe("Account name helper", function() {
        expect(tree).toEqual(readFromJsonFile('two-level.month.tree'));
     });
 
+    it("can filter by payee", function() {
+       createJournal('two-level.journal');
+
+       let tree = balanceTreeHelper.filteredBalanceTree(journal, {
+          payee: 'lower'
+       });
+       expect(tree).toEqual(readFromJsonFile('two-level.payee.tree'));
+    });
 
     it("can filter by both", function() {
        createJournal('two-level.journal');
@@ -72,6 +80,26 @@ describe("Account name helper", function() {
        });
        expect(bal).toEqual(0.0);
     });
+
+    it("returns balance filtered by payee", function() {
+       createJournal('two-level.journal');
+
+       let bal = balanceTreeHelper.filteredMonthlyBalance(journal, {
+          payee: 'lower'
+       });
+       expect(bal).toEqual(0.0);
+    });
+
+    it("returns balance filtered by payee and account", function() {
+       createJournal('two-level.journal');
+
+       let bal = balanceTreeHelper.filteredMonthlyBalance(journal, {
+          payee: 'lower',
+          account: 'food'
+       });
+       expect(bal).toEqual(122.04);
+    });
+
 
     it("returns balance filtered by account name and month", function() {
        createJournal('two-level.journal');

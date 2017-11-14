@@ -5,16 +5,7 @@ let Big = require('big.js');
 module.exports = {
 
   filteredBalanceTree: function(journal, filter){
-    let txnMonthFilter = createMonthFilter(filter);
-    let postingAccountFilter = createPostingAccountFilter(filter);
-
-    let filteredAccounts = balancer.balance(journal,
-                                            t => txnMonthFilter(t) && t.posting.some(postingAccountFilter),
-                                            postingAccountFilter)
-
-    let accountArray = Object.keys(filteredAccounts)
-      .map(a => filteredAccounts[a]);
-
+    let accountArray = getFilteredAccountArray(journal, filter, createMonthFilter(filter));
     let b2 = accountArray.sort((a, b) =>
       accountNameHelper.encodeAccountName(a.account)
         .localeCompare(accountNameHelper.encodeAccountName(b.account))
@@ -54,15 +45,21 @@ module.exports = {
   }
 };
 
+function getFilteredAccountArray(journal, filter, txnFilter){
+    let txnMonthFilter = createMonthFilter(filter);
+    let txnPayeeFilter = createPayeeFilter(filter);
+    let postingAccountFilter = createPostingAccountFilter(filter);
+
+    let filteredAccounts = balancer.balance(journal,
+                                            t => txnMonthFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter),
+                                            postingAccountFilter)
+
+    return Object.keys(filteredAccounts)
+      .map(a => filteredAccounts[a]);
+}
+
 function filteredBalance(journal, filter, txnFilter){
-  let postingAccountFilter = createPostingAccountFilter(filter);
-  let filteredAccounts = balancer.balance(journal,
-                            t => txnFilter(t) && t.posting.some(postingAccountFilter),
-                            postingAccountFilter)
-
-  let accountArray = Object.keys(filteredAccounts)
-    .map(a => filteredAccounts[a]);
-
+  let accountArray = getFilteredAccountArray(journal, filter, txnFilter);
   let topAccounts = findTopAccounts(accountArray);
   return accountsTotal(topAccounts);
 }
@@ -86,6 +83,16 @@ function createPostingAccountFilter(filter){
           p.account.some(a => a.toLowerCase().indexOf(filter.account.toLowerCase()) >= 0)
           :
           p => true;
+    return a;
+}
+
+function createPayeeFilter(filter){
+    var a =
+        filter != null && filter.payee != null && filter.payee != '' ?
+        t => t.payee.toLowerCase().indexOf(filter.payee.toLowerCase()) >= 0
+        :
+        t => true;
+
     return a;
 }
 
