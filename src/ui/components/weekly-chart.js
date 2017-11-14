@@ -42,7 +42,7 @@ module.exports = Vue.component('weekly-chart', {
     updateChart: function(){
       let data = [this.filter.account];
       for(let i = 1; i <= 52; ++i){
-        data.push(this.getWeeklyBalance(i));
+        data.push(Math.abs(this.getWeeklyBalance(i)));
       }
       this.columnData = [data];
       let self = this;
