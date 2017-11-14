@@ -3,9 +3,9 @@ var c3 = require('c3');
 
 var balanceTreeHelper = require('../util/balance-filter-helper');
 
-module.exports = Vue.component('monthly-chart', {
+module.exports = Vue.component('total-monthly-chart', {
   template: '#chart-template',
-  props: ['filter', 'journal'],
+  props: ['journal'],
   data: function(){
     return {
       columnData: []
@@ -15,12 +15,6 @@ module.exports = Vue.component('monthly-chart', {
       this.updateChart();
   },
   watch: {
-    filter: {
-      handler:function (){
-        this.updateChart();
-      },
-      deep: true
-    },
     journal: {
       handler:function (){
         this.updateChart();
@@ -41,11 +35,14 @@ module.exports = Vue.component('monthly-chart', {
     },
 
     updateChart: function(){
-      let data = [this.filter.account];
+      let dataExpense = ['Expense'];
+      let dataIncome = ['Income'];
       for(let i = 1; i <= 12; ++i){
-        data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
+        dataExpense.push(Math.abs(this.getMonthlyBalance('Expense', i)));
+        dataIncome.push(Math.abs(this.getMonthlyBalance('Income', i)));
       }
-      this.columnData = [data];
+      this.columnData = [dataExpense, dataIncome];
+
       let self = this;
       Vue.nextTick(function () {
         self.createChart();

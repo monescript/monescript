@@ -1,9 +1,8 @@
 var Vue = require('vue');
 var c3 = require('c3');
-
 var balanceTreeHelper = require('../util/balance-filter-helper');
 
-module.exports = Vue.component('monthly-chart', {
+module.exports = Vue.component('weekly-chart', {
   template: '#chart-template',
   props: ['filter', 'journal'],
   data: function(){
@@ -30,20 +29,17 @@ module.exports = Vue.component('monthly-chart', {
   },
   methods: {
     uniqId: function(){
-      return 'monthly-chart-' + this._uid;
-    },
-
-    getMonthlyBalance: function(account, month){
-      return balanceTreeHelper.filteredMonthlyBalance(this.journal, {
-        account: account,
-        month: month
-      });
+      return 'weekly-chart-' + this._uid;
     },
 
     updateChart: function(){
       let data = [this.filter.account];
-      for(let i = 1; i <= 12; ++i){
-        data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
+      for(let i = 1; i <= 52; ++i){
+        var b = balanceTreeHelper.filteredWeeklyBalance(this.journal, {
+                      account: this.filter.account,
+                      week: i
+                    });
+        data.push(b);
       }
       this.columnData = [data];
       let self = this;
@@ -53,6 +49,9 @@ module.exports = Vue.component('monthly-chart', {
     },
 
     createChart: function(){
+      var catIds = [];
+      for(var i = 1; i<=52; ++i)
+        catIds.push(i);
       var chart = c3.generate({
           bindto: '#' + this.uniqId(),
           data: {
@@ -68,10 +67,10 @@ module.exports = Vue.component('monthly-chart', {
           axis: {
               x: {
                   type: 'category',
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                  categories: catIds
               }
           }
       });
     }
-  }
+  },
 });

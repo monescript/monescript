@@ -1,16 +1,14 @@
 var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
-var balancer = require('../../src/balance');
-var c3 = require('c3');
-var Big = require('big.js');
 var sampleGenerator = require('../../generator/generator.util');
-var accountNameHelper = require('./util/account-name-helper');
-var balanceTreeHelper = require('./util/balance-filter-helper');
 
 var Vue = require('vue');
 require('./components/accounts.js');
 require('./components/account-filter.js');
+require('./components/total-monthly-chart.js');
 require('./components/monthly-chart.js');
+require('./components/weekly-chart.js');
+require('./components/transaction-table.js');
 
 var app = new Vue({
   el: '#app',
@@ -19,10 +17,7 @@ var app = new Vue({
       account: 'Expenses',
       month: new Date().getMonth() + 1
     },
-    accountTree: {},
-    transactions: [],
-    totalInOutData: [],
-    filteredData: []
+    journal: journal
   },
   methods: {
 
@@ -34,7 +29,6 @@ var app = new Vue({
         reader.onload = function(e) {
             var text = reader.result
             self.createJournal(text);
-            self.calculateBalance();
         }
         reader.onerror = function(err) {
             console.log(err, err.loaded, err.loaded === 0);
@@ -57,99 +51,11 @@ var app = new Vue({
           console.log('Failing on line ' + JSON.stringify(e.chunk));
         }
     },
-
-    updateTransactions: function(){
-      this.transactions = journal.transactions(t => {
-        if(t.type == 'transaction' && t.date.month == this.filter.month){
-          if(this.matchingPosting(t) != null)
-            return true;
-        }
-        return false;
-      });
-      if(this.transactions == null){
-        this.transactions = [];
-      }
-    },
-
-    matchingPosting: function(t){
-      for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.encodeAccountName(t.posting[i].account).toLowerCase().indexOf(this.filter.account.toLowerCase()) >= 0 &&
-          t.posting[i].amount != null){
-            return t.posting[i];
-        }
-      }
-      return null;
-    },
-
-    matchingTxnPosting: function(t){
-      let mp = this.matchingPosting(t);
-      return mp == null ? {amount: 0.0, account: []} : mp;
-    },
-
-    updateAccounts: function(){
-      this.accountTree = balanceTreeHelper.filteredBalanceTree(journal, this.filter);
-      if(this.accountTree == null){
-        this.accountTree = {};
-      }
-    },
-
-    calculateBalance: function(){
-      this.updateTransactions();
-      this.updateAccounts();
-      this.createChart();
-      this.createChartFiltered();
-    },
-
-    generateJournal: function(){
-      const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      let today = new Date();
-      let todayMonth = today.getMonth() + 1;
-      let todayDay = today.getDate();
-      let todayYear = today.getFullYear();
-
-      let text = '';
-      for(let month = 0; month < todayMonth; ++month){
-        for(let day = 1; day <= monthDays[month]; day++){
-          if(month == todayMonth && day > todayDay){
-            break;
-          }
-          text += sampleGenerator.transactionsDay(todayYear, month + 1, day);
-        }
-      }
-      return text;
-    },
-
-    getMonthlyBalance: function(account, month){
-      return balanceTreeHelper.filteredBalance(journal, {
-        account: account,
-        month: month
-      });
-    },
-
-    createChartFiltered: function(){
-      let data = [this.filter.account];
-      for(let i = 1; i <= 12; ++i){
-        data.push(this.getMonthlyBalance(this.filter.account, i));
-      }
-      this.filteredData = [data];
-    },
-
-    createChart: function(){
-      let dataExpense = ['Expense'];
-      let dataIncome = ['Income'];
-      for(let i = 1; i <= 12; ++i){
-        dataExpense.push(this.getMonthlyBalance('Expense', i));
-        dataIncome.push(this.getMonthlyBalance('Income', i));
-      }
-      this.totalInOutData = [dataExpense, dataIncome];
-    }
   },
 
   beforeMount: function(){
       var self = this;
-      var text = this.generateJournal();
+      var text = sampleGenerator.generateYearJournal();
       this.createJournal(text);
-      this.calculateBalance();
   },
 })
-
