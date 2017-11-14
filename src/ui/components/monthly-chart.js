@@ -33,17 +33,16 @@ module.exports = Vue.component('monthly-chart', {
       return 'monthly-chart-' + this._uid;
     },
 
-    getMonthlyBalance: function(account, month){
-      return balanceFilterHelper.filteredMonthlyBalance(this.journal, {
-        account: account,
-        month: month
-      });
+    getMonthlyBalance: function(month){
+      var filterCopy = Object.assign({}, this.filter);
+      filterCopy.month = month;
+      return balanceFilterHelper.filteredMonthlyBalance(this.journal, filterCopy);
     },
 
     updateChart: function(){
       let data = [this.filter.account];
       for(let i = 1; i <= 12; ++i){
-        data.push(Math.abs(this.getMonthlyBalance(this.filter.account, i)));
+        data.push(Math.abs(this.getMonthlyBalance(i)));
       }
       this.columnData = [data];
       let self = this;
