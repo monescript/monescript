@@ -11,6 +11,10 @@ adjustments or additions.
 luini supports subset of the Ledger v3 journal syntax as detailed below. Depending on the usage, the plan is to
 continuously evolve the functionality to come close to covering all Ledger journal features. 
 
+## [Demo][https://abtechbit.github.io/]
+A fully functional demo showing randomly generated data.
+
+If you have a ledger file with simplified syntax (see below), you can feed it to the demo and explore it. There is no server behind this, so all the calculations are performed locally in your browser.
 
 ## Supported Ledger syntax in luini
 - basic transaction format
