@@ -30,7 +30,6 @@ module.exports = Vue.component('accounts', {
   methods: {
     updateAccounts: function(){
       if(this.journal == null){
-        this.accountTree = this.accounts;
         return;
       }
       this.accountTree = balanceTreeHelper.filteredBalanceTree(this.journal, this.filter);
@@ -40,7 +39,7 @@ module.exports = Vue.component('accounts', {
     },
 
     level: function(){
-      return this.accountTree;
+      return this.journal == null ? this.accounts : this.accountTree;
     },
 
     accountDisplay: function(value){
