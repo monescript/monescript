@@ -15,47 +15,47 @@ var app = new Vue({
   data: {
     filter:  {
       account: 'Expenses',
-      month: new Date().getMonth() + 1
+      month: new Date().getMonth() + 1,
+      payee: ''
     },
     journal: journal
   },
-  methods: {
-
-    handleFiles : function(e) {
-        var files = e.currentTarget.files;
-        var reader = new FileReader();
-        var self = this;
-
-        reader.onload = function(e) {
-            var text = reader.result
-            self.createJournal(text);
-        }
-        reader.onerror = function(err) {
-            console.log(err, err.loaded, err.loaded === 0);
-            button.removeAttribute("disabled");
-        }
-        reader.readAsText(files[0]);
-    },
-
-    createJournal: function(text){
-        journal.reset();
-
-        parser.reset(text)
-        var chunk;
-        try{
-          while((chunk = parser.next()) != null){
-            journal.add(chunk);
-          }
-        }catch(e){
-          console.log(e);
-          console.log('Failing on line ' + JSON.stringify(e.chunk));
-        }
-    },
-  },
-
   beforeMount: function(){
       var self = this;
       var text = sampleGenerator.generateYearJournal();
       this.createJournal(text);
+  },
+  methods: {
+
+    handleFiles : function(e) {
+      var files = e.currentTarget.files;
+      var reader = new FileReader();
+      var self = this;
+
+      reader.onload = function(e) {
+          var text = reader.result
+          self.createJournal(text);
+      }
+      reader.onerror = function(err) {
+          console.log(err, err.loaded, err.loaded === 0);
+          button.removeAttribute("disabled");
+      }
+      reader.readAsText(files[0]);
+    },
+
+    createJournal: function(text){
+      journal.reset();
+
+      parser.reset(text)
+      var chunk;
+      try{
+        while((chunk = parser.next()) != null){
+          journal.add(chunk);
+        }
+      }catch(e){
+        console.log(e);
+        console.log('Failing on line ' + JSON.stringify(e.chunk));
+      }
+    },
   },
 })

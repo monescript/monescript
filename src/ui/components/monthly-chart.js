@@ -1,7 +1,7 @@
 var Vue = require('vue');
 var c3 = require('c3');
 
-var balanceTreeHelper = require('../util/balance-filter-helper');
+var balanceFilterHelper = require('../util/balance-filter-helper');
 
 module.exports = Vue.component('monthly-chart', {
   template: '#chart-template',
@@ -34,7 +34,7 @@ module.exports = Vue.component('monthly-chart', {
     },
 
     getMonthlyBalance: function(account, month){
-      return balanceTreeHelper.filteredMonthlyBalance(this.journal, {
+      return balanceFilterHelper.filteredMonthlyBalance(this.journal, {
         account: account,
         month: month
       });
