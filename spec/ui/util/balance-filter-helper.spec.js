@@ -148,6 +148,66 @@ describe("Account name helper", function() {
     });
   })
 
+  describe("isTransactionMatchingTheFilter", function() {
+      const txn = {
+        type: 'transaction',
+        date: { year: 2017, month: 11, day: 29 },
+        payee: 'other',
+        posting: [
+          {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56}
+        ]
+      };
+
+      it("true for empty filter", function() {
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {})).toBeTruthy();
+      });
+
+      it("matches payee case insensitive", function() {
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {payee: 'THE'})).toBeTruthy();
+      });
+
+      it("matches account case insensitive", function() {
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {account: 'PHO'})).toBeTruthy();
+      });
+
+      it("matches month", function() {
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {month: 11})).toBeTruthy();
+      });
+
+      it("fails on wrong values", function() {
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {payee: '123'})).toBeFalsy();
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {account: 'abc'})).toBeFalsy();
+          expect(balanceTreeHelper.transactionMatchesFilter(txn, {month: 2})).toBeFalsy();
+      });
+
+      it("matches all together", function() {
+        expect(balanceTreeHelper.transactionMatchesFilter(txn, {payee:'OTH', account: 'exp', month: 11})).toBeTruthy();
+      });
+  })
+
+  describe("matchingPostings", function() {
+      const posting = [
+         {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56},
+         {account: [ 'Expenses', 'Department'], currency: '$', amount: 56.78},
+         {account: [ 'Assets', 'Savings'], currency: '$', amount: 1291.34}
+       ];
+
+      const txn = {
+        type: 'transaction',
+        date: { year: 2017, month: 11, day: 29 },
+        payee: 'other',
+        posting: posting
+      };
+
+      it("returns all for empty filter", function() {
+          expect(balanceTreeHelper.matchingPostings(txn, {})).toEqual(posting);
+      });
+
+      it("filters by account", function() {
+          expect(balanceTreeHelper.matchingPostings(txn, {account: 'DepART'})).toEqual([posting[1]]);
+      });
+  })
+
   describe("getWeekNumber", function() {
       it("returns week number for date", function() {
          expect(balanceTreeHelper.getWeekNumber(new Date(2017, 0, 5))).toEqual({year: 2017, week: 1});

@@ -42,16 +42,30 @@ module.exports = {
 
   getWeekNumber : function(date) {
     return weekNumberFromDate(date);
+  },
+
+  transactionMatchesFilter: function(t, filter){
+      return isTransactionMatchingTheFilter(t, filter);
+  },
+
+  matchingPostings: function(t, filter){
+    let postingAccountFilter = createPostingAccountFilter(filter);
+    return t.posting.filter(p => postingAccountFilter(p));
   }
 };
 
-function getFilteredAccountArray(journal, filter, txnFilter){
+function isTransactionMatchingTheFilter(t, filter){
     let txnMonthFilter = createMonthFilter(filter);
     let txnPayeeFilter = createPayeeFilter(filter);
     let postingAccountFilter = createPostingAccountFilter(filter);
+    return txnMonthFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter);
+}
+
+function getFilteredAccountArray(journal, filter, txnFilter){
+    let postingAccountFilter = createPostingAccountFilter(filter);
 
     let filteredAccounts = balancer.balance(journal,
-                                            t => txnMonthFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter),
+                                            t => isTransactionMatchingTheFilter(t, filter),
                                             postingAccountFilter)
 
     return Object.keys(filteredAccounts)
@@ -80,7 +94,7 @@ function createPostingAccountFilter(filter){
     var a =
         filter != null && filter.account != null ?
           p => p.account != null &&
-          p.account.some(a => a.toLowerCase().indexOf(filter.account.toLowerCase()) >= 0)
+          accountNameHelper.accountMatches(p.account, filter.account)
           :
           p => true;
     return a;

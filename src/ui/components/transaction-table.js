@@ -1,5 +1,5 @@
 var accountNameHelper = require('../util/account-name-helper');
-var balanceTreeHelper = require('../util/balance-filter-helper');
+var balanceFilterHelper = require('../util/balance-filter-helper');
 var Big = require('big.js');
 
 var Vue = require('vue');
@@ -32,37 +32,15 @@ module.exports = Vue.component('transaction-table', {
   methods: {
     updateTransactions: function(){
       this.transactions = this.journal.transactions(t => {
-        if(t.type == 'transaction' && t.date.month == this.filter.month){
-          if(this.hasMatchingPosting(t) != null)
-            return true;
-        }
-        return false;
+        return balanceFilterHelper.transactionMatchesFilter(t, this.filter);
       });
       if(this.transactions == null){
         this.transactions = [];
       }
     },
 
-    hasMatchingPosting: function(t){
-      for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
-          t.posting[i].amount != null){
-            return t.posting[i];
-        }
-      }
-      return null;
-    },
-
     matchingPostings: function(t){
-      let matches = [];
-      for(let i = 0; i < t.posting.length; ++i){
-        if(t.posting[i].account != null && accountNameHelper.accountMatches(t.posting[i].account, this.filter.account)  &&
-          t.posting[i].amount != null){
-            matches.push(t.posting[i]);
-        }
-      }
-
-      return matches;
+      return balanceFilterHelper.matchingPostings(t, this.filter);
     },
 
     matchingPostingsTotal: function(t){
@@ -85,7 +63,7 @@ module.exports = Vue.component('transaction-table', {
 
     txnWeekNumber: function(t){
       let txnDate = new Date(t.date.year, t.date.month - 1, t.date.day)
-      return balanceTreeHelper.getWeekNumber(txnDate).week;
+      return balanceFilterHelper.getWeekNumber(txnDate).week;
     },
   }
 });
