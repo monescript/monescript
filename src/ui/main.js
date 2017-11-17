@@ -44,6 +44,8 @@ var app = new Vue({
     },
 
     createJournal: function(text){
+      this.setSource(text);
+
       journal.reset();
 
       parser.reset(text)
@@ -57,5 +59,11 @@ var app = new Vue({
         console.log('Failing on line ' + JSON.stringify(e.chunk));
       }
     },
+
+    setSource: function(text){
+      Vue.nextTick(function () {
+        $('#file-contents').text(text);
+      });
+    }
   },
 })
