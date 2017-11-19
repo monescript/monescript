@@ -110,14 +110,31 @@
     </div>
 
     <script id="account-filter-template" type="text/x-template">
-      <div>
-        <label>Account: </label>
-        <input type="text" @change="updateFilter" v-model.lazy="filter.account"/>
-        <label>Month: </label>
-        <input type="number" @change="updateFilter" v-model.lazy="filter.month"/>
-        <label>Payee: </label>
-        <input type="text" @change="updateFilter" v-model.lazy="filter.payee"/>
-      </div>
+        <div class="form-inline mb-2">
+            <label class="mr-2" >Account: </label>
+            <input class="form-control" type="text" @change="updateFilter" v-model.lazy="filter.account" placeholder="Expenses"/>
+            <label class="ml-3 mr-2" >Month: </label>
+            <!--<input />-->
+            <select class="form-control" type="number" @change="updateFilter" v-model.lazy="filter.month">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <label class="ml-3 mr-2" >Payee: </label>
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-addon">@</div>
+                <input class="form-control" type="text" @change="updateFilter" v-model.lazy="filter.payee" placeholder="Giant Moose"/>
+            </div>
+        </div>
     </script>
 
     <script id="accounts-template" type="text/x-template">
