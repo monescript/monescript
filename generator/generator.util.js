@@ -104,7 +104,7 @@
         if(month == todayMonth && day > todayDay){
           break;
         }
-        text += this.transactionsDay(todayYear, month + 1, day);
+        text += this.transactionsDay(todayYear, month + 1, day) + '\n';
       }
     }
     return text;
@@ -116,7 +116,7 @@
       let txn = this.transaction();
       t = `${year}/${month}/${day} * ${txn.payee}\n`;
       txn.posting.forEach(p => {
-        t += `  ${p.account}  $${p.amount}\n`
+        t += `  ${p.account} `.padEnd(40) + ` $${p.amount}\n`
       });
       txn.counterPosting.forEach(p => {
         t += `  ${p.account} \n`
