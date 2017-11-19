@@ -45,7 +45,7 @@ var app = new Vue({
 
     createJournal: function(text){
       this.setSource(text);
-
+      $('#errors').text('');
       journal.reset();
 
       parser.reset(text)
@@ -54,9 +54,11 @@ var app = new Vue({
         while((chunk = parser.next()) != null){
           journal.add(chunk);
         }
+
+        console.log($('#topTab a[href="#transactions-tab"]').length);
+        $('#topTab a[href="#transactions"]').tab('show');
       }catch(e){
-        console.log(e);
-        console.log('Failing on line ' + JSON.stringify(e.chunk));
+        $('#errors').text('Failing on line ' + JSON.stringify(e.chunk, null, 2));
       }
     },
 

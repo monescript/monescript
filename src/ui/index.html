@@ -18,20 +18,27 @@
     <div class="container-fluid mt-2">
         <form id="app">
 
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <ul class="nav nav-tabs" id="topTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Open</a>
+                    <a class="nav-link" id="open-tab" data-toggle="tab" href="#open" role="tab" aria-controls="home" aria-selected="true">Open</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Transactions</a>
+                    <a class="nav-link active" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="profile" aria-selected="false">Transactions</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Source</a>
+                    <a class="nav-link" id="source-tab" data-toggle="tab" href="#source" role="tab" aria-controls="contact" aria-selected="false">Source</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade mt-3" id="home" role="tabpanel" aria-labelledby="home-tab"><input type="file" id="input" v-on:change="handleFiles"></div>
-                <div class="tab-pane fade mt-3 show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade mt-3" id="open" role="tabpanel" aria-labelledby="open-tab">
+                    <input type="file" id="input" v-on:change="handleFiles">
+                    <div>
+                        <pre id="errors">
+                        </pre>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade mt-3 show active" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
 
 
                     <div id="accordion" role="tablist">
@@ -91,9 +98,9 @@
                     </div>
                     <transaction-table v-bind:filter="filter" v-bind:journal="journal"></transaction-table>
                 </div>
-                <div class="tab-pane fade mt-3 ml-3" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="tab-pane fade mt-3 ml-3" id="source" role="tabpanel" aria-labelledby="source-tab">
                     <div>
-                        <pre id="file-contents">asdasda
+                        <pre id="file-contents">
                         </pre>
                     </div>
                 </div>
