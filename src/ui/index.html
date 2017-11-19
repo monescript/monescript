@@ -39,8 +39,6 @@
 
                 </div>
                 <div class="tab-pane fade mt-3 show active" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
-
-
                     <div id="accordion" role="tablist">
                         <div class="card">
                             <div class="card-header" role="tab" id="headingOne">
@@ -52,7 +50,7 @@
                             </div>
 
                             <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-                                <div class="card-body">
+                                <div class="card-body  pl-0">
                                     <total-monthly-chart style="width: 100%; height: 200px;" v-bind:journal="journal"></total-monthly-chart>
                                 </div>
                             </div>
@@ -66,7 +64,7 @@
                                 </h5>
                             </div>
                             <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
-                                <div class="card-body">
+                                <div class="card-body pl-0">
                                     <monthly-chart style="width: 100%; height: 200px;" v-bind:filter="filter" v-bind:journal="journal"></monthly-chart>
                                 </div>
                             </div>
@@ -80,7 +78,7 @@
                                 </h5>
                             </div>
                             <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
-                                <div class="card-body">
+                                <div class="card-body pl-0">
                                     <weekly-chart style="width: 100%; height: 200px;" v-bind:filter="filter" v-bind:journal="journal"></weekly-chart>
                                 </div>
                             </div>
