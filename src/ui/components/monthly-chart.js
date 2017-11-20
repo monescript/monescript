@@ -34,7 +34,9 @@ module.exports = Vue.component('monthly-chart', {
       return formatHelper.formattedAmount(this.totalBalance());
     },
     average: function(){
-      return formatHelper.formattedAmount(this.totalBalance()/12.0);
+      let today = new Date();
+      let todayMonth = today.getMonth() + 1;
+      return formatHelper.formattedAmount(this.totalBalance()/todayMonth);
     }
   },
   methods: {
