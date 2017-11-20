@@ -115,7 +115,7 @@ function createPayeeFilter(filter){
 
 function createMonthFilter(filter){
     var a =
-        filter != null && filter.month != null  ?
+        filter != null && filter.month != null && filter.month > 0 ?
         t => t.date.month == filter.month
         :
         t => true;

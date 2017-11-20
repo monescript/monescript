@@ -33,7 +33,9 @@ module.exports = Vue.component('weekly-chart', {
       return formatHelper.formattedAmount(this.totalBalance());
     },
     average: function(){
-      return formatHelper.formattedAmount(this.totalBalance()/52.0);
+      let today = new Date();
+      let todayWeek = balanceFilterHelper.getWeekNumber(today).week;
+      return formatHelper.formattedAmount(this.totalBalance()/todayWeek);
     }
   },
   methods: {

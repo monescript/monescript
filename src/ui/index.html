@@ -1,6 +1,6 @@
 <html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Luini</title>
+    <title>luini</title>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,12 +31,16 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade mt-3" id="open" role="tabpanel" aria-labelledby="open-tab">
-                    <input type="file" id="input" v-on:change="handleFiles">
-                    <div>
-                        <pre id="errors">
-                        </pre>
+                    <div class="form">
+                        <div class="form-group">
+                            <label> Please provide a text file in a <a href="https://github.com/abtechbit/luini#supported-ledger-syntax-in-luini" target="_blank"> simplified Ledger format </a> </label>
+                            <input class="form-control" type="file" id="input" v-on:change="handleFiles">
+                        </div>
+                        <div>
+                            <pre id="errors">
+                            </pre>
+                        </div>
                     </div>
-
                 </div>
                 <div class="tab-pane fade mt-3 show active" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
                     <div id="accordion" role="tablist">
@@ -114,6 +118,7 @@
             <label class="ml-3 mr-2" >Month: </label>
             <!--<input />-->
             <select class="form-control" type="number" @change="updateFilter" v-model.lazy="filter.month">
+                <option value="0">All</option>
                 <option value="1">January</option>
                 <option value="2">February</option>
                 <option value="3">March</option>
