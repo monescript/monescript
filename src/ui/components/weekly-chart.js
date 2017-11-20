@@ -1,6 +1,7 @@
 var Vue = require('vue');
 var c3 = require('c3');
 var balanceFilterHelper = require('../util/balance-filter-helper');
+var formatHelper = require('../util/format-helper');
 
 module.exports = Vue.component('weekly-chart', {
   template: '#chart-template',
@@ -27,7 +28,23 @@ module.exports = Vue.component('weekly-chart', {
       deep: true
     },
   },
+  computed: {
+    total: function(){
+      return formatHelper.formattedAmount(this.totalBalance());
+    },
+    average: function(){
+      return formatHelper.formattedAmount(this.totalBalance()/52.0);
+    }
+  },
   methods: {
+    totalBalance: function(){
+      let total = 0.0;
+      for(let i = 1; i <= 52; ++i){
+        total += Math.abs(this.getWeeklyBalance(i));
+      }
+      return total;
+    },
+
     uniqId: function(){
       return 'weekly-chart-' + this._uid;
     },

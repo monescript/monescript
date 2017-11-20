@@ -51,6 +51,10 @@ module.exports = {
   matchingPostings: function(t, filter){
     let postingAccountFilter = createPostingAccountFilter(filter);
     return t.posting.filter(p => postingAccountFilter(p));
+  },
+
+  totalBalance: function(journal, account){
+    return Math.abs(filteredBalance(journal, {account: account}, (t)=> true));
   }
 };
 

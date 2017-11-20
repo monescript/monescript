@@ -55,7 +55,6 @@ var app = new Vue({
           journal.add(chunk);
         }
 
-        console.log($('#topTab a[href="#transactions-tab"]').length);
         $('#topTab a[href="#transactions"]').tab('show');
       }catch(e){
         $('#errors').text('Failing on line ' + JSON.stringify(e.chunk, null, 2));
