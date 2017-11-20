@@ -1,10 +1,11 @@
 var Vue = require('vue');
 var c3 = require('c3');
 
-var balanceTreeHelper = require('../util/balance-filter-helper');
+var balanceFilterHelper = require('../util/balance-filter-helper');
+var formatHelper = require('../util/format-helper');
 
 module.exports = Vue.component('total-monthly-chart', {
-  template: '#chart-template',
+  template: '#total-monthly-chart-template',
   props: ['journal'],
   data: function(){
     return {
@@ -22,13 +23,27 @@ module.exports = Vue.component('total-monthly-chart', {
       deep: true
     },
   },
+  computed: {
+    totalIncome: function(){
+      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Income:'));
+    },
+    totalExpenses: function(){
+      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:'));
+    },
+    averageMonthlyIncome: function(){
+      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Income:') / 12.0);
+    },
+    averageMonthlyExpenses: function(){
+      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:')  / 12.0);
+    }
+  },
   methods: {
     uniqId: function(){
       return 'monthly-chart-' + this._uid;
     },
 
     getMonthlyBalance: function(account, month){
-      return balanceTreeHelper.filteredMonthlyBalance(this.journal, {
+      return balanceFilterHelper.filteredMonthlyBalance(this.journal, {
         account: account,
         month: month
       });

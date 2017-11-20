@@ -50,8 +50,8 @@
                             </div>
 
                             <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-                                <div class="card-body  pl-0">
-                                    <total-monthly-chart style="width: 100%; height: 200px;" v-bind:journal="journal"></total-monthly-chart>
+                                <div class="card-body pl-0">
+                                    <total-monthly-chart v-bind:journal="journal"></total-monthly-chart>
                                 </div>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                             </div>
                             <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
                                 <div class="card-body pl-0">
-                                    <monthly-chart style="width: 100%; height: 200px;" v-bind:filter="filter" v-bind:journal="journal"></monthly-chart>
+                                    <monthly-chart v-bind:filter="filter" v-bind:journal="journal"></monthly-chart>
                                 </div>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                             </div>
                             <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
                                 <div class="card-body pl-0">
-                                    <weekly-chart style="width: 100%; height: 200px;" v-bind:filter="filter" v-bind:journal="journal"></weekly-chart>
+                                    <weekly-chart v-bind:filter="filter" v-bind:journal="journal"></weekly-chart>
                                 </div>
                             </div>
                         </div>
@@ -146,8 +146,42 @@
         </ul>
     </script>
 
+    <script id="total-monthly-chart-template" type="text/x-template">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div  style="height: 200px;" :id="uniqId()"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 ml-2">
+                        <label class="mr-3">Total Income: {{totalIncome}} </label>
+                        <label class="mr-3">Total Expenses: {{totalExpenses}} </label>
+                        <label class="mr-3">Average Monthly Income: {{averageMonthlyIncome}} </label>
+                        <label class="mr-3">Average Monthly Expenses: {{averageMonthlyExpenses}} </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
     <script id="chart-template" type="text/x-template">
-        <div :id="uniqId()"></div>
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div style="height: 200px;" :id="uniqId()"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 ml-2">
+                        <label class="mr-3">Total: {{total}} </label>
+                        <label class="mr-3">Average: {{average}} </label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </script>
 
     <script id="transaction-table-template" type="text/x-template">
