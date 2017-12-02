@@ -70,6 +70,14 @@ var app = new Vue({
       Vue.nextTick(function () {
         $('#file-contents').text(text);
       });
+    },
+
+    updateFilterAccount: function(account){
+      console.log('=> ' + account);
+      var self = this;
+      Vue.nextTick(function () {
+        self.filter.account = account;
+      });
     }
   },
 })

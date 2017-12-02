@@ -18,7 +18,8 @@ module.exports = {
         var nextLevel = branchLevel.accounts == null ? null : branchLevel.accounts[n];
         if(nextLevel == null)
         {
-          var nextLevel = {name: n};
+          var fullAccountPath = a.account.slice();
+          var nextLevel = {name: n, fullName: accountNameHelper.encodeAccountName(fullAccountPath)};
           if(branchLevel.accounts == null)
             branchLevel.accounts = {};
           branchLevel.accounts[n] = nextLevel;

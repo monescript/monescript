@@ -1,5 +1,5 @@
 var Vue = require('vue');
-var balanceTreeHelper = require('../util/balance-filter-helper');
+var balanceFilterHelper = require('../util/balance-filter-helper');
 
 
 module.exports = Vue.component('accounts', {
@@ -32,10 +32,15 @@ module.exports = Vue.component('accounts', {
       if(this.journal == null){
         return;
       }
-      this.accountTree = balanceTreeHelper.filteredBalanceTree(this.journal, this.filter);
+      this.accountTree = balanceFilterHelper.filteredBalanceTree(this.journal, this.filter);
       if(this.accountTree == null){
         this.accountTree = {};
       }
+    },
+
+    filterByAccount: function(account){
+      console.log('Account:  ' + account);
+      this.$emit('account', account)
     },
 
     level: function(){
