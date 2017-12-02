@@ -118,7 +118,8 @@
                                 <account-filter v-model="filter"></account-filter>
                             </td></tr>
                             <tr><td>
-                                <accounts v-bind:filter="filter" v-bind:journal="journal"> </accounts>
+                                <accounts v-bind:filter="filter" v-bind:journal="journal" @account="updateFilterAccount">
+                                </accounts>
                             </td></tr>
                         </table>
                     </div>
@@ -167,9 +168,9 @@
     <script id="accounts-template" type="text/x-template">
         <ul>
             <li v-for="(value, key) in level()" >
-                <b>{{ accountDisplay(value) }}</b>
+                <b><a href="#" @click.prevent="filterByAccount(value.fullName)" >{{ accountDisplay(value) }}</a></b>
                 <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
-                    <accounts v-bind:accounts="value.accounts"> </accounts>
+                    <accounts v-bind:accounts="value.accounts" @account="filterByAccount" > </accounts>
                 </div>
             </li>
         </ul>
