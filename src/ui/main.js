@@ -57,7 +57,12 @@ var app = new Vue({
 
         $('#topTab a[href="#transactions"]').tab('show');
       }catch(e){
-        $('#errors').text('Failing on line ' + JSON.stringify(e.chunk, null, 2));
+        if(e.chunk == null){
+          $('#errors').text('Error: ' + e.message + JSON.stringify(e, null, 2));
+        } else {
+          $('#errors').text('Failing on line ' + JSON.stringify(e.chunk, null, 2));
+        }
+        console.log(e);
       }
     },
 
