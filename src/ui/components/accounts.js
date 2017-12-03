@@ -39,7 +39,6 @@ module.exports = Vue.component('accounts', {
     },
 
     filterByAccount: function(account){
-      console.log('Account:  ' + account);
       this.$emit('account', account)
     },
 
