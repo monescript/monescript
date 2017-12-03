@@ -139,10 +139,9 @@
     <script id="account-filter-template" type="text/x-template">
         <div class="form-inline mb-2">
             <label class="mr-2" >Account: </label>
-            <input class="form-control" type="text" @change="updateFilter" v-model.lazy="filter.account" placeholder="Expenses"/>
+            <input class="form-control" type="text"  v-model.lazy="value.account" placeholder="Expenses"/>
             <label class="ml-3 mr-2" >Month: </label>
-            <!--<input />-->
-            <select class="form-control" type="number" @change="updateFilter" v-model.lazy="filter.month">
+            <select class="form-control" v-model.lazy="value.month">
                 <option value="0">All</option>
                 <option value="1">January</option>
                 <option value="2">February</option>
@@ -160,7 +159,7 @@
             <label class="ml-3 mr-2" >Payee: </label>
             <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                 <div class="input-group-addon">@</div>
-                <input class="form-control" type="text" @change="updateFilter" v-model.lazy="filter.payee" placeholder="Giant Moose"/>
+                <input class="form-control" type="text" v-model.lazy="value.payee" placeholder="Giant Moose"/>
             </div>
         </div>
     </script>

@@ -73,11 +73,7 @@ var app = new Vue({
     },
 
     updateFilterAccount: function(account){
-      console.log('=> ' + account);
-      var self = this;
-      Vue.nextTick(function () {
-        self.filter.account = account;
-      });
+      this.filter.account = account;
     }
   },
 })
