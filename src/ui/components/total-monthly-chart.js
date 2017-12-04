@@ -31,11 +31,12 @@ module.exports = Vue.component('total-monthly-chart', {
       return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:'));
     },
     averageMonthlyIncome: function(){
-      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Income:') / 12.0);
+      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Income:') / this.monthCount);
     },
     averageMonthlyExpenses: function(){
-      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:')  / 12.0);
-    }
+      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:')  / this.monthCount);
+    },
+
   },
   methods: {
     uniqId: function(){
@@ -57,6 +58,7 @@ module.exports = Vue.component('total-monthly-chart', {
         dataIncome.push(Math.abs(this.getMonthlyBalance('Income', i)));
       }
       this.columnData = [dataExpense, dataIncome];
+      this.monthCount = this.journal.getTransactionMonthCount();
 
       let self = this;
       Vue.nextTick(function () {

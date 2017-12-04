@@ -31,6 +31,12 @@ var Journal = {
     return this.transactionList.filter(filter);
   },
 
+  getTransactionMonthCount: function(){
+      var allMonths = this.transactionList.map(t => t.date.month);
+      var months = Array.from(new Set(allMonths));
+      return months.length;
+  },
+
   //----------- Internal state
 
   transactionList: [],
