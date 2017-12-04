@@ -1,11 +1,13 @@
 {
   "Assets": {
     "name": "Assets",
+    "fullName": "Assets",
     "balance": -100,
     "currency": "$",
     "accounts": {
       "Checking": {
         "name": "Checking",
+        "fullName": "Assets:Checking",
         "balance": -100,
         "currency": "$"
       }
@@ -13,11 +15,13 @@
   },
   "Expenses": {
     "name": "Expenses",
+    "fullName": "Expenses",
     "balance": 100,
     "currency": "$",
     "accounts": {
       "Dining": {
         "name": "Dining",
+        "fullName": "Expenses:Dining",
         "balance": 100,
         "currency": "$"
       }
