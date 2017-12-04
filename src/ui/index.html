@@ -118,6 +118,13 @@
                                 <account-filter v-model="filter"></account-filter>
                             </td></tr>
                             <tr><td>
+
+                                <div class="mb-2">
+                                    <button type="button" class="btn btn-sm btn-danger" @click.prevent="updateFilterAccount('Expenses')">Expenses</button>
+                                    <button type="button" class="btn btn-sm btn-success" @click.prevent="updateFilterAccount('Income')">Income</button>
+                                    <button type="button" class="btn btn-sm btn-info" @click.prevent="updateFilterAccount('Assets')">Assets</button>
+                                </div>
+
                                 <accounts v-bind:filter="filter" v-bind:journal="journal" @account="updateFilterAccount">
                                 </accounts>
                             </td></tr>
