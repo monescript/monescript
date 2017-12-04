@@ -1,11 +1,13 @@
 {
   "Expenses": {
     "name": "Expenses",
+    "fullName": "Expenses",
     "balance": 122.04,
     "currency": "$",
     "accounts": {
       "Food": {
         "name": "Food",
+        "fullName": "Expenses:Food",
         "balance": 122.04,
         "currency": "$"
       }

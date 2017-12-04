@@ -1,16 +1,19 @@
 {
   "Assets": {
     "name": "Assets",
+    "fullName": "Assets",
     "balance": -122.04,
     "currency": "$",
     "accounts": {
       "Bank": {
         "name": "Bank",
+        "fullName": "Assets:Bank",
         "balance": -122.04,
         "currency": "$",
         "accounts": {
           "Checking": {
             "name": "Checking",
+            "fullName": "Assets:Bank:Checking",
             "balance": -122.04,
             "currency": "$"
           }
@@ -20,11 +23,13 @@
   },
   "Expenses": {
     "name": "Expenses",
+    "fullName": "Expenses",
     "balance": 122.04,
     "currency": "$",
     "accounts": {
       "Food": {
         "name": "Food",
+        "fullName": "Expenses:Food",
         "balance": 122.04,
         "currency": "$"
       }
