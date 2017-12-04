@@ -7,8 +7,8 @@ luini is a double-entry [plain text accounting](http://plaintextaccounting.org/)
 There is no server behind luini, all the calculations are performed locally in your browser window without any data 
 leaving your computer. 
 
-luini works with text files formatted as a journal and performs all the calculations in the browser. No modification 
-is made to the original journal, luini only performs journal analysis and presents financial summary graphs and statistics.
+luini works with text files formatted as a transaction journal. No modification is made to the original journal, luini 
+only performs journal analysis and presents financial summary graphs and statistics.
 
 ## [Demo](https://abtechbit.github.io/)
 By default demo shows randomly generated data on the Transactions tab. 
