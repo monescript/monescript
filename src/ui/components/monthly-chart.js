@@ -36,7 +36,7 @@ module.exports = Vue.component('monthly-chart', {
     average: function(){
       let today = new Date();
       let todayMonth = today.getMonth() + 1;
-      return formatHelper.formattedAmount(this.totalBalance()/todayMonth);
+      return formatHelper.formattedAmount(this.totalBalance()/this.monthCount);
     }
   },
   methods: {
@@ -64,6 +64,7 @@ module.exports = Vue.component('monthly-chart', {
         data.push(Math.abs(this.getMonthlyBalance(i)));
       }
       this.columnData = [data];
+      this.monthCount = this.journal.getTransactionMonthCount();
       let self = this;
       Vue.nextTick(function () {
         self.createChart();
