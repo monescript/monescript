@@ -51,7 +51,8 @@ bucket Assets:Bank:Checking
 # don't have to specify the source account, when defined with bucket command above  
 
 2017/2/1 * PartyShack
-  Expenses:Entertainment                 ($5.89 * 1.05) ; luini can compute simple expressions, like thistax calculation 
+  ; luini can compute simple expressions, like this tax calculation 
+  Expenses:Entertainment                 ($5.89 * 1.05) 
   Expenses:Clothing                      $16.72
   Assets:Bank:Checking 
 
