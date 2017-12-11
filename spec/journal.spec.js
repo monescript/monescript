@@ -211,4 +211,25 @@ describe("Journal ", function() {
       expect(e.txn).toEqual(bigCopy(txn));
     }
   });
+
+  it("returns number of months with transactions", function() {
+
+    var txn = grammarParser.parse(
+      "2016/02/12 other\n" +
+      " Expenses:Utilities:Phone 1  $123.45 \n" +
+      " Assets:Checking"
+    );
+    journal.add(txn);
+
+
+    var txn = grammarParser.parse(
+      "2016/08/23 other\n" +
+      " Expenses:Utilities:Phone 1  $123.45 \n" +
+      " Assets:Checking"
+    );
+    journal.add(txn);
+
+    expect(journal.getTransactionMonthCount()).toEqual(2);
+  });
+
 })
