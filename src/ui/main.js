@@ -16,7 +16,8 @@ var app = new Vue({
     filter:  {
       account: 'Expenses',
       month: new Date().getMonth() + 1,
-      payee: ''
+      payee: '',
+      tag: ''
     },
     journal: journal
   },
