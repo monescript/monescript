@@ -6,7 +6,7 @@ describe("Ledger Grammar Parser", function() {
 http://ledger-cli.org/3.0/doc/ledger3.html#Transactions-and-Comments
 
       ; # % | *
-          A line beginning with a semicolon, pound, percent, bar or asterisk indicates a comment, and is ignored. Comments will not be returned in a “print” response.
+          A line beginning with a semicolon, pound, percent, bar or asterisk indicates a comment, and is ignored.
 
 */
 

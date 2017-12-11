@@ -221,6 +221,25 @@ describe("Ledger Grammar Parser", function() {
     expect(result).toEqual(expectedTransaction);
   });
 
+  it("should be able to parse a transaction without header transaction note - no hard separator before comment character", function() {
+
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2017, month: 11, day: 29 },
+      payee: 'other ;  payee notes',
+      status: '*',
+      posting: [
+        {account: [ 'Expenses', 'Utilities', 'Phone 1'], currency: '$', amount: 1234.56}
+      ]
+    };
+
+    var result = parser.parse(
+      "2017/11/29 * other ;  payee notes\n" +
+      " Expenses:Utilities:Phone 1  $1234.56\n"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
 
   it("should be able to parse a transaction with empty header transaction note", function() {
 
