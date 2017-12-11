@@ -1,6 +1,7 @@
 var Big = require('big.js');
 var _ = require('underscore');
 var eval = require('./expression-evaluator.js');
+var tagExtractor = require('./parser/tag-extractor.js');
 
 var Journal = {
   reset: function(){
@@ -74,7 +75,24 @@ var Journal = {
       }
     }
 
+    this.parseTags(txn);
+
     this.transactionList.push(txn)
+  },
+
+  parseTags: function(txn){
+    let tags = tagExtractor.extractTags(txn.note);
+    txn.posting
+      .forEach(p => {
+        if(p.type == 'comment'){
+          tags = tags.concat(tagExtractor.extractTags(p.text));
+        } else {
+          tags = tags.concat(tagExtractor.extractTags(p.note));
+        }
+      });
+
+    if(tags.length > 0)
+      txn.tags = tags;
   },
 
   copy : function(txn){

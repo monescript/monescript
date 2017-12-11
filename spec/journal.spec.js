@@ -59,7 +59,7 @@ describe("Journal ", function() {
 
     var txn = {"type":"transaction","date":{"year":2017,"month":1,"day":7},
                     "payee":"ultramar","posting":[
-                      {"type":"comment","text":" description: 1.099"},
+                      {"type":"comment","text":" description is 1.099"},
                       {"account":["Expenses","Auto","Gas"],"currency":"$","amount":45.16},
                       {"account":["Assets","Chequing"],"currency":"$","amount":-45.16}
                     ]
@@ -232,4 +232,19 @@ describe("Journal ", function() {
     expect(journal.getTransactionMonthCount()).toEqual(2);
   });
 
+  it("returns number of months with transactions", function() {
+
+    var txn = grammarParser.parse(
+      "2016/02/12 other  ; mytag: hello\n" +
+      " ; :otherTag: \n" +
+      " Expenses:Utilities:Phone 1  $123.45  ; :thirdTag:  \n" +
+      " ; :fourthTag: \n" +
+      " Assets:Checking"
+    );
+    journal.add(txn);
+    let txns = journal.transactions();
+    let parsedTxn = txns[0];
+
+    expect(parsedTxn.tags).toEqual([{'mytag':'hello'}, {'otherTag':''}, {'thirdTag':''}, {'fourthTag':''}]);
+  });
 })

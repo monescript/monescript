@@ -2,6 +2,8 @@
 module.exports = {
   extractTags: function(value){
     let tags = [];
+    if(value == null) return tags;
+
     let parts = value.split(':');
 
     if(parts.length > 1){
@@ -19,7 +21,7 @@ module.exports = {
 
   createTag: function(key, value){
     let tag = {};
-    tag[key.trim()] = value;
+    tag[key.trim()] = value.trimLeft();
     return tag;
   }
 }
