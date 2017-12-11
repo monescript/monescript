@@ -36,21 +36,21 @@ command
     / "year" space year:year space?  { return {type: "year", year:year}}
 
 transaction
-  = date:date space status:status payee:payee note:transactionNote?
+  = date:date space status:status payeeAndNote:payeeAndNote
     posting:posting+
     {
       var txn = {
         type: 'transaction',
         date: date,
-        payee: payee,
+        payee: payeeAndNote.payee.trim(),
         posting: posting
       };
 
       if(status != null && status != '')
         txn.status = status;
 
-      if(note != null)
-        txn.note = note;
+      if(payeeAndNote.note != null)
+        txn.note = payeeAndNote.note;
 
       return txn;
     }
@@ -78,8 +78,16 @@ status
      "!" space { return "!"; } /
      "" {return ""}
 
-payee
-  = (!hardSeparator !newline .)* { return text();}
+payeeAndNote
+  =
+    payee:(!hardSeparator !newline .)* hardSeparator+ comment:comment {
+      let payeeStr = [].concat.apply([], payee).filter(c => c!= null).join('');
+      return {payee:payeeStr, note: comment};
+    }
+    / payee:(!newline .)* {
+      let payeeStr = [].concat.apply([], payee).filter(c => c!= null).join('');
+      return {payee:payeeStr, note: null};
+    }
 
 transactionNote
   = hardSeparator+ comment:comment? { return comment; }
