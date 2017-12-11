@@ -1,4 +1,4 @@
-fdescribe("Tag Extractor", function() {
+describe("Tag Extractor", function() {
   var tagExtractor = require("../../src/parser/tag-extractor.js");
 
 /*
@@ -14,6 +14,10 @@ https://www.ledger-cli.org/3.0/doc/ledger3.html#Metadata-values
 
 To associate a value with a tag, use the syntax “Key: Value”, where the value can be any string of characters. Whitespace is needed after the colon, and cannot appear in the Key:
 */
+  it("returns nothing for null", function() {
+    let tags = tagExtractor.extractTags();
+    expect(tags).toEqual([]);
+  });
 
   it("returns nothing for empty", function() {
     let tags = tagExtractor.extractTags(
@@ -57,14 +61,14 @@ To associate a value with a tag, use the syntax “Key: Value”, where the valu
 
   it("returns tag with a value", function() {
     let tags = tagExtractor.extractTags(
-      "abcd:efgh ijk lmn op"
+      "abcd: efgh ijk lmn op"
     );
     expect(tags).toEqual([{'abcd':'efgh ijk lmn op'}]);
   });
 
   it("trims tag key", function() {
     let tags = tagExtractor.extractTags(
-      "  abcd:efgh"
+      "  abcd: efgh"
     );
     expect(tags).toEqual([{'abcd':'efgh'}]);
   });
