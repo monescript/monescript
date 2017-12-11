@@ -61,8 +61,9 @@ module.exports = {
 
 function isTransactionMatchingTheFilter(t, filter, txnDateFilter){
     let txnPayeeFilter = createPayeeFilter(filter);
+    let txnTagFilter = createTagFilter(filter);
     let postingAccountFilter = createPostingAccountFilter(filter);
-    return txnDateFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter);
+    return txnDateFilter(t) && txnTagFilter(t) && txnPayeeFilter(t) && t.posting.some(postingAccountFilter);
 }
 
 function getFilteredAccountArray(journal, filter, txnFilter){
@@ -108,6 +109,16 @@ function createPayeeFilter(filter){
     var a =
         filter != null && filter.payee != null && filter.payee != '' ?
         t => t.payee.toLowerCase().indexOf(filter.payee.toLowerCase()) >= 0
+        :
+        t => true;
+
+    return a;
+}
+
+function createTagFilter(filter){
+    var a =
+        filter != null && filter.tag != null && filter.tag != '' ?
+        t => t.tags == null ? false : t.tags.map(t => Object.keys(t)[0].toLowerCase()).some(k => k == filter.tag)
         :
         t => true;
 
