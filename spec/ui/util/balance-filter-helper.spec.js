@@ -214,6 +214,23 @@ describe("Account name helper", function() {
       });
   })
 
+  describe("totalBalance", function() {
+      it("returns zero for empty journal", function() {
+        expect(balanceTreeHelper.totalBalance(journal, 'Expenses')).toEqual(0);
+      });
+
+      it("returns total balance for account", function() {
+        createJournal('two-level.journal');
+        expect(balanceTreeHelper.totalBalance(journal, 'Expenses')).toEqual(233.95);
+        expect(balanceTreeHelper.totalBalance(journal, 'Expenses:Food')).toEqual(122.04);
+      });
+
+      it("returns absolute value as a balance", function() {
+        createJournal('two-level.journal');
+        expect(balanceTreeHelper.totalBalance(journal, 'Assets:Bank:Checking')).toEqual(233.95);
+      });
+  })
+
   let readFromJsonFile = function(filename){
     var text = fs.readFileSync('spec/resources/ui/util/balance-tree-helper/' + filename, 'utf8');
     return JSON.parse(text);
