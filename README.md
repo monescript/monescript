@@ -1,13 +1,13 @@
 [![Build status](https://travis-ci.org/abtechbit/luini.svg?branch=master)](https://travis-ci.org/abtechbit/luini)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-# luini
+# monescript
 
-luini is a double-entry [plain text accounting](http://plaintextaccounting.org/) system that works in you browser. 
-There is no server behind luini, all the calculations are performed locally in your browser window without any data 
+monescript is a double-entry [plain text accounting](http://plaintextaccounting.org/) system that works in you browser. 
+There is no server behind monescript, all the calculations are performed locally in your browser window without any data 
 leaving your computer. 
 
-luini works with text files formatted as a transaction journal. No modification is made to the original journal, luini 
+monescript works with text files formatted as a transaction journal. No modification is made to the original journal, monescript 
 only performs journal analysis and presents financial summary graphs and statistics.
 
 ## [Demo](https://abtechbit.github.io/)
@@ -15,12 +15,12 @@ By default demo shows randomly generated data on the Transactions tab.
 
 You can explore the generated journal on the Source tab.
 
-If you have a file with luini journal syntax you can feed to luini from the Open tab. 
+If you have a file with monescript journal syntax you can feed to monescript from the Open tab. 
 
-## luini journal syntax
+## monescript journal syntax
 
-luini syntax is loosely based on a simplified [Ledger](http://ledger-cli.org) journal syntax. Here is the list of
-features that are currently supported by luini parser:
+monescript syntax is inspired by [Ledger](http://ledger-cli.org) journal syntax. Here is the list of
+features that are currently supported by monescript parser:
 
 - Transaction format
   - YYYY/MM/DD date format
@@ -29,14 +29,15 @@ features that are currently supported by luini parser:
   - notes prefixed with ';'
 - line comments prefixed with ';' or '#'
 - bucket command
+- tag names
 - include and year commands (ignored)
 
 There is no restriction on the name of the accounts. 
 
 Journal is expected to be balanced, which means that for every transaction has to have source and destination account(s). 
-if journal is not balanced. luini will not be able to analyze the journal and show an error.
+if journal is not balanced. monescript will not be able to analyze the journal and show an error.
 
-### Sample luini journal file
+### Sample monescript journal file
 
 
 ```` 
@@ -51,7 +52,7 @@ bucket Assets:Bank:Checking
 # don't have to specify the source account, when defined with bucket command above  
 
 2017/2/1 * PartyShack
-  ; luini can compute simple expressions, like this tax calculation 
+  ; monescript can compute simple expressions, like this tax calculation 
   Expenses:Entertainment                 ($5.89 * 1.05) 
   Expenses:Clothing                      $16.72
   Assets:Bank:Checking 
