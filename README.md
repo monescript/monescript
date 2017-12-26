@@ -10,7 +10,7 @@ leaving your computer.
 monescript works with text files formatted as a transaction journal. No modification is made to the original journal, monescript 
 only performs journal analysis and presents financial summary graphs and statistics.
 
-## [Demo](https://abtechbit.github.io/)
+## [Demo](https://monescript.github.io/)
 By default demo shows randomly generated data on the Transactions tab. 
 
 You can explore the generated journal on the Source tab.
