@@ -1,6 +1,6 @@
 <html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
-    <title>luini</title>
+    <title>monescript</title>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,21 +17,11 @@
 </head>
 
 <body>
-    <div class="top-bar">
+    <div class="dark-bar">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <ul class="contact-details">
-                        <li>luini - double entry accounting</li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <ul class="social-list">
-                        <li>
-                            <a class="github itl-tooltip" data-placement="bottom" href="https://github.com/abtechbit/luini" data-original-title="Github" target="_blank"><i class="fa fa-github"></i></a>
-                        </li>
-                    </ul>
-
+                <div class="col-md-12 text-center">
+                    monescript - double entry accounting
                 </div>
             </div>
         </div>
@@ -54,7 +44,7 @@
                 <div class="tab-pane fade mt-3" id="open" role="tabpanel" aria-labelledby="open-tab">
                     <div class="form">
                         <div class="form-group">
-                            <label> Please provide a text file in a <a href="https://github.com/abtechbit/luini#supported-ledger-syntax-in-luini" target="_blank"> simplified Ledger format </a> </label>
+                            <label> Please provide a text file in a <a href="https://github.com/monescript/monescript#monescript-journal-syntax" target="_blank"> monescript format </a> </label>
                             <input class="form-control" type="file" id="input" v-on:change="handleFiles">
                         </div>
                         <div>
@@ -141,6 +131,15 @@
             </div>
 
         </form>
+    </div>
+    <div class="dark-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center py-1">
+                    <a class="github itl-tooltip" data-placement="bottom" href="https://github.com/monescript/monescript" data-original-title="Github" target="_blank"><i class="fa fa-github"></i> Github</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script id="account-filter-template" type="text/x-template">
