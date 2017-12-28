@@ -1,0 +1,276 @@
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <title>luini</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="contact-details">
+                        <li>luini - ledger ui no install</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="social-list">
+                        <li>
+                            <a class="github itl-tooltip" data-placement="bottom" href="https://github.com/abtechbit/luini" data-original-title="Github" target="_blank"><i class="fa fa-github"></i></a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-2">
+        <form id="app">
+
+            <ul class="nav nav-tabs" id="topTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="open-tab" data-toggle="tab" href="#open" role="tab" aria-controls="home" aria-selected="true">Open</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="profile" aria-selected="false">Transactions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="source-tab" data-toggle="tab" href="#source" role="tab" aria-controls="contact" aria-selected="false">Source</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade mt-3" id="open" role="tabpanel" aria-labelledby="open-tab">
+                    <div class="form">
+                        <div class="form-group">
+                            <label> Please provide a text file in a <a href="https://github.com/abtechbit/luini#supported-ledger-syntax-in-luini" target="_blank"> simplified Ledger format </a> </label>
+                            <input class="form-control" type="file" id="input" v-on:change="handleFiles">
+                        </div>
+                        <div>
+                            <pre id="errors">
+                            </pre>
+                        </div>
+                        <div>
+                            <p>There is no server-side code behind this page, all the computations are performed in your browser.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade mt-3 show active" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+                    <div id="accordion" role="tablist">
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Total Income and Expenses
+                                    </a>
+                                </h5>
+                            </div>
+
+                            <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+                                <div class="card-body pl-0">
+                                    <total-monthly-chart v-bind:journal="journal"></total-monthly-chart>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Monthly chart
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+                                <div class="card-body pl-0">
+                                    <monthly-chart v-bind:filter="filter" v-bind:journal="journal"></monthly-chart>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        Weekly chart
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
+                                <div class="card-body pl-0">
+                                    <weekly-chart v-bind:filter="filter" v-bind:journal="journal"></weekly-chart>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <table>
+                            <tr><td>
+                                <account-filter v-model="filter"></account-filter>
+                            </td></tr>
+                            <tr><td>
+
+                                <div class="mb-2">
+                                    <button type="button" class="btn btn-sm btn-danger" @click.prevent="updateFilterAccount('Expenses')">Expenses</button>
+                                    <button type="button" class="btn btn-sm btn-success" @click.prevent="updateFilterAccount('Income')">Income</button>
+                                    <button type="button" class="btn btn-sm btn-info" @click.prevent="updateFilterAccount('Assets')">Assets</button>
+                                </div>
+
+                                <accounts v-bind:filter="filter" v-bind:journal="journal" @account="updateFilterAccount">
+                                </accounts>
+                            </td></tr>
+                        </table>
+                    </div>
+                    <transaction-table v-bind:filter="filter" v-bind:journal="journal"></transaction-table>
+                </div>
+                <div class="tab-pane fade mt-3 ml-3" id="source" role="tabpanel" aria-labelledby="source-tab">
+                    <div>
+                        <pre id="file-contents">
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script id="account-filter-template" type="text/x-template">
+        <div class="form-inline mb-2">
+            <label class="mr-2" >Account: </label>
+            <input class="form-control" type="text"  v-model.lazy="value.account" placeholder="Expenses"/>
+            <label class="ml-3 mr-2" >Month: </label>
+            <select class="form-control" v-model.lazy="value.month">
+                <option value="0">All</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <label class="ml-3 mr-2" >Payee: </label>
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-addon">@</div>
+                <input class="form-control" type="text" v-model.lazy="value.payee" placeholder="Giant Moose"/>
+            </div>
+        </div>
+    </script>
+
+    <script id="accounts-template" type="text/x-template">
+        <ul>
+            <li v-for="(value, key) in level()" >
+                <b><a href="#" @click.prevent="filterByAccount(value.fullName)" >{{ accountDisplay(value) }}</a></b>
+                <div v-if="value.accounts != null && Object.keys(value.accounts).length > 0">
+                    <accounts v-bind:accounts="value.accounts" @account="filterByAccount" > </accounts>
+                </div>
+            </li>
+        </ul>
+    </script>
+
+    <script id="total-monthly-chart-template" type="text/x-template">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div  style="height: 200px;" :id="uniqId()"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 ml-2">
+                        <label class="mr-3">Total Income: {{totalIncome}} </label>
+                        <label class="mr-3">Total Expenses: {{totalExpenses}} </label>
+                        <label class="mr-3">Average Monthly Income: {{averageMonthlyIncome}} </label>
+                        <label class="mr-3">Average Monthly Expenses: {{averageMonthlyExpenses}} </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script id="chart-template" type="text/x-template">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div style="height: 200px;" :id="uniqId()"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 ml-2">
+                        <label class="mr-3">Total: {{total}} </label>
+                        <label class="mr-3">Average: {{average}} </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script id="transaction-table-template" type="text/x-template">
+        <table class="table table-striped table-sm" >
+            <thead>
+                <tr>
+                    <th scope="col">Date [week]</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Payee</th>
+                    <th scope="col">Account</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="t in transactions">
+                    <template v-for="mp in [matchingPostings(t)]">
+                        <tr>
+                            <td>
+                                {{t.date.year + '/' + t.date.month + '/' + t.date.day}} [{{txnWeekNumber(t)}}]
+                            </td>
+                            <td>
+                                {{matchingPostingsTotal(t)}}
+                            </td>
+                            <td>
+                                <i>{{t.payee}}</i>
+                            </td>
+                            <td>
+                                <template v-if="mp.length == 1">
+                                    {{formattedAccount(mp[0].account)}}
+                                </template>
+                            </td>
+                        </tr>
+                        <template v-for="(p, index) in mp" v-if="mp.length > 1">
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td style="font-size: smaller">
+                                    {{formattedAmount(p.amount)}}
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    {{formattedAccount(p.account)}}
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                </template>
+            </tbody>
+        </table>
+    </script>
+
+	<script src="js/bundle.js"></script>
+</body>
+</html>
