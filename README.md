@@ -4,18 +4,29 @@
 # monescript
 
 monescript is a double-entry [plain text accounting](http://plaintextaccounting.org/) system that works in you browser. 
-There is no server behind monescript, all the calculations are performed locally in your browser window without any data 
+monescript is a server-less application, all the calculations are performed locally in your browser window without any data 
 leaving your computer. 
 
 monescript works with text files formatted as a transaction journal. No modification is made to the original journal, monescript 
 only performs journal analysis and presents financial summary graphs and statistics.
 
+# Motivation
+
+For years I've been using Excel to handler my personal accounting. After reading an excellent 
+[introduction to double-entry accounting](https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit)
+from [Beancount](http://furius.ca/beancount/) documentation and discovering plain-text account, I decided to give [Ledger](http://ledger-cli.org) 
+a try. I had lots of fun discovering ledger command line reporting features and getting summary in couple simple commands.
+
+Around that time I wanted to learn some JavaScript. Having monescript implemented in JavaScript gives it flexibility to work on pretty much any system
+where you have a browser and text editor, and you do not need to install anything - just add your transactions to the text file and open it in monescript to 
+get all the details in couple of clicks. 
+
 ## [Demo](https://monescript.github.io/)
 By default demo shows randomly generated data on the Transactions tab. 
 
-You can explore the generated journal on the Source tab.
+You can explore the generated journal format on the Source tab.
 
-If you have a file with monescript journal syntax you can feed to monescript from the Open tab. 
+If you have a file with monescript journal syntax you can feed it to monescript from the Open tab. 
 
 ## monescript journal syntax
 
@@ -70,4 +81,3 @@ bucket Assets:Bank:Checking
   Assets:Bank:Checking                   $-47.64 
 
 ````
-
