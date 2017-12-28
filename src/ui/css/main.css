@@ -1,66 +1,11 @@
 
-/*
-    Top bar // START
-*/
-
-.top-bar {
+.dark-bar {
 	background-color:#2F3C43;
 	border-bottom:1px solid #f2f2f2;
-}
-
-.top-bar a {
 	color:white;
+	line-height:30px
 }
 
-ul.contact-details {
-	float:right;
-	color: white;
-	list-style:none;
-	padding:0;
-	margin:0;
-	font-size:15px;
-	display:block;
-	line-height:30px;
+.dark-bar a {
+  color:white;
 }
-
-ul.social-list {
-	float:right;
-	color: white;
-	list-style:none;
-	padding:0;
-	margin:0;
-}
-ul.social-list li {
-	float:left;
-}
-ul.social-list li a {
-	display:inline-block;
-	transition:all 0.2s ease-in-out;
-    text-decoration:none;
-	-moz-transition:all 0.2s ease-in-out;
-	-webkit-transition:all 0.2s ease-in-out;
-	-o-transition:all 0.2s ease-in-out;
-}
-ul.social-list li a:hover {
-	color:#fff;
-}
-ul.social-list li a.github:hover {
-	background-color:#b7b9ba;
-}
-
-ul.social-list li a i {
-	font-size:1em;
-	display:block;
-	width:34px;
-	height:33px;
-	line-height:33px;
-	text-align:center;
-	border-left:1px solid #f2f2f2;
-}
-ul.social-list li:last-child a i {
-	border-right:1px solid #f2f2f2;
-}
-
-/*
-    Top bar // END
-*/
