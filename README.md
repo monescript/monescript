@@ -12,15 +12,14 @@ only performs journal analysis and presents financial summary graphs and statist
 
 # Motivation
 
-For years I've been using Excel to handler my personal accounting. After reading an excellent 
+For years I've been using Excel to handler my personal accounting. After stumbiling upon [Ledger docs](https://www.ledger-cli.org/3.0/doc/ledger3.html) and 
 [introduction to double-entry accounting](https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit)
-from [Beancount](http://furius.ca/beancount/) documentation and discovering plain-text account, I decided to give [Ledger](http://ledger-cli.org) 
-a try. I had lots of fun discovering ledger command line reporting features and getting summary in couple simple commands.
+from [Beancount](http://furius.ca/beancount/) I decided to try out plain text accounting. 
 
-Around that time I wanted to learn some JavaScript. Having monescript implemented in JavaScript gives it flexibility to work on pretty much any system
-where you have a browser and text editor, and you do not need to install anything - just add your transactions to the text file and open it in monescript to 
-get all the details in couple of clicks. 
-
+Around that time I also wanted to learn JavaScript, so naturally the monescript is works in the browser and in nodejs (for the tests). As a side benefit 
+there is nothing to install to get monescript working, all you need is a browser and a and text editor. You can just add your transactions to the text file and 
+open it in [monescript](https://monescript.github.io/) to get all the details in couple of clicks. 
+  
 ## [Demo](https://monescript.github.io/)
 By default demo shows randomly generated data on the Transactions tab. 
 
