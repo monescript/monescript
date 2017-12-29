@@ -81,10 +81,12 @@ bucket Assets:Bank:Checking
 
 ````
 
-## Contributions and bugs
+# Contributions and bugs
 
 If you find a bug please submit a ticket in the [Issues](https://github.com/monescript/monescript/issues). Contributions are welcome 
 via pull request to the master branch. 
 
 
-Copyright (C) 2017 abtechbit <abtechbit@aol.com>.  All Rights Reserved.
+# Copyright
+
+Copyright (C) 2018 ABTechBit &lt;abtechbit@aol.com&gt;
