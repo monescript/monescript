@@ -80,3 +80,11 @@ bucket Assets:Bank:Checking
   Assets:Bank:Checking                   $-47.64 
 
 ````
+
+## Contributions and bugs
+
+If you find a bug please submit a ticket in the [Issues](https://github.com/monescript/monescript/issues). Contributions are welcome 
+via pull request to the master branch. 
+
+
+Copyright (C) 2017 abtechbit <abtechbit@aol.com>.  All Rights Reserved.
