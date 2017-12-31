@@ -17,7 +17,7 @@ For years I've been using Excel to handler my personal accounting. After stumbil
 from [Beancount](http://furius.ca/beancount/) I decided to try out plain text accounting. 
 
 Around that time I also wanted to learn JavaScript, so naturally monescript works in the browser and in nodejs (for the tests). As a side benefit 
-there is nothing to install to get monescript working, all you need is a browser and and a text editor. You can just add your transactions to the text file and 
+there is nothing to install to get monescript working, all you need is a browser and a text editor. You can just add your transactions to the text file and 
 open it in [monescript](https://monescript.github.io/) to get all the details in couple of clicks. 
   
 ## [Demo](https://monescript.github.io/)
