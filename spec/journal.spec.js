@@ -212,7 +212,7 @@ describe("Journal ", function() {
     }
   });
 
-  it("returns number of months with transactions", function() {
+  it("returns transaction tags", function() {
 
     var txn = grammarParser.parse(
       "2016/02/12 other\n" +
