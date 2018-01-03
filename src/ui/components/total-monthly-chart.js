@@ -6,7 +6,7 @@ var formatHelper = require('../util/format-helper');
 
 module.exports = Vue.component('total-monthly-chart', {
   template: '#total-monthly-chart-template',
-  props: ['journal'],
+  props: ['journal', 'redraw'],
   data: function(){
     return {
       columnData: []
@@ -22,6 +22,11 @@ module.exports = Vue.component('total-monthly-chart', {
       },
       deep: true
     },
+    redraw: {
+      handler:function (){
+        this.chart.flush();
+      },
+    }
   },
   computed: {
     totalIncome: function(){
@@ -67,7 +72,12 @@ module.exports = Vue.component('total-monthly-chart', {
     },
 
     createChart: function(){
-      var chart = c3.generate({
+
+      if(this.chart != null){
+        this.chart.data(this.columnData);
+      }
+
+      this.chart = c3.generate({
           bindto: '#' + this.uniqId(),
           data: {
               columns: this.columnData,
