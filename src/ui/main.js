@@ -28,7 +28,7 @@ var app = new Vue({
       this.createJournal(text);
   },
   mounted(){
-    $(this.$refs.accordion).on("shown.bs.collapse", this.collapsedGraph)
+    $(this.$refs.accordion).on("show.bs.collapse", this.collapsedGraph)
   },
   methods: {
 
