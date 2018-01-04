@@ -29,6 +29,7 @@ var app = new Vue({
   },
   mounted(){
     $(this.$refs.accordion).on("show.bs.collapse", this.collapsedGraph)
+    $(this.$refs.tabs).on("shown.bs.tab", this.collapsedGraph)
   },
   methods: {
 
