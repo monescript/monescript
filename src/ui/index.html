@@ -29,7 +29,7 @@
     <div class="container-fluid mt-2">
         <form id="app">
 
-            <ul class="nav nav-tabs" id="topTab" role="tablist">
+            <ul class="nav nav-tabs" id="topTab" role="tablist" ref="tabs">
                 <li class="nav-item">
                     <a class="nav-link" id="open-tab" data-toggle="tab" href="#open" role="tab" aria-controls="home" aria-selected="true">Open</a>
                 </li>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="tab-pane fade mt-3 show active" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
-                    <div id="accordion" role="tablist">
+                    <div id="accordion" role="tablist" ref="accordion">
                         <div class="card">
                             <div class="card-header" role="tab" id="headingOne">
                                 <h5 class="mb-0">
@@ -66,10 +66,9 @@
                                     </a>
                                 </h5>
                             </div>
-
                             <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
                                 <div class="card-body pl-0">
-                                    <total-monthly-chart v-bind:journal="journal"></total-monthly-chart>
+                                    <total-monthly-chart v-bind:journal="journal"  v-bind:redraw="redraw"></total-monthly-chart>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +82,7 @@
                             </div>
                             <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
                                 <div class="card-body pl-0">
-                                    <monthly-chart v-bind:filter="filter" v-bind:journal="journal"></monthly-chart>
+                                    <monthly-chart v-bind:filter="filter" v-bind:journal="journal" v-bind:redraw="redraw"></monthly-chart>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +96,7 @@
                             </div>
                             <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
                                 <div class="card-body pl-0">
-                                    <weekly-chart v-bind:filter="filter" v-bind:journal="journal"></weekly-chart>
+                                    <weekly-chart v-bind:filter="filter" v-bind:journal="journal" v-bind:redraw="redraw"></weekly-chart>
                                 </div>
                             </div>
                         </div>

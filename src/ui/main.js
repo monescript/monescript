@@ -19,12 +19,17 @@ var app = new Vue({
       payee: '',
       tag: ''
     },
-    journal: journal
+    journal: journal,
+    redraw: false
   },
   beforeMount: function(){
       var self = this;
       var text = sampleGenerator.generateYearJournal();
       this.createJournal(text);
+  },
+  mounted(){
+    $(this.$refs.accordion).on("show.bs.collapse", this.collapsedGraph)
+    $(this.$refs.tabs).on("shown.bs.tab", this.collapsedGraph)
   },
   methods: {
 
@@ -75,6 +80,10 @@ var app = new Vue({
 
     updateFilterAccount: function(account){
       this.filter.account = account;
+    },
+
+    collapsedGraph: function(){
+      this.redraw = !this.redraw;
     }
   },
 })
