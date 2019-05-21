@@ -247,4 +247,30 @@ describe("Journal ", function() {
 
     expect(parsedTxn.tags).toEqual([{'mytag':'hello'}, {'otherTag':''}, {'thirdTag':''}, {'fourthTag':''}]);
   });
+
+  var fs = require('fs');
+  it("should not produce NaN for amount in brackets", function() {
+      var file = fs.readFileSync('spec/resources/B001 ledger.journal', 'utf8');
+      var fileTxns = grammarParser.parse(file);
+
+      journal.add(fileTxns);
+
+      var txn = {
+        type: 'transaction',
+        date: { year: 2019, month: 3, day: 14 },
+        status: '*',
+        payee: 'nan_shop',
+        posting: [
+          {account: [ 'Expenses', 'Department'], currency: '$', amount: 101.35 },
+          {account: [ 'Assets', 'Checking'], currency: '$', amount: -101.35 }
+        ]
+      };
+
+      var txnCopy = copy(txn);
+      txnCopy.posting[1].emptyInitialAmount = true;
+      txnCopy = bigCopy(txnCopy);
+
+      expect(journal.transactions()[0] !== txn).toBeTruthy();
+      expect(journal.transactions()).toEqual([txnCopy]);
+  });
 })

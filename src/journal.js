@@ -161,9 +161,13 @@ var Journal = {
     if(p.amount == null){
       p.emptyInitialAmount = true;
       p.amount = Big(0);
-    } else if(p.amount.type == 'BinaryExpression' ){
+    } else if(p.amount.type == 'BinaryExpression'){
       p.amountExpression = p.amount;
       var result = eval.evaluate(p.amountExpression);
+      p.amount = result.amount;
+      p.currency = result.currency;
+    } else if(p.amount.type == 'Literal'){
+      var result = this.copy(p.amount)
       p.amount = result.amount;
       p.currency = result.currency;
     } else if(!(p.amount instanceof Big)){

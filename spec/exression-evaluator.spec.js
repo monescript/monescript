@@ -12,6 +12,10 @@ describe("Expression Evaluator ", function() {
       expect(eval("($1234.56)")).toEqual({currency: '$', amount: Big(1234.56)});
   });
 
+  it("can evaluate simple negative amount with currency", function() {
+      expect(eval("($-1234.56)")).toEqual({currency: '$', amount: Big(-1234.56)});
+  });
+
   it("can add", function() {
       expect(eval("($100 + 200)")).toEqual({currency: '$', amount: Big(300.00)});
   });
