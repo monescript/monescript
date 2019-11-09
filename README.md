@@ -12,7 +12,7 @@ only performs journal analysis and presents financial summary graphs and statist
 
 # Motivation
 
-For years I've been using Excel to handler my personal accounting. After stumbiling upon [Ledger docs](https://www.ledger-cli.org/3.0/doc/ledger3.html) and 
+For years I've been using Excel to handle my personal accounting. After stumbiling upon [Ledger docs](https://www.ledger-cli.org/3.0/doc/ledger3.html) and 
 [introduction to double-entry accounting](https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit)
 from [Beancount](http://furius.ca/beancount/) I decided to try out plain text accounting. 
 
