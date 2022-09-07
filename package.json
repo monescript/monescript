@@ -1,18 +1,38 @@
 {
-  "name": "lui",
+  "name": "monescript",
   "version": "0.0.1",
   "description": "JavaScript UI for ledger-cli files",
+  "build": {
+    "win": {
+      "icon": "assets/logo.jpg"
+    },
+    "linux": {
+      "icon": "assets/logo.jpg"
+    }
+  },
   "keywords": [
     "ledger-cli",
     "personal finance",
     "ui"
   ],
   "license": "GPL-3.0",
+  "author": {
+    "name": "monescript"
+  },
   "contributors": [],
   "devDependencies": {
-    "jasmine": "^2.8.0"
+    "browserify": "^17.0.0",
+    "electron": "^20.1.2",
+    "electron-builder": "^23.3.3",
+    "grunt": "^0.4.5",
+    "jasmine": "^2.8.0",
+    "uglify": "^0.1.5",
+    "vue": "^3.2.38"
   },
   "scripts": {
+    "start": "electron index.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "build-grammar": "pegjs src/resources/ledger-cli.pegjs",
     "uib": "browserify src/ui/main.js -o src/ui/_js/bundle.js",
     "build-ui-bundle-min": "uglify -s src/ui/bundle.js -o src/ui/bundle-min.js",
@@ -24,8 +44,7 @@
     "c3": "^0.4.18",
     "moo": "^0.4.3",
     "pegjs": "^0.10.0",
-    "underscore": "^1.8.3",
-    "vue": "^2.5.2"
+    "underscore": "^1.8.3"
   },
   "browser": {
     "vue": "vue/dist/vue.common.js"
