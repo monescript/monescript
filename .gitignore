@@ -2,3 +2,4 @@ node_modules
 /package-lock.json
 src/resources/ledger-cli.js
 src/ui/_js
+/dist
