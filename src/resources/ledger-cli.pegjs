@@ -207,17 +207,20 @@ Value Expression
 -----------------
 */
 valueExpression
-  = Identifier
+  = RunningTotal
+  / Identifier
   / AmountLiteral
   / Number
   / "(" __ expression:AdditiveExpression __ ")" { return expression; }
 
+RunningTotal
+  = "above" ![a-zA-Z] { return {type: 'RunningTotal'}; }
 
 Identifier
   = [a-zA-Z]+
 
 AmountLiteral
-  = Currency Number
+  = c:Currency n:Number {return {currency: c, amount: n, type: 'Literal'};}
 
 Currency
  = "$"

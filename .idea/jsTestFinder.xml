@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavascriptTestFinderProjectComponent">
+    <option name="productionExtensions">
+      <list>
+        <option value=".js" />
+        <option value=".jsx" />
+      </list>
+    </option>
+    <option name="testExtensions">
+      <list>
+        <option value=".spec.js" />
+        <option value=".jstd" />
+      </list>
+    </option>
+  </component>
+</project>
