@@ -75,9 +75,9 @@ bucket Assets:Bank:Checking
 
 2017/10/17 * Multi Department
   ; monescript can calculate remainder after multiple postings
-  Expenses:Food                        $56.18
-  Expenses:Stationery                  $43.12
-  Expenses:Seasonal                    ($172.22 - above)
+  Expenses:Food                          $56.18
+  Expenses:Stationery                    $43.12
+  Expenses:Seasonal                      ($172.22 - above)
   Assets:Bank:Checking
 
 2017/2/3 * Laser Play
