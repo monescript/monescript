@@ -2,165 +2,173 @@ var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
 var sampleGenerator = require('../../generator/generator.util');
 
-var Vue = require('vue');
-require('./components/accounts.js');
-require('./components/account-filter.js');
-require('./components/total-monthly-chart.js');
-require('./components/monthly-chart.js');
-require('./components/weekly-chart.js');
-require('./components/transaction-table.js');
+var accountFilter = require('./components/account-filter.js');
+var accounts = require('./components/accounts.js');
+var totalMonthlyChart = require('./components/total-monthly-chart.js');
+var monthlyChart = require('./components/monthly-chart.js');
+var weeklyChart = require('./components/weekly-chart.js');
+var transactionTable = require('./components/transaction-table.js');
 
-var app = new Vue({
-  el: '#app',
-  data: {
-    filter:  {
-      account: 'Expenses',
-      month: new Date().getMonth() + 1,
-      payee: '',
-      tag: ''
-    },
-    journal: journal,
-    redraw: false,
-    currentFile: null,
-    currentFileHandle: null,
-    showReloaded: false,
-    supportsFileSystemAccess: typeof window.showOpenFilePicker === 'function',
+var state = {
+  filter: {
+    account: 'Expenses',
+    month: new Date().getMonth() + 1,
+    payee: '',
+    tag: ''
   },
-  beforeMount: function(){
-      var self = this;
-      var text = sampleGenerator.generateYearJournal();
-      this.createJournal(text);
-  },
-  mounted(){
-    $(this.$refs.accordion).on("show.bs.collapse", this.collapsedGraph)
-    $(this.$refs.tabs).on("shown.bs.tab", this.collapsedGraph)
-  },
-  methods: {
+  journal: journal
+};
 
-    openFile: async function(){
-      if(typeof window.showOpenFilePicker === 'function'){
-        try{
-          const [handle] = await window.showOpenFilePicker();
-          this.currentFileHandle = handle;
-          const file = await handle.getFile();
-          this.currentFile = file;
-          this.readFile(file);
-        }catch(err){
-          if(err.name !== 'AbortError'){
-            console.log(err);
-          }
-        }
-      } else {
-        this.$refs.fileInput.click();
-      }
-    },
+var currentFile = null;
+var currentFileHandle = null;
+var afterReload = null;
+var flashTimers = {};
 
-    handleFiles : function(e) {
-      var files = e.currentTarget.files;
-      if(files == null || files.length === 0){
-        return;
-      }
-      this.currentFileHandle = null;
-      this.currentFile = files[0];
-      this.readFile(this.currentFile);
-      if(this.reloadPending){
-        this.reloadPending = false;
-        this.flashReloaded();
-      }
-    },
+function byId(id){ return document.getElementById(id); }
 
-    reloadFile : async function(){
-      if(this.currentFileHandle != null){
-        try{
-          const file = await this.currentFileHandle.getFile();
-          this.currentFile = file;
-          this.readFile(file);
-          this.flashReloaded();
-        }catch(err){
-          console.log(err);
-          $('#errors').text('Could not re-read the file from disk. It may have been moved or deleted.');
-        }
-        return;
-      }
+// ---- rendering (replaces Vue's deep watchers) ----
 
-      if(this.currentFile != null){
-        this.reloadPending = true;
-        await this.openFile();
-      }
-    },
+var views = [];
 
-    reloadFileFromFooter: async function(){
-      await this.reloadFile();
-      await Vue.nextTick();
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'auto' });
-      $('#footer-reloaded').removeClass('d-none');
-      var self = this;
-      clearTimeout(this.footerReloadedTimeout);
-      this.footerReloadedTimeout = setTimeout(function(){
-        $('#footer-reloaded').addClass('d-none');
-      }, 2000);
-    },
+function render(){
+  views.forEach(function(v){ v.update(state); });
+}
 
-    readFile : function(file){
-      var reader = new FileReader();
-      var self = this;
+function updateFilterAccount(account){
+  state.filter.account = account;
+  render();
+}
 
-      reader.onload = function(e) {
-          var text = reader.result
-          self.createJournal(text);
-      }
-      reader.onerror = function(err) {
-          console.log(err, err.loaded, err.loaded === 0);
-      }
-      reader.readAsText(file);
-    },
+function flash(id){
+  var el = byId(id);
+  el.classList.remove('d-none');
+  clearTimeout(flashTimers[id]);
+  flashTimers[id] = setTimeout(function(){ el.classList.add('d-none'); }, 2000);
+}
 
-    flashReloaded: function(){
-      clearTimeout(this.reloadedTimeout);
-      this.showReloaded = true;
-      var self = this;
-      this.reloadedTimeout = setTimeout(function(){
-        self.showReloaded = false;
-      }, 2000);
-    },
+// ---- journal loading ----
 
-    createJournal: function(text){
-      this.setSource(text);
-      $('#errors').text('');
-      journal.reset();
+function createJournal(text){
+  byId('file-contents').textContent = text;
+  byId('errors').textContent = '';
+  journal.reset();
 
-      parser.reset(text)
-      var chunk;
-      try{
-        while((chunk = parser.next()) != null){
-          journal.add(chunk);
-        }
-
-        $('#topTab a[href="#transactions"]').tab('show');
-      }catch(e){
-        if(e.chunk == null){
-          $('#errors').text('Error: ' + e.message + JSON.stringify(e, null, 2));
-        } else {
-          $('#errors').text('Failing on line ' + JSON.stringify(e.chunk, null, 2));
-        }
-        console.log(e);
-      }
-    },
-
-    setSource: function(text){
-      Vue.nextTick(function () {
-        $('#file-contents').text(text);
-      });
-    },
-
-    updateFilterAccount: function(account){
-      this.filter.account = account;
-    },
-
-    collapsedGraph: function(){
-      this.redraw = !this.redraw;
+  parser.reset(text);
+  var chunk;
+  var ok = true;
+  try{
+    while((chunk = parser.next()) != null){
+      journal.add(chunk);
     }
-  },
-})
+  }catch(e){
+    ok = false;
+    if(e.chunk == null){
+      byId('errors').textContent = 'Error: ' + e.message + JSON.stringify(e, null, 2);
+    } else {
+      byId('errors').textContent = 'Failing on line ' + JSON.stringify(e.chunk, null, 2);
+    }
+    console.log(e);
+  }
 
-window.app = app;
+  render();
+  if(ok){
+    $('#topTab a[href="#transactions"]').tab('show');
+  }
+  return ok;
+}
+
+async function readFile(file){
+  try{
+    return createJournal(await file.text());
+  }catch(err){
+    console.log(err);
+    byId('errors').textContent = 'Could not read the file: ' + err.message;
+    return false;
+  }
+}
+
+async function openFile(){
+  if(typeof window.showOpenFilePicker === 'function'){
+    try{
+      var handles = await window.showOpenFilePicker();
+      currentFileHandle = handles[0];
+      currentFile = await currentFileHandle.getFile();
+      await readFile(currentFile);
+    }catch(err){
+      if(err.name !== 'AbortError'){
+        console.log(err);
+      }
+    }
+  } else {
+    byId('file-input').click();
+  }
+}
+
+async function handleFiles(e){
+  var input = e.target;
+  if(input.files == null || input.files.length === 0){
+    return;
+  }
+  currentFileHandle = null;
+  currentFile = input.files[0];
+  var ok = await readFile(currentFile);
+  input.value = '';   // lets picking the same file again fire 'change' (Firefox reload fallback)
+  if(ok && afterReload != null){
+    var after = afterReload;
+    afterReload = null;
+    after();
+  }
+}
+
+async function reloadFile(after){
+  after = after || function(){ flash('reloaded-flash'); };
+
+  if(currentFileHandle != null){
+    try{
+      currentFile = await currentFileHandle.getFile();
+      if(await readFile(currentFile)){
+        after();
+      }
+    }catch(err){
+      console.log(err);
+      byId('errors').textContent = 'Could not re-read the file from disk. It may have been moved or deleted.';
+    }
+    return;
+  }
+
+  if(currentFile != null){
+    afterReload = after;   // no live handle: re-open the picker, finish in handleFiles
+    openFile();
+  }
+}
+
+function reloadFromFooter(){
+  return reloadFile(function(){
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'auto' });
+    flash('footer-reloaded');
+  });
+}
+
+// ---- wiring ----
+
+views = [
+  totalMonthlyChart.create(byId('total-monthly-chart')),
+  monthlyChart.create(byId('monthly-chart')),
+  weeklyChart.create(byId('weekly-chart')),
+  accountFilter.create(byId('account-filter'), state, render),
+  accounts.create(byId('accounts'), { onAccount: updateFilterAccount }),
+  transactionTable.create(byId('transaction-table'))
+];
+
+byId('choose-file-btn').addEventListener('click', function(){ afterReload = null; openFile(); });
+byId('file-input').addEventListener('change', handleFiles);
+byId('reload-btn').addEventListener('click', function(){ reloadFile(); });
+byId('footer-reload-btn').addEventListener('click', reloadFromFooter);
+
+Array.prototype.forEach.call(document.querySelectorAll('[data-quick-account]'), function(btn){
+  btn.addEventListener('click', function(){
+    updateFilterAccount(btn.getAttribute('data-quick-account'));
+  });
+});
+
+createJournal(sampleGenerator.generateYearJournal());

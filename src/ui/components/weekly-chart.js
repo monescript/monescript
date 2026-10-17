@@ -1,108 +1,41 @@
-var Vue = require('vue');
-var c3 = require('c3');
+var chartHelper = require('../util/chart-helper');
 var balanceFilterHelper = require('../util/balance-filter-helper');
 var formatHelper = require('../util/format-helper');
 
-module.exports = Vue.component('weekly-chart', {
-  template: '#chart-template',
-  props: ['filter', 'journal', 'redraw'],
-  data: function(){
+module.exports = {
+  create: function(root){
+    root.innerHTML =
+      '<div class="row"><div class="col-12">' +
+        '<div class="row"><div class="col-12"><div id="weekly-chart-plot" style="height: 200px;"></div></div></div>' +
+        '<div class="row"><div class="col-12 ml-2">' +
+          '<label class="mr-3">Total: <span data-total></span></label>' +
+          '<label class="mr-3">Average: <span data-average></span></label>' +
+        '</div></div>' +
+      '</div></div>';
+    var totalEl = root.querySelector('[data-total]');
+    var averageEl = root.querySelector('[data-average]');
+    var chart = chartHelper.lazyBarChart('#weekly-chart-plot');
+
+    var weeks = [];
+    for(var w = 1; w <= 52; ++w){ weeks.push(w); }
+
     return {
-      columnData: []
+      update: function(state){
+        var data = [state.filter.account];
+        var total = 0.0;
+        for(var i = 1; i <= 52; ++i){
+          var filterCopy = Object.assign({}, state.filter);
+          filterCopy.month = undefined;
+          filterCopy.week = i;
+          var balance = Math.abs(balanceFilterHelper.filteredWeeklyBalance(state.journal, filterCopy));
+          data.push(balance);
+          total += balance;
+        }
+        var todayWeek = balanceFilterHelper.getWeekNumber(new Date()).week;
+        totalEl.textContent = formatHelper.formattedAmount(total);
+        averageEl.textContent = formatHelper.formattedAmount(total / todayWeek);
+        chart.show([data], weeks);
+      }
     };
-  },
-  beforeMount: function(){
-      this.updateChart();
-  },
-  watch: {
-    filter: {
-      handler:function (){
-        this.updateChart();
-      },
-      deep: true
-    },
-    journal: {
-      handler:function (){
-        this.updateChart();
-      },
-      deep: true
-    },
-    redraw: {
-      handler:function (){
-        this.chart.flush();
-      },
-    }
-  },
-  computed: {
-    total: function(){
-      return formatHelper.formattedAmount(this.totalBalance());
-    },
-    average: function(){
-      let today = new Date();
-      let todayWeek = balanceFilterHelper.getWeekNumber(today).week;
-      return formatHelper.formattedAmount(this.totalBalance()/todayWeek);
-    }
-  },
-  methods: {
-    totalBalance: function(){
-      let total = 0.0;
-      for(let i = 1; i <= 52; ++i){
-        total += Math.abs(this.getWeeklyBalance(i));
-      }
-      return total;
-    },
-
-    uniqId: function(){
-      return 'weekly-chart-' + this._uid;
-    },
-
-    getWeeklyBalance: function(week){
-      var filterCopy = Object.assign({}, this.filter);
-      filterCopy.month = undefined;
-      filterCopy.week = week;
-      return balanceFilterHelper.filteredWeeklyBalance(this.journal, filterCopy);
-    },
-
-    updateChart: function(){
-      let data = [this.filter.account];
-      for(let i = 1; i <= 52; ++i){
-        data.push(Math.abs(this.getWeeklyBalance(i)));
-      }
-      this.columnData = [data];
-      let self = this;
-      Vue.nextTick(function () {
-        self.createChart();
-      });
-    },
-
-    createChart: function(){
-      var catIds = [];
-      for(var i = 1; i <= 52; ++i)
-        catIds.push(i);
-
-      if(this.chart != null){
-        this.chart.data(this.columnData);
-      }
-
-      this.chart = c3.generate({
-          bindto: '#' + this.uniqId(),
-          data: {
-              columns: this.columnData,
-              labels: true,
-              type: 'bar'
-          },
-          bar: {
-              width: {
-                  ratio: 0.9
-              }
-          },
-          axis: {
-              x: {
-                  type: 'category',
-                  categories: catIds
-              }
-          }
-      });
-    }
-  },
-});
+  }
+};

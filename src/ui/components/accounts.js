@@ -1,53 +1,39 @@
-var Vue = require('vue');
 var balanceFilterHelper = require('../util/balance-filter-helper');
+var escapeHtml = require('../util/html-helper').escapeHtml;
 
+function accountDisplay(value){
+  return (value.balance == null ? '' : value.balance.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })) +
+    ' ' + value.name;
+}
 
-module.exports = Vue.component('accounts', {
-  template: '#accounts-template',
-  props: ['filter', 'journal', 'accounts'],
-  data: function(){
-    return {
-      accountTree : {}
-    };
-  },
-  beforeMount: function(){
-      this.updateAccounts();
-  },
-  watch: {
-    filter: {
-      handler:function (){
-        this.updateAccounts();
-      },
-      deep: true
-    },
-    journal: {
-      handler:function (){
-        this.updateAccounts();
-      },
-      deep: true
-    },
-  },
-  methods: {
-    updateAccounts: function(){
-      if(this.journal == null){
-        return;
-      }
-      this.accountTree = balanceFilterHelper.filteredBalanceTree(this.journal, this.filter);
-      if(this.accountTree == null){
-        this.accountTree = {};
-      }
-    },
-
-    filterByAccount: function(account){
-      this.$emit('account', account)
-    },
-
-    level: function(){
-      return this.journal == null ? this.accounts : this.accountTree;
-    },
-
-    accountDisplay: function(value){
-      return `${value.balance == null ? '' : value.balance.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })} ${value.name }`;
+function renderLevel(level){
+  var html = '<ul>';
+  Object.keys(level).forEach(function(key){
+    var value = level[key];
+    html += '<li><b><a href="#" data-account="' + escapeHtml(value.fullName) + '">' +
+            escapeHtml(accountDisplay(value)) + '</a></b>';
+    if(value.accounts != null && Object.keys(value.accounts).length > 0){
+      html += '<div>' + renderLevel(value.accounts) + '</div>';
     }
+    html += '</li>';
+  });
+  return html + '</ul>';
+}
+
+module.exports = {
+  create: function(root, opts){
+    root.addEventListener('click', function(e){
+      var link = e.target.closest('a[data-account]');
+      if(link == null) return;
+      e.preventDefault();
+      opts.onAccount(link.getAttribute('data-account'));
+    });
+
+    return {
+      update: function(state){
+        var tree = balanceFilterHelper.filteredBalanceTree(state.journal, state.filter) || {};
+        root.innerHTML = renderLevel(tree);
+      }
+    };
   }
-});
+};

@@ -16,9 +16,8 @@ For years I've been using Excel to handle my personal accounting. After stumbili
 [introduction to double-entry accounting](https://docs.google.com/document/d/100tGcA4blh6KSXPRGCZpUlyxaRUwFHEvnz_k9DyZFn4/edit)
 from [Beancount](http://furius.ca/beancount/) I decided to try out plain text accounting. 
 
-Around that time I also wanted to learn JavaScript, so naturally monescript works in the browser and in nodejs (for the tests). As a side benefit 
-there is nothing to install to get monescript working, all you need is a browser and a text editor. You can just add your transactions to the text file and 
-open it in [monescript](https://monescript.github.io/) to get all the details in couple of clicks. 
+Monescript works directly in the browser. There is nothing to install to get monescript working, all you need is a browser and a text editor. You can just add your transactions to the text file and 
+open it in [monescript](https://monescript.github.io/) to get all the details in couple of clicks. Once you change the file, click reload to see updated changes (in Firefox it will open file picker again).
   
 ## [Demo](https://monescript.github.io/)
 By default demo shows randomly generated data on the Transactions tab. 

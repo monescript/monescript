@@ -1,101 +1,43 @@
-var Vue = require('vue');
-var c3 = require('c3');
-
+var chartHelper = require('../util/chart-helper');
 var balanceFilterHelper = require('../util/balance-filter-helper');
 var formatHelper = require('../util/format-helper');
 
-module.exports = Vue.component('total-monthly-chart', {
-  template: '#total-monthly-chart-template',
-  props: ['journal', 'redraw'],
-  data: function(){
+module.exports = {
+  create: function(root){
+    root.innerHTML =
+      '<div class="row"><div class="col-12">' +
+        '<div class="row"><div class="col-12"><div id="total-monthly-chart-plot" style="height: 200px;"></div></div></div>' +
+        '<div class="row"><div class="col-12 ml-2">' +
+          '<label class="mr-3">Total Income: <span data-total-income></span></label>' +
+          '<label class="mr-3">Total Expenses: <span data-total-expenses></span></label>' +
+          '<label class="mr-3">Average Monthly Income: <span data-avg-income></span></label>' +
+          '<label class="mr-3">Average Monthly Expenses: <span data-avg-expenses></span></label>' +
+        '</div></div>' +
+      '</div></div>';
+    var el = function(name){ return root.querySelector('[data-' + name + ']'); };
+    var totalIncomeEl = el('total-income'), totalExpensesEl = el('total-expenses');
+    var avgIncomeEl = el('avg-income'), avgExpensesEl = el('avg-expenses');
+    var chart = chartHelper.lazyBarChart('#total-monthly-chart-plot');
+
     return {
-      columnData: []
+      update: function(state){
+        var journal = state.journal;
+        var dataExpense = ['Expense'];
+        var dataIncome = ['Income'];
+        for(var i = 1; i <= 12; ++i){
+          dataExpense.push(Math.abs(balanceFilterHelper.filteredMonthlyBalance(journal, { account: 'Expense', month: i })));
+          dataIncome.push(Math.abs(balanceFilterHelper.filteredMonthlyBalance(journal, { account: 'Income', month: i })));
+        }
+        var monthCount = journal.getTransactionMonthCount();
+        var income = balanceFilterHelper.totalBalance(journal, 'Income:');
+        var expenses = balanceFilterHelper.totalBalance(journal, 'Expenses:');
+
+        totalIncomeEl.textContent = formatHelper.formattedAmount(income);
+        totalExpensesEl.textContent = formatHelper.formattedAmount(expenses);
+        avgIncomeEl.textContent = formatHelper.formattedAmount(income / monthCount);
+        avgExpensesEl.textContent = formatHelper.formattedAmount(expenses / monthCount);
+        chart.show([dataExpense, dataIncome], chartHelper.MONTHS);
+      }
     };
-  },
-  beforeMount: function(){
-      this.updateChart();
-  },
-  watch: {
-    journal: {
-      handler:function (){
-        this.updateChart();
-      },
-      deep: true
-    },
-    redraw: {
-      handler:function (){
-        this.chart.flush();
-      },
-    }
-  },
-  computed: {
-    totalIncome: function(){
-      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Income:'));
-    },
-    totalExpenses: function(){
-      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:'));
-    },
-    averageMonthlyIncome: function(){
-      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Income:') / this.monthCount);
-    },
-    averageMonthlyExpenses: function(){
-      return formatHelper.formattedAmount(balanceFilterHelper.totalBalance(this.journal, 'Expenses:')  / this.monthCount);
-    },
-
-  },
-  methods: {
-    uniqId: function(){
-      return 'monthly-chart-' + this._uid;
-    },
-
-    getMonthlyBalance: function(account, month){
-      return balanceFilterHelper.filteredMonthlyBalance(this.journal, {
-        account: account,
-        month: month
-      });
-    },
-
-    updateChart: function(){
-      let dataExpense = ['Expense'];
-      let dataIncome = ['Income'];
-      for(let i = 1; i <= 12; ++i){
-        dataExpense.push(Math.abs(this.getMonthlyBalance('Expense', i)));
-        dataIncome.push(Math.abs(this.getMonthlyBalance('Income', i)));
-      }
-      this.columnData = [dataExpense, dataIncome];
-      this.monthCount = this.journal.getTransactionMonthCount();
-
-      let self = this;
-      Vue.nextTick(function () {
-        self.createChart();
-      });
-    },
-
-    createChart: function(){
-
-      if(this.chart != null){
-        this.chart.data(this.columnData);
-      }
-
-      this.chart = c3.generate({
-          bindto: '#' + this.uniqId(),
-          data: {
-              columns: this.columnData,
-              labels: true,
-              type: 'bar'
-          },
-          bar: {
-              width: {
-                  ratio: 0.9
-              }
-          },
-          axis: {
-              x: {
-                  type: 'category',
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-              }
-          }
-      });
-    }
   }
-});
+};

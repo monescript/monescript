@@ -1,105 +1,36 @@
-var Vue = require('vue');
-var c3 = require('c3');
-
+var chartHelper = require('../util/chart-helper');
 var balanceFilterHelper = require('../util/balance-filter-helper');
 var formatHelper = require('../util/format-helper');
 
-module.exports = Vue.component('monthly-chart', {
-  template: '#chart-template',
-  props: ['filter', 'journal', 'redraw'],
-  data: function(){
+module.exports = {
+  create: function(root){
+    root.innerHTML =
+      '<div class="row"><div class="col-12">' +
+        '<div class="row"><div class="col-12"><div id="monthly-chart-plot" style="height: 200px;"></div></div></div>' +
+        '<div class="row"><div class="col-12 ml-2">' +
+          '<label class="mr-3">Total: <span data-total></span></label>' +
+          '<label class="mr-3">Average: <span data-average></span></label>' +
+        '</div></div>' +
+      '</div></div>';
+    var totalEl = root.querySelector('[data-total]');
+    var averageEl = root.querySelector('[data-average]');
+    var chart = chartHelper.lazyBarChart('#monthly-chart-plot'); 
+
     return {
-      columnData: []
+      update: function(state){
+        var data = [state.filter.account];
+        var total = 0.0;
+        for(var i = 1; i <= 12; ++i){
+          var filterCopy = Object.assign({}, state.filter);
+          filterCopy.month = i;
+          var balance = Math.abs(balanceFilterHelper.filteredMonthlyBalance(state.journal, filterCopy));
+          data.push(balance);
+          total += balance;
+        }
+        totalEl.textContent = formatHelper.formattedAmount(total);
+        averageEl.textContent = formatHelper.formattedAmount(total / state.journal.getTransactionMonthCount());
+        chart.show([data], chartHelper.MONTHS);
+      }
     };
-  },
-  beforeMount: function(){
-      this.updateChart();
-  },
-  watch: {
-    filter: {
-      handler:function (){
-        this.updateChart();
-      },
-      deep: true
-    },
-    journal: {
-      handler:function (){
-        this.updateChart();
-      },
-      deep: true
-    },
-    redraw: {
-      handler:function (){
-        this.chart.flush();
-      },
-    }
-  },
-  computed: {
-    total: function(){
-      return formatHelper.formattedAmount(this.totalBalance());
-    },
-    average: function(){
-      let today = new Date();
-      let todayMonth = today.getMonth() + 1;
-      return formatHelper.formattedAmount(this.totalBalance()/this.monthCount);
-    }
-  },
-  methods: {
-    totalBalance: function(){
-      let total = 0.0;
-      for(let i = 1; i <= 12; ++i){
-        total += Math.abs(this.getMonthlyBalance(i));
-      }
-      return total;
-    },
-
-    uniqId: function(){
-      return 'monthly-chart-' + this._uid;
-    },
-
-    getMonthlyBalance: function(month){
-      var filterCopy = Object.assign({}, this.filter);
-      filterCopy.month = month;
-      return balanceFilterHelper.filteredMonthlyBalance(this.journal, filterCopy);
-    },
-
-    updateChart: function(){
-      let data = [this.filter.account];
-      for(let i = 1; i <= 12; ++i){
-        data.push(Math.abs(this.getMonthlyBalance(i)));
-      }
-      this.columnData = [data];
-      this.monthCount = this.journal.getTransactionMonthCount();
-      let self = this;
-      Vue.nextTick(function () {
-        self.createChart();
-      });
-    },
-
-    createChart: function(){
-      if(this.chart != null){
-        this.chart.data(this.columnData);
-      }
-
-      this.chart = c3.generate({
-          bindto: '#' + this.uniqId(),
-          data: {
-              columns: this.columnData,
-              labels: true,
-              type: 'bar'
-          },
-          bar: {
-              width: {
-                  ratio: 0.9
-              }
-          },
-          axis: {
-              x: {
-                  type: 'category',
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-              }
-          }
-      });
-    }
   }
-});
+};

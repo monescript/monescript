@@ -1,3 +1,6 @@
+html {
+  overflow-y: scroll;
+}
 
 .dark-bar {
 	background-color:#2F3C43;

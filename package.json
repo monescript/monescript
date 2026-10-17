@@ -27,10 +27,6 @@
     "moo": "^0.4.3",
     "pegjs": "^0.10.0",
     "underscore": "^1.8.3",
-    "vue": "^2.5.2",
     "watchify": "^4.0.0"
-  },
-  "browser": {
-    "vue": "vue/dist/vue.common.js"
   }
 }
