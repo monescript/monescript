@@ -1,7 +1,7 @@
 {
-  "name": "lui",
-  "version": "0.0.1",
-  "description": "JavaScript UI for ledger-cli files",
+  "name": "monescript",
+  "version": "0.1.1",
+  "description": "JavaScript UI for monescript files",
   "keywords": [
     "ledger-cli",
     "personal finance",
