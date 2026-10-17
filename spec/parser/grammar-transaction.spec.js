@@ -317,6 +317,46 @@ describe("Ledger Grammar Parser", function() {
     expect(result).toEqual(expectedTransaction);
   });
 
+  it("should be able to parse a transaction with braces around amount", function() {
+      const expectedTransaction = {
+        type: 'transaction',
+        date: { year: 2016, month: 8, day: 23 },
+        payee: 'other',
+        posting: [
+          {
+            account: [ 'Expenses', 'Utilities', 'Phone 1'], amount: {type: 'Literal', currency: '$', amount: 1234.56}
+          }
+        ]
+      };
+
+      var result = parser.parse(
+        "2016/08/23 other\n" +
+        " Expenses:Utilities:Phone 1  ($1234.56)"
+      );
+
+      expect(result).toEqual(expectedTransaction);
+  });
+
+  it("should be able to parse a transaction with braces around negative amount", function() {
+      const expectedTransaction = {
+        type: 'transaction',
+        date: { year: 2016, month: 8, day: 23 },
+        payee: 'other',
+        posting: [
+          {
+            account: [ 'Expenses', 'Utilities', 'Phone 1'], amount: {type: 'Literal', currency: '$', amount: -1234.56}
+          }
+        ]
+      };
+
+      var result = parser.parse(
+        "2016/08/23 other\n" +
+        " Expenses:Utilities:Phone 1  ($-1234.56)"
+      );
+
+      expect(result).toEqual(expectedTransaction);
+    });
+
 /*
   http://ledger-cli.org/3.0/doc/ledger3.html#Value-Expressions
 */
@@ -338,17 +378,17 @@ describe("Ledger Grammar Parser", function() {
               left: {
                 type: 'BinaryExpression',
                 operator: '*',
-                left: [ '$', 1234.56 ],
+                left: { currency: '$', amount: 1234.56, type: 'Literal' },
                 right: 1.2
               },
               right: {
                   type: 'BinaryExpression',
                   operator: '-',
-                  left: [ '$', 56 ],
-                  right: [ '$', 134 ]
+                  left: { currency: '$', amount: 56, type: 'Literal' },
+                  right: { currency: '$', amount: 134, type: 'Literal' }
               }
             },
-            right: [ '$', 0 ]
+            right: { currency: '$', amount: 0, type: 'Literal' }
           },
           note: ' second bill'
         }

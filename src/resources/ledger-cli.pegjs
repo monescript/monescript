@@ -217,7 +217,7 @@ Identifier
   = [a-zA-Z]+
 
 AmountLiteral
-  = Currency Number
+  = c:Currency n:Number {return {currency: c, amount: n, type: 'Literal'};}
 
 Currency
  = "$"
