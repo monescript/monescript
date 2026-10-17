@@ -273,4 +273,66 @@ describe("Journal ", function() {
       expect(journal.transactions()[0] !== txn).toBeTruthy();
       expect(journal.transactions()).toEqual([txnCopy]);
   });
+
+  it("resolves 'above' to the sum of the postings above it", function() {
+    var txn = grammarParser.parse(
+      "2026/03/10 * costco\n" +
+      " Expenses:Purchases:Department  $35.86\n" +
+      " Expenses:Purchases:Doge:Food  ($54.84)\n" +
+      " Expenses:Purchases:Food:Home  ($172.22 - above)\n" +
+      " Assets:Abcd:SB:Checking"
+    );
+
+    journal.add(txn);
+
+    var txnCopy = copy(txn);
+    txnCopy.posting[1].currency = '$';
+    txnCopy.posting[1].amount = 54.84;
+    txnCopy.posting[2].amountExpression = txnCopy.posting[2].amount;
+    txnCopy.posting[2].amount = 81.52;    // 172.22 - (35.86 + 54.84)
+    txnCopy.posting[2].currency = '$';
+    txnCopy.posting[3].amount = -172.22;
+    txnCopy.posting[3].currency = '$';
+    txnCopy.posting[3].emptyInitialAmount = true;
+    txnCopy = bigCopy(txnCopy);
+
+    expect(journal.transactions()).toEqual([txnCopy]);
+  });
+
+  it("resolves 'above' to zero when it is on the first posting", function() {
+    var txn = grammarParser.parse(
+      "2026/03/10 test\n" +
+      " Expenses:A  (above + $10)\n" +
+      " Assets:Checking"
+    );
+
+    journal.add(txn);
+
+    var txnCopy = copy(txn);
+    txnCopy.posting[0].amountExpression = txnCopy.posting[0].amount;
+    txnCopy.posting[0].amount = 10;
+    txnCopy.posting[0].currency = '$';
+    txnCopy.posting[1].amount = -10;
+    txnCopy.posting[1].currency = '$';
+    txnCopy.posting[1].emptyInitialAmount = true;
+    txnCopy = bigCopy(txnCopy);
+
+    expect(journal.transactions()).toEqual([txnCopy]);
+  });
+
+  it("still fails on an unbalanced transaction that uses 'above'", function() {
+    var txn = grammarParser.parse(
+      "2026/03/10 test\n" +
+      " Expenses:A  $10\n" +
+      " Expenses:B  ($20 - above)\n" +
+      " Expenses:C  $5"
+    );
+
+    try{
+      journal.add(txn);
+      fail('should fail on unbalanced transaction');
+    }catch(e){
+      expect(e.message).toEqual('Transaction is not balanced');
+    }
+  });
 })
