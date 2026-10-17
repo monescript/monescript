@@ -10,7 +10,9 @@
   "license": "GPL-3.0",
   "contributors": [],
   "devDependencies": {
-    "jasmine": "^2.8.0"
+    "jasmine": "^2.8.0",
+    "pegjs": "^0.10.0",
+    "watchify": "^4.0.0"
   },
   "scripts": {
     "build-grammar": "pegjs src/resources/ledger-cli.pegjs",
@@ -22,11 +24,7 @@
   },
   "dependencies": {
     "big.js": "^4.0.2",
-    "browserify": "^17.0.1",
     "c3": "^0.4.18",
-    "moo": "^0.4.3",
-    "pegjs": "^0.10.0",
-    "underscore": "^1.8.3",
-    "watchify": "^4.0.0"
+    "moo": "^0.4.3"
   }
 }

@@ -2,6 +2,7 @@ var parser = require('../../src/parser/journal-parser');
 var journal = require('../../src/journal');
 var sampleGenerator = require('../../generator/generator.util');
 
+var tabs = require('./tabs.js');
 var accountFilter = require('./components/account-filter.js');
 var accounts = require('./components/accounts.js');
 var totalMonthlyChart = require('./components/total-monthly-chart.js');
@@ -72,8 +73,9 @@ function createJournal(text){
 
   render();
   if(ok){
-    $('#topTab a[href="#transactions"]').tab('show');
+    tabs.show('#transactions');
   }
+  tabs.init();
   return ok;
 }
 

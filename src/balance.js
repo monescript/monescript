@@ -1,6 +1,5 @@
 var Big = require('big.js');
 var eval = require('./journal.js');
-var _ = require('underscore');
 
 var Balance = {
 
@@ -40,7 +39,7 @@ var Balance = {
     var lastAccount = [];
     accountArray.forEach(a => {
       lastAccount.push(a);
-      accountHierarchy.push(_.clone(lastAccount));
+      accountHierarchy.push(lastAccount.slice());
     })
     return accountHierarchy;
   },

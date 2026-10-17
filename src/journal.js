@@ -1,5 +1,4 @@
 var Big = require('big.js');
-var _ = require('underscore');
 var eval = require('./expression-evaluator.js');
 var tagExtractor = require('./parser/tag-extractor.js');
 
@@ -107,7 +106,7 @@ var Journal = {
 
   createMissingPostingFromBucketAccount: function(txn, currency, remainder){
       txn.posting.push(
-        {account: _.clone(this.bucketAccount), currency: currency, amount: remainder.times(-1.0)}
+        {account: this.bucketAccount.slice(), currency: currency, amount: remainder.times(-1.0)}
       );
   },
 

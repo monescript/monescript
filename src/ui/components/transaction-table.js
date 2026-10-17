@@ -3,6 +3,9 @@ var balanceFilterHelper = require('../util/balance-filter-helper');
 var formatHelper = require('../util/format-helper');
 var escapeHtml = require('../util/html-helper').escapeHtml;
 var Big = require('big.js');
+var COMMENT_ICON =
+  '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" ' +
+  'stroke-width="1.5" aria-hidden="true"><path d="M2 3h12v8H7l-3 3v-3H2z" stroke-linejoin="round"/></svg>';
 
 function transactionComments(t){
   var comments = [];
@@ -62,8 +65,8 @@ module.exports = {
               '<td><i>' + escapeHtml(t.payee) + '</i></td>' +
               '<td>' + (mp.length == 1 ? escapeHtml(accountNameHelper.encodeAccountName(mp[0].account)) : '') + '</td>' +
               '<td>' + (comments.length > 0
-                  ? '<i class="fa fa-comment-o text-muted" style="cursor: help" title="' +
-                    escapeHtml(comments.join('\n')) + '"></i>'
+                  ? '<span class="text-muted" style="cursor: help" title="' +
+                    escapeHtml(comments.join('\n')) + '">' + COMMENT_ICON + '</span>'
                   : '') + '</td>' +
             '</tr>');
 
