@@ -45,7 +45,10 @@
                     <div class="form">
                         <div class="form-group">
                             <label> Please provide a text file in a <a href="https://github.com/monescript/monescript#monescript-journal-syntax" target="_blank"> monescript format </a> </label>
-                            <input class="form-control" type="file" id="input" v-on:change="handleFiles">
+                            <div>
+                                <button type="button" class="btn btn-primary" @click.prevent="openFile">Choose File</button>
+                                <input class="d-none" type="file" ref="fileInput" v-on:change="handleFiles">
+                            </div>
                         </div>
                         <div>
                             <pre id="errors">
@@ -108,10 +111,14 @@
                             </td></tr>
                             <tr><td>
 
-                                <div class="mb-2">
-                                    <button type="button" class="btn btn-sm btn-danger" @click.prevent="updateFilterAccount('Expenses')">Expenses</button>
-                                    <button type="button" class="btn btn-sm btn-success" @click.prevent="updateFilterAccount('Income')">Income</button>
-                                    <button type="button" class="btn btn-sm btn-info" @click.prevent="updateFilterAccount('Assets')">Assets</button>
+                                <div class="mb-2 d-flex flex-wrap align-items-stretch">
+                                    <button type="button" class="btn btn-sm btn-danger ml-1" @click.prevent="updateFilterAccount('Expenses')">Expenses</button>
+                                    <button type="button" class="btn btn-sm btn-success ml-1" @click.prevent="updateFilterAccount('Income')">Income</button>
+                                    <button type="button" class="btn btn-sm btn-info ml-1" @click.prevent="updateFilterAccount('Assets')">Assets</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary ml-3" title="Reload file" @click.prevent="reloadFile">
+                                        <i class="fa fa-refresh"></i>
+                                    </button>
+                                    <span v-if="showReloaded" class="text-success ml-2 align-self-center"><i class="fa fa-check"></i> Reloaded</span>
                                 </div>
 
                                 <accounts v-bind:filter="filter" v-bind:journal="journal" @account="updateFilterAccount">
@@ -136,6 +143,10 @@
             <div class="row">
                 <div class="col-md-12 text-center py-1">
                     <a class="github itl-tooltip" data-placement="bottom" href="https://github.com/monescript/monescript" data-original-title="Github" target="_blank"><i class="fa fa-github"></i> Github</a>
+                    <button type="button" class="btn btn-sm btn-outline-light ml-3" title="Reload file" onclick="app.reloadFileFromFooter()">
+                        <i class="fa fa-refresh"></i> Reload
+                    </button>
+                    <span id="footer-reloaded" class="text-success ml-2 d-none"><i class="fa fa-check"></i> Reloaded</span>
                 </div>
             </div>
         </div>

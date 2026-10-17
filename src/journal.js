@@ -115,7 +115,7 @@ var Journal = {
     var journal = this;
     var totalSum = Big(0);
     this.postings(txn).forEach(function(p) {
-      var pAmt = journal.amount(p);
+      var pAmt = journal.amount(p, totalSum);
       totalSum = totalSum.add(pAmt);
     });
     return totalSum;
@@ -157,13 +157,17 @@ var Journal = {
       return p.currency;
   },
 
-  amount: function(p){
+  amount: function(p, runningTotal){
     if(p.amount == null){
       p.emptyInitialAmount = true;
       p.amount = Big(0);
-    } else if(p.amount.type == 'BinaryExpression'){
+    } else if(p.amount.type == 'BinaryExpression' || p.amount.type == 'RunningTotal'){
       p.amountExpression = p.amount;
-      var result = eval.evaluate(p.amountExpression);
+      var result = eval.evaluate(p.amountExpression, {runningTotal: runningTotal});
+      p.amount = result.amount;
+      p.currency = result.currency;
+    } else if(p.amount.type == 'Literal'){
+      var result = this.copy(p.amount)
       p.amount = result.amount;
       p.currency = result.currency;
     } else if(p.amount.type == 'Literal'){

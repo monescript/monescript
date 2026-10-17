@@ -402,4 +402,56 @@ describe("Ledger Grammar Parser", function() {
 
     expect(result).toEqual(expectedTransaction);
   });
+
+    /*
+    "above" = running sum of the postings written above it in the same transaction
+  */
+
+  it("should parse 'above' as a running-total reference in a value expression", function() {
+    const expectedTransaction = {
+      type: 'transaction',
+      date: { year: 2026, month: 3, day: 10 },
+      status: '*',
+      payee: 'costco',
+      posting: [
+        { account: ['Expenses', 'Purchases', 'Department'], currency: '$', amount: 35.86 },
+        { account: ['Expenses', 'Purchases', 'Doge', 'Food'],
+          amount: { type: 'Literal', currency: '$', amount: 54.84 } },
+        { account: ['Expenses', 'Purchases', 'Food', 'Home'],
+          amount: {
+            type: 'BinaryExpression',
+            operator: '-',
+            left: { type: 'Literal', currency: '$', amount: 172.22 },
+            right: { type: 'RunningTotal' }
+          }
+        },
+        { account: ['Assets', 'Abcd', 'SB', 'Checking'] }
+      ]
+    };
+
+    var result = parser.parse(
+      "2026/03/10 * costco\n" +
+      " Expenses:Purchases:Department  $35.86\n" +
+      " Expenses:Purchases:Doge:Food  ($54.84)\n" +
+      " Expenses:Purchases:Food:Home  ($172.22 - above)\n" +
+      " Assets:Abcd:SB:Checking"
+    );
+
+    expect(result).toEqual(expectedTransaction);
+  });
+
+  it("should parse 'above' on the left side of an expression", function() {
+    var result = parser.parse(
+      "2026/03/10 test\n" +
+      " Expenses:A  (above + $10)\n" +
+      " Assets:Checking"
+    );
+
+    expect(result.posting[0].amount).toEqual({
+      type: 'BinaryExpression',
+      operator: '+',
+      left: { type: 'RunningTotal' },
+      right: { type: 'Literal', currency: '$', amount: 10 }
+    });
+  });
 });

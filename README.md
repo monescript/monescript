@@ -37,6 +37,8 @@ features that are currently supported by monescript parser:
   - $ currency
   - simple arithmetic value expressions (+, -, *, /)
   - notes prefixed with ';'
+  - **`above` keyword in value expressions** (extra feature beyond standard ledger: evaluates to the sum of preceding postings in the same transaction)
+
 - line comments prefixed with ';' or '#'
 - bucket command
 - tag names
@@ -71,6 +73,13 @@ bucket Assets:Bank:Checking
 2017/1/13 * Groceries and More
   Expenses:Food:Grocery                  $29.32 ; Or for each posting
   Assets:Bank:Checking 
+
+2017/10/17 * Multi Department
+  ; monescript can calculate remainder after multiple postings
+  Expenses:Food                        $56.18
+  Expenses:Stationery                  $43.12
+  Expenses:Seasonal                    ($172.22 - above)
+  Assets:Bank:Checking
 
 2017/2/3 * Laser Play
   Expenses:Entertainment                 $45.96
